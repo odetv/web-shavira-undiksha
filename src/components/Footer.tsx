@@ -14,16 +14,10 @@ export default function Footer() {
         <div className="lg:w-1/3">
           <div className="flex justify-center space-x-3 lg:justify-start">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-center w-32 h-32 rounded-full bg-white">
-                <Image
-                  width={96}
-                  height={96}
-                  style={{ height: "auto", width: "auto" }}
-                  src={UndikshaLogo.src}
-                  alt=""
-                />
+              <div className="flex items-center justify-center w-32 h-32 rounded-full bg-[#2aa9e0]">
+                <Image width={96} height={96} src={UndikshaLogo.src} alt="" />
               </div>
-              <span className="text-2xl font-semibold uppercase">
+              <span className="text-xl sm:text-2xl font-semibold uppercase">
                 Undiksha Virtual Assistant
               </span>
               <p className="text-tiny sm:text-sm md:text-sm lg:text-sm xl:text-sm">
@@ -62,7 +56,7 @@ export default function Footer() {
                   humas@undiksha.ac.id
                 </p>
               </div>
-              <div title="Telepon" className="flex items-center py-0.5">
+              <div title="Website" className="flex items-center py-0.5">
                 <LanguageIcon />
                 <p className="pl-2 text-tiny sm:text-sm md:text-sm lg:text-sm xl:text-sm">
                   www.undiksha.ac.id

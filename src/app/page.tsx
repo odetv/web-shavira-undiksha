@@ -5,27 +5,107 @@ import UserLogo from "../assets/logo/user.png";
 import { Textarea, Button, Chip } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
 import { sendQuestion } from "../services/apiChatBot";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import React from "react";
+
+interface ChatMessage {
+  role: "user" | "bot";
+  message: string;
+}
 
 export default function Home() {
-  const [userMessage, setUserMessage] = useState(""); // Untuk menyimpan pesan user
-  const [botResponse, setBotResponse] = useState(""); // Untuk menyimpan respons bot
-  const [loading, setLoading] = useState(false); // Untuk loading state
+  const [userMessage, setUserMessage] = useState("");
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [loading, setLoading] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fungsi untuk mengirimkan pertanyaan ke API chatbot
+  useEffect(() => {
+    const storedChatHistory = localStorage.getItem("chatHistory");
+    if (storedChatHistory) {
+      setChatHistory(JSON.parse(storedChatHistory));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (chatHistory.length > 0) {
+      localStorage.setItem("chatHistory", JSON.stringify(chatHistory));
+    }
+
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
+
   const handleSend = async () => {
     if (!userMessage) return;
 
+    const newChatHistory: ChatMessage[] = [
+      ...chatHistory,
+      { role: "user", message: userMessage },
+    ];
+    setChatHistory(newChatHistory);
+    setUserMessage(""); // Bersihkan input setelah pengguna mengirim pesan
+
     setLoading(true);
     try {
-      const response = await sendQuestion(userMessage); // Panggil API
-      setBotResponse(response); // Simpan respons dari API
+      const response = await sendQuestion(userMessage);
+      setChatHistory([...newChatHistory, { role: "bot", message: response }]);
     } catch (error) {
       console.error("Error fetching chatbot response:", error);
-      setBotResponse("Maaf, terjadi kesalahan."); // Tampilkan pesan error
+      setChatHistory([
+        ...newChatHistory,
+        { role: "bot", message: "Maaf, terjadi kesalahan." },
+      ]);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleReset = () => {
+    localStorage.removeItem("chatHistory");
+    setChatHistory([]);
+  };
+
+  const parseMessage = (message: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const boldRegex = /\*\*(.*?)\*\*/g;
+    const newLineRegex = /\n/g;
+
+    const parts = message.split(newLineRegex).map((line, index) =>
+      line.split(urlRegex).map((part, partIndex) => {
+        if (urlRegex.test(part)) {
+          return (
+            <a
+              key={`${index}-${partIndex}`}
+              href={part}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline"
+            >
+              {part}
+            </a>
+          );
+        } else {
+          const boldedText = part.split(boldRegex).map((segment, i) => {
+            if (i % 2 === 1) {
+              return (
+                <strong key={`${index}-${partIndex}-${i}`}>{segment}</strong>
+              );
+            }
+            return <span key={`${index}-${partIndex}-${i}`}>{segment}</span>;
+          });
+          return <span key={`${index}-${partIndex}`}>{boldedText}</span>;
+        }
+      })
+    );
+
+    return parts.map((line, index) => (
+      <React.Fragment key={index}>
+        {line}
+        <br />
+      </React.Fragment>
+    ));
   };
 
   return (
@@ -38,90 +118,132 @@ export default function Home() {
       </div>
       <div className="mt-4">
         <Chip color="warning" className="uppercase">
-          Eksperimen
+          <p className="font-bold">Eksperimen</p>
         </Chip>
       </div>
       <div className="mt-8 bg-white p-4 rounded-xl container max-w-screen-lg">
-        <div id="block-chat" className="flex flex-col gap-6">
-          <div id="bot" className="flex flex-col gap-1">
-            <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-              <div className="flex flex-row justify-start items-center gap-2">
-                <Image
-                  className="rounded-full"
-                  width={24}
-                  height={24}
-                  src={BotLogo}
-                  alt={"Bot"}
-                />
-                <p>Shavira</p>
+        <div className="mt-8 bg-white p-4 rounded-xl container max-w-screen-lg">
+          <div
+            id="block-chat"
+            ref={chatContainerRef}
+            className="flex flex-col gap-6 overflow-y-scroll max-h-[400px]"
+          >
+            <div className="flex flex-col gap-2 mt-2">
+              <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                  <Image
+                    className="rounded-full"
+                    width={24}
+                    height={24}
+                    src={BotLogo}
+                    alt={"Bot"}
+                  />
+                  <p className="font-extrabold">Shavira</p>
+                </div>
+              </div>
+              <div className="flex justify-start ml-10 mr-5 sm:mr-auto text-left sm:w-[700px]">
+                <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                  Hai kak, aku Shavira. Ada yang bisa dibantu?
+                </p>
               </div>
             </div>
-            <div>
-              <p>
-                {botResponse || "Hai kak, aku Shavira. Ada yang bisa dibantu?"}
-              </p>
-            </div>
+            {chatHistory.map((chat, index) => (
+              <div key={index} className="flex flex-col gap-2 mt-2">
+                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                  {chat.role === "bot" ? (
+                    <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={BotLogo}
+                        alt="Bot"
+                      />
+                      <p className="font-extrabold">Shavira</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row justify-end items-center gap-2 mr-2">
+                      <p className="font-extrabold">User</p>
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={UserLogo}
+                        alt="User"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div
+                  className={`flex ${
+                    chat.role === "user"
+                      ? "justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 sm:w-[700px]"
+                      : "justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]"
+                  }`}
+                >
+                  <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                    {parseMessage(chat.message)}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
-          <div id="user" className="flex flex-col gap-1">
-            <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-              <div className="flex flex-row justify-end items-center gap-2">
-                <p>User</p>
-                <Image
-                  className="rounded-full"
-                  width={24}
-                  height={24}
-                  src={UserLogo}
-                  alt={"User"}
-                />
-              </div>
-            </div>
-            <div className="text-end">
-              <p>{userMessage || "..."}</p>
+
+          <div id="input" className="pt-10">
+            <div className="flex flex-row justify-between items-center gap-2">
+              <Textarea
+                value={userMessage}
+                onChange={(e) => setUserMessage(e.target.value)}
+                minRows={1}
+                placeholder="Ajukan Pertanyaan..."
+                type="text"
+                variant="faded"
+                label=""
+                color="default"
+              />
+              <Button
+                onPress={handleSend}
+                isLoading={loading}
+                isIconOnly
+                disableRipple
+                disableAnimation
+                variant="light"
+              >
+                <SendIcon color="primary" />
+              </Button>
             </div>
           </div>
         </div>
-        <div id="input" className="pt-10">
-          <div className="flex flex-row justify-between items-center gap-2">
-            <Textarea
-              value={userMessage}
-              onChange={(e) => setUserMessage(e.target.value)}
-              minRows={1}
-              placeholder="Pertanyaan"
-              type="text"
-              variant="flat"
-              label=""
-              color="default"
-            />
+      </div>
+      <div id="opsi-input" className="mt-8">
+        <div className="flex flex-col sm:flex-row justify-center w-full gap-2">
+          <div className="grid grid-cols-2 gap-2 justify-between items-center">
             <Button
-              onPress={handleSend}
-              isLoading={loading}
-              isIconOnly
-              disableRipple
-              disableAnimation
-              variant="light"
+              onPress={handleReset}
+              radius="md"
+              className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-6 sm:py-8"
             >
-              <SendIcon color="primary" />
+              Reset Chat
             </Button>
-          </div>
-        </div>
-        <div id="opsi-input" className="pt-4">
-          <div className="flex flex-wrap sm:flex-row justify-center w-full gap-2">
             <Button
               radius="md"
-              className="bg-gradient-to-tr from-[#2aa9e0] to-[#d79127] text-white shadow-lg py-8"
+              className="bg-gradient-to-tr from-[#2aa9e0] to-[#d79127] text-white shadow-lg py-6 sm:py-8"
             >
               Tanya Lagi
             </Button>
-            <Button
-              radius="md"
-              className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-8"
-            >
-              <div className="flex flex-col">
-                <p>Saya tidak mendapat jawaban sesuai</p>
-                <p>Alihkan ke CS UPA TIK</p>
-              </div>
-            </Button>
           </div>
+          <Button
+            radius="md"
+            className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-8"
+          >
+            <a
+              href="https://upttik.undiksha.ac.id/kontak-kami/"
+              className="flex flex-col"
+            >
+              <p>Saya tidak mendapat jawaban sesuai</p>
+              <p>Alihkan ke CS UPA TIK</p>
+            </a>
+          </Button>
         </div>
       </div>
     </main>

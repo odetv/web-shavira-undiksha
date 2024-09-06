@@ -85,7 +85,7 @@ export default function Header() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu>
+      <NavbarMenu className="flex flex-col gap-4 pl-6 pt-4 font-semibold">
         <NavbarMenuItem>
           <Link color="foreground" href="#">
             Beranda
