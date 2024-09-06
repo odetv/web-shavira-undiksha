@@ -142,7 +142,7 @@ export default function Home() {
                     <p className="font-extrabold">Shavira</p>
                   </div>
                 </div>
-                <div className="flex justify-start ml-10 mr-5 sm:mr-auto text-left sm:w-[700px]">
+                <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
                   <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
                     Hai kak, aku Shavira. Ada yang bisa dibantu?
                   </p>
