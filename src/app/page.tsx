@@ -129,7 +129,7 @@ export default function Home() {
             className="flex flex-col gap-6"
           >
             <ScrollShadow className="max-h-[400px]">
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 mb-4">
                 <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
                   <div className="flex flex-row justify-start items-center gap-2 ml-2">
                     <Image
@@ -149,7 +149,7 @@ export default function Home() {
                 </div>
               </div>
               {chatHistory.map((chat, index) => (
-                <div key={index} className="flex flex-col gap-2 mt-2">
+                <div key={index} className="flex flex-col gap-2 mt-4">
                   <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
                     {chat.role === "bot" ? (
                       <div className="flex flex-row justify-start items-center gap-2 ml-2">
