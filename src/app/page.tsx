@@ -122,13 +122,13 @@ export default function Home() {
         </Chip>
       </div>
       <div className="mt-8 bg-white p-4 rounded-xl container max-w-screen-lg">
-        <div className="mt-8 bg-white p-4 rounded-xl container max-w-screen-lg">
+        <div className="mt-2 bg-white p-4 rounded-xl container max-w-screen-lg">
           <div
             id="block-chat"
             ref={chatContainerRef}
             className="flex flex-col gap-6 overflow-y-scroll max-h-[400px]"
           >
-            <div className="flex flex-col gap-2 mt-2">
+            <div className="flex flex-col gap-2">
               <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
                 <div className="flex flex-row justify-start items-center gap-2 ml-2">
                   <Image
