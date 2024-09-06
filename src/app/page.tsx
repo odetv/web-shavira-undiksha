@@ -128,7 +128,7 @@ export default function Home() {
             ref={chatContainerRef}
             className="flex flex-col gap-6"
           >
-            <ScrollShadow className="max-h-[400px]">
+            <ScrollShadow size={10} className="max-h-[400px]">
               <div className="flex flex-col gap-2 mb-4">
                 <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
                   <div className="flex flex-row justify-start items-center gap-2 ml-2">
