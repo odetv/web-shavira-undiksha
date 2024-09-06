@@ -4,7 +4,7 @@ import BotLogo from "../assets/logo/bot.png";
 import UserLogo from "../assets/logo/user.png";
 import { Textarea, Button, Chip } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
-import { sendQuestion } from "../services/apiChatbot";
+import { sendQuestion } from "../services/apiChatBot";
 import { useState } from "react";
 
 export default function Home() {
