@@ -1,10 +1,33 @@
+"use client";
 import Image from "next/image";
 import BotLogo from "../assets/logo/bot.png";
 import UserLogo from "../assets/logo/user.png";
 import { Textarea, Button, Chip } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
+import { sendQuestion } from "../services/apiChatbot";
+import { useState } from "react";
 
 export default function Home() {
+  const [userMessage, setUserMessage] = useState(""); // Untuk menyimpan pesan user
+  const [botResponse, setBotResponse] = useState(""); // Untuk menyimpan respons bot
+  const [loading, setLoading] = useState(false); // Untuk loading state
+
+  // Fungsi untuk mengirimkan pertanyaan ke API chatbot
+  const handleSend = async () => {
+    if (!userMessage) return;
+
+    setLoading(true);
+    try {
+      const response = await sendQuestion(userMessage); // Panggil API
+      setBotResponse(response); // Simpan respons dari API
+    } catch (error) {
+      console.error("Error fetching chatbot response:", error);
+      setBotResponse("Maaf, terjadi kesalahan."); // Tampilkan pesan error
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="pt-10 pb-20 flex flex-col items-center justify-center p-4 bg-gradient-to-r from-[#03097d] to-[#2aa9e0] sm:bg-gradient-to-r sm:from-[#03097d] sm:from-10% sm:via-[#023781] sm:via-30% sm:to-[#2aa9e0] sm:to-90%">
       <div id="info-bot" className="text-center text-white tracking-wide">
@@ -34,7 +57,9 @@ export default function Home() {
               </div>
             </div>
             <div>
-              <p>Hai kak, aku Shavira. Ada yang bisa dibantu?</p>
+              <p>
+                {botResponse || "Hai kak, aku Shavira. Ada yang bisa dibantu?"}
+              </p>
             </div>
           </div>
           <div id="user" className="flex flex-col gap-1">
@@ -51,13 +76,15 @@ export default function Home() {
               </div>
             </div>
             <div className="text-end">
-              <p>Aku mau kuliah di Undiksha, ada info PMB?</p>
+              <p>{userMessage || "..."}</p>
             </div>
           </div>
         </div>
         <div id="input" className="pt-10">
           <div className="flex flex-row justify-between items-center gap-2">
             <Textarea
+              value={userMessage}
+              onChange={(e) => setUserMessage(e.target.value)}
               minRows={1}
               placeholder="Pertanyaan"
               type="text"
@@ -65,7 +92,14 @@ export default function Home() {
               label=""
               color="default"
             />
-            <Button isIconOnly disableRipple disableAnimation variant="light">
+            <Button
+              onPress={handleSend}
+              isLoading={loading}
+              isIconOnly
+              disableRipple
+              disableAnimation
+              variant="light"
+            >
               <SendIcon color="primary" />
             </Button>
           </div>
