@@ -17,3 +17,23 @@ export const sendChatBot = async (question: string) => {
 
   return data.data[0].answer;
 };
+
+export const checkChatBotStatus = async () => {
+  const url = "/api/statusChatBot";
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch the chatbot status");
+  }
+
+  return data.timestamp;
+};

@@ -1,17 +1,14 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  const { question } = await req.json();
+export async function GET() {
+  const apiUrl = process.env.NEXT_PUBLIC_VERCEL_CHATBOT_API_URL || "";
 
-  const apiUrl = process.env.NEXT_PUBLIC_VERCEL_CHATBOT_API_URL + "/chat";
-  const apiKey = process.env.NEXT_PUBLIC_VERCEL_CHATBOT_API_KEY;
-
-  if (!apiKey || !apiUrl) {
+  if (!apiUrl) {
     return NextResponse.json(
       {
         statusCode: 500,
         success: false,
-        message: "Server misconfiguration: API key or API URL is missing",
+        message: "Server misconfiguration: API URL is missing",
         data: null,
       },
       { status: 500 }
@@ -20,12 +17,10 @@ export async function POST(req: Request) {
 
   try {
     const apiResponse = await fetch(apiUrl, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "CHATBOT-API-KEY": apiKey,
       },
-      body: JSON.stringify({ question }),
     });
 
     const data = await apiResponse.json();
@@ -35,7 +30,7 @@ export async function POST(req: Request) {
         {
           statusCode: apiResponse.status,
           success: false,
-          message: data.message || "Failed to fetch chatbot response",
+          message: data.message || "Failed to fetch chatbot status",
           data: null,
         },
         { status: apiResponse.status }
@@ -47,7 +42,7 @@ export async function POST(req: Request) {
         statusCode: 200,
         success: true,
         message: "OK",
-        data: data.data,
+        timestamp: data.timestamp,
       },
       { status: 200 }
     );

@@ -4,7 +4,7 @@ import BotLogo from "../assets/logo/bot.png";
 import UserLogo from "../assets/logo/user.png";
 import { Textarea, Button, Chip, ScrollShadow } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
-import { sendChatBot } from "../services/apiChatBot";
+import { sendChatBot, checkChatBotStatus } from "../services/apiChatBot";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 
@@ -18,8 +18,22 @@ export default function Home() {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [chatBotReady, setChatBotReady] = useState(false);
 
   useEffect(() => {
+    const checkStatus = async () => {
+      try {
+        const timestamp = await checkChatBotStatus();
+        if (timestamp) {
+          setChatBotReady(true);
+        }
+      } catch (error) {
+        setChatBotReady(false);
+      }
+    };
+
+    checkStatus();
+
     const storedChatHistory = localStorage.getItem("chatHistory");
     if (storedChatHistory) {
       setChatHistory(JSON.parse(storedChatHistory));
@@ -119,9 +133,18 @@ export default function Home() {
           Layanan Helpdesk Undiksha Virtual Assistant
         </p>
       </div>
-      <div className="mt-4">
-        <Chip color="warning" className="uppercase">
+      <div className="mt-4 flex flex-row gap-2 items-center justify-center">
+        <Chip color="warning" className="uppercase" variant="solid">
           <p className="font-bold">Eksperimen</p>
+        </Chip>
+        <Chip
+          color={chatBotReady ? "success" : "danger"}
+          className="uppercase"
+          variant="dot"
+        >
+          <p className="font-bold text-white">
+            {chatBotReady ? "Ready" : "Not Ready"}
+          </p>
         </Chip>
       </div>
       <div className="mt-8 bg-white p-4 rounded-xl container max-w-screen-lg">
