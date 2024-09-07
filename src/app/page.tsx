@@ -129,69 +129,67 @@ export default function Home() {
           <div
             id="block-chat"
             ref={chatContainerRef}
-            className="flex flex-col gap-6"
+            className="flex flex-col gap-6 max-h-[400px] overflow-y-auto"
           >
-            <ScrollShadow size={10} className="max-h-[400px]">
-              <div className="flex flex-col gap-2 mb-4">
-                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                  <div className="flex flex-row justify-start items-center gap-2 ml-2">
-                    <Image
-                      className="rounded-full"
-                      width={24}
-                      height={24}
-                      src={BotLogo}
-                      alt={"Bot"}
-                    />
-                    <p className="font-extrabold">Shavira</p>
-                  </div>
+            <div className="flex flex-col gap-2 mb-4">
+              <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                  <Image
+                    className="rounded-full"
+                    width={24}
+                    height={24}
+                    src={BotLogo}
+                    alt={"Bot"}
+                  />
+                  <p className="font-extrabold">Shavira</p>
                 </div>
-                <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
+              </div>
+              <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
+                <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                  Hai kak, aku Shavira. Ada yang bisa dibantu?
+                </p>
+              </div>
+            </div>
+            {chatHistory.map((chat, index) => (
+              <div key={index} className="flex flex-col gap-2 mt-4">
+                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                  {chat.role === "bot" ? (
+                    <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={BotLogo}
+                        alt="Bot"
+                      />
+                      <p className="font-extrabold">Shavira</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-row justify-end items-center gap-2 mr-2">
+                      <p className="font-extrabold">User</p>
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={UserLogo}
+                        alt="User"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div
+                  className={`flex ${
+                    chat.role === "user"
+                      ? "justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 sm:w-[700px]"
+                      : "justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]"
+                  }`}
+                >
                   <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    Hai kak, aku Shavira. Ada yang bisa dibantu?
+                    {parseMessage(chat.message)}
                   </p>
                 </div>
               </div>
-              {chatHistory.map((chat, index) => (
-                <div key={index} className="flex flex-col gap-2 mt-4">
-                  <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                    {chat.role === "bot" ? (
-                      <div className="flex flex-row justify-start items-center gap-2 ml-2">
-                        <Image
-                          className="rounded-full"
-                          width={24}
-                          height={24}
-                          src={BotLogo}
-                          alt="Bot"
-                        />
-                        <p className="font-extrabold">Shavira</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-row justify-end items-center gap-2 mr-2">
-                        <p className="font-extrabold">User</p>
-                        <Image
-                          className="rounded-full"
-                          width={24}
-                          height={24}
-                          src={UserLogo}
-                          alt="User"
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div
-                    className={`flex ${
-                      chat.role === "user"
-                        ? "justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 sm:w-[700px]"
-                        : "justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]"
-                    }`}
-                  >
-                    <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                      {parseMessage(chat.message)}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </ScrollShadow>
+            ))}
           </div>
 
           <div id="input" className="pt-10">
@@ -212,7 +210,7 @@ export default function Home() {
                 isIconOnly
                 disableRipple
                 disableAnimation
-                variant="light"
+                variant="solid"
               >
                 <SendIcon color="primary" />
               </Button>
