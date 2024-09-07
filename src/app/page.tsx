@@ -4,7 +4,7 @@ import BotLogo from "../assets/logo/bot.png";
 import UserLogo from "../assets/logo/user.png";
 import { Textarea, Button, Chip, ScrollShadow } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
-import { sendQuestion } from "../services/apiChatBot";
+import { sendChatBot } from "../services/apiChatBot";
 import { useEffect, useRef, useState } from "react";
 import React from "react";
 
@@ -45,17 +45,20 @@ export default function Home() {
       { role: "user", message: userMessage },
     ];
     setChatHistory(newChatHistory);
-    setUserMessage(""); // Bersihkan input setelah pengguna mengirim pesan
+    setUserMessage("");
 
     setLoading(true);
     try {
-      const response = await sendQuestion(userMessage);
+      const response = await sendChatBot(userMessage);
       setChatHistory([...newChatHistory, { role: "bot", message: response }]);
     } catch (error) {
       console.error("Error fetching chatbot response:", error);
       setChatHistory([
         ...newChatHistory,
-        { role: "bot", message: "Maaf, terjadi kesalahan." },
+        {
+          role: "bot",
+          message: (error as Error).message || "Maaf, terjadi kesalahan.",
+        },
       ]);
     } finally {
       setLoading(false);
