@@ -19,7 +19,7 @@ export const sendChatBot = async (question: string) => {
 };
 
 export const checkChatBotStatus = async () => {
-  const url = "/api/statusChatBot";
+  const url = process.env.NEXT_PUBLIC_VERCEL_CHATBOT_API_URL || "";
 
   const response = await fetch(url, {
     method: "GET",
