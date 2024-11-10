@@ -20,13 +20,13 @@ const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
   }, [finishLoading]);
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center bg-white">
+    <div className="flex flex-col h-screen items-center justify-center bg-white pb-20">
       <div
         id="splashscreen"
         className="flex flex-col justify-center items-center gap-2"
       >
         <Image width={100} height={100} alt="Logo" src={Logo.src} />
-        <p className="text-base sm:text-xl font-medium">Shavira Undiksha</p>
+        <p className="text-base sm:text-xl font-bold">Shavira Undiksha</p>
       </div>
     </div>
   );

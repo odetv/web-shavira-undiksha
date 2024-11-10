@@ -12,7 +12,7 @@ export default function Home() {
   const [chatBotReady, setChatBotReady] = useState(false);
 
   return (
-    <main className="pb-20 flex flex-col items-center justify-center p-4 smooth-gradient h-screen">
+    <main className="pt-10 pb-20 flex flex-col items-center justify-center p-4 smooth-gradient">
       <div id="info-bot" className="text-center text-white tracking-wide">
         <h1 className="text-5xl sm:text-7xl font-bold pb-2">Shavira</h1>
         <p className="text-sm sm:text-2xl">

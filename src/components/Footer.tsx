@@ -21,9 +21,10 @@ export default function Footer() {
                 Undiksha Virtual Assistant
               </span>
               <p className="text-tiny sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                Website Resmi Helpdesk Shavira (Undiksha Virtual Assistant).
-                Chatbot bantuan informasi dan layanan akademik untuk civitas
-                akademik di Universitas Pendidikan Ganesha.
+                Website Resmi Helpdesk Undiksha Virtual Assistant (Shavira).
+                Sebuah virtual assistant yang menyediakan bantuan informasi dan
+                layanan akademik untuk civitas akademika di Universitas
+                Pendidikan Ganesha.
               </p>
             </div>
           </div>

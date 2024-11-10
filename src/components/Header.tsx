@@ -33,7 +33,7 @@ export default function Header() {
             src={UndikshaLogo.src}
             alt={"Logo Undiksha"}
           />
-          <p className="pl-2 font-semibold">Shavira</p>
+          <p className="pl-2 font-extrabold">SHAVIRA</p>
         </NavbarBrand>
       </NavbarContent>
 
@@ -45,7 +45,7 @@ export default function Header() {
             src={UndikshaLogo.src}
             alt={"Logo Undiksha"}
           />
-          <p className="pl-2 font-semibold">Shavira</p>
+          <p className="pl-2 font-extrabold">SHAVIRA</p>
         </NavbarBrand>
       </NavbarContent>
 
