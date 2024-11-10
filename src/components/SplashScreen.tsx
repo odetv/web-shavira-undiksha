@@ -11,7 +11,7 @@ const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
       complete: () => finishLoading(),
     });
     loader.add({
-      targets: "#logo",
+      targets: "#splashscreen",
       delay: 1,
       scale: 1.5,
       duration: 2500,
@@ -22,7 +22,7 @@ const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
   return (
     <div className="flex flex-col h-screen items-center justify-center bg-white">
       <div
-        id="logo"
+        id="splashscreen"
         className="flex flex-col justify-center items-center gap-2"
       >
         <Image width={100} height={100} alt="Logo" src={Logo.src} />
