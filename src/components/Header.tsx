@@ -13,7 +13,7 @@ import {
 } from "@nextui-org/react";
 import Image from "next/image";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import UndikshaLogo from "../assets/logo/undiksha.png";
+import UndikshaLogo from "../assets/logo/eganesha.png";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
@@ -59,12 +59,12 @@ export default function Header() {
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="https://missu.undiksha.ac.id/#kontak">
             Kontak
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="https://missu.undiksha.ac.id/#faq">
             FAQs
           </Link>
         </NavbarItem>
@@ -92,12 +92,12 @@ export default function Header() {
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="https://missu.undiksha.ac.id/#kontak">
             Kontak
           </Link>
         </NavbarMenuItem>
         <NavbarMenuItem>
-          <Link color="foreground" href="#">
+          <Link color="foreground" href="https://missu.undiksha.ac.id/#faq">
             FAQs
           </Link>
         </NavbarMenuItem>
