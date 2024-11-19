@@ -25,6 +25,11 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <title>Shavira Undiksha</title>
+      <meta name="description" content="Shavira Undiksha" />
+      <meta name="keywords" content="shavira, helpdesk, undiksha" />
+      <meta property="og:title" content="Shavira Undiksha" />
+      <meta property="og:description" content="Shavira Undiksha" />
       <meta name="viewport" content="initial-scale=1, width=device-width" />
       <body className={inter.className}>
         {isLoading && isHome ? (
