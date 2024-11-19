@@ -12,9 +12,9 @@ const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
     });
     loader.add({
       targets: "#splashscreen",
-      delay: 1,
-      scale: 1.5,
-      duration: 2500,
+      delay: 0,
+      scale: 1.25,
+      duration: 2000,
       easing: "easeInOutExpo",
     });
   }, [finishLoading]);
