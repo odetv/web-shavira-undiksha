@@ -3,12 +3,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: "/api", // Endpoint proxy lokal
-        destination: `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}`, // API server target
+        source: "/api",
+        destination: `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}`,
       },
       {
-        source: "/api/chat", // Endpoint proxy lokal
-        destination: `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}/chat`, // API server target
+        source: "/api/chat",
+        destination: `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}/chat`,
       },
     ];
   },

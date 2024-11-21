@@ -1,4 +1,4 @@
-const API_URL = "/api";
+const API_URL = `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}`;
 
 const headers = () => ({
   "Content-Type": "application/json",
@@ -33,7 +33,7 @@ const chatResponse = async (
     });
 
     if (response.status === 500) {
-      // console.error("Error 500: Internal Server Error");
+      console.error("Error 500: Internal Server Error");
       return {
         success: true,
         data: [
@@ -48,7 +48,7 @@ const chatResponse = async (
     }
 
     if (!response.ok) {
-      // console.error(`API response error: ${response.status}`);
+      console.error(`API response error: ${response.status}`);
       return {
         success: false,
         data: [],
@@ -58,14 +58,15 @@ const chatResponse = async (
     const data = await response.json();
     return data;
   } catch (error) {
-    // console.error("Error fetching chat response:", error);
+    console.error("Error fetching chat response:", error);
     return {
-      success: false,
+      success: true,
       data: [
         {
           timestamp: new Date().toISOString(),
           question,
-          answer: "Maaf, koneksi gagal. Silakan coba lagi nanti.",
+          answer:
+            "Maaf, terjadi kesalahan pada server. Silakan coba lagi nanti.",
         },
       ],
     };

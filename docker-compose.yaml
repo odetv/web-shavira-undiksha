@@ -1,7 +1,7 @@
 services:
   web:
     build: .
-    command: "npm run dev"
+    command: "npm run build && npm run start"
     env_file:
       - .env.local
     ports:

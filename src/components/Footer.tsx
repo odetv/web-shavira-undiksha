@@ -15,7 +15,13 @@ export default function Footer() {
           <div className="flex justify-center space-x-3 lg:justify-start">
             <div className="flex flex-col gap-3">
               <div className="flex items-center justify-center w-32 h-32 rounded-full bg-[#acd8eb]">
-                <Image width={96} height={96} src={UndikshaLogo.src} alt="" />
+                <Image
+                  className="p-1"
+                  width={96}
+                  height={96}
+                  src={UndikshaLogo.src}
+                  alt=""
+                />
               </div>
               <span className="text-xl sm:text-2xl font-semibold uppercase">
                 Undiksha Virtual Assistant
