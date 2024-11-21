@@ -18,6 +18,10 @@ import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
 import encodeComplexData from "@/services/encodeData";
 import decodeComplexData from "@/services/decodeData";
 import Cookies from "js-cookie";
+import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import PopUpAI from "@/components/PopUpAI";
 
 export default function Home() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -136,25 +140,44 @@ export default function Home() {
           className="flex flex-col gap-6 max-h-[400px] overflow-y-auto"
         >
           {welcomeVisible && (
-            <div id="shavira" className="flex flex-col gap-2 mb-4">
-              <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                <div className="flex flex-row justify-start items-center gap-2 ml-2">
-                  <Image
-                    className="rounded-full"
-                    width={24}
-                    height={24}
-                    src={BotLogo}
-                    alt={"Bot"}
-                  />
-                  <p className="font-extrabold">Shavira</p>
+            <>
+              <div className="flex flex-row gap-2 sm:justify-center items-center overflow-x-auto">
+                <div className="bg-green-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-green-600 cursor-pointer">
+                  <p>Apa saja fasilitas kampus undiksha?</p>
+                </div>
+                <div className="bg-green-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-green-600 cursor-pointer">
+                  <p>Dimana lokasi kampus Undiksha?</p>
+                </div>
+                <div className="bg-green-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-green-600 cursor-pointer">
+                  <p>Saya lupa password SSO Undiksha.</p>
+                </div>
+                <div className="bg-green-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-green-600 cursor-pointer">
+                  <p>Saya ingin cek kelulusan pendaftaran.</p>
+                </div>
+                <div className="bg-green-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-green-600 cursor-pointer">
+                  <p>Cara akses melihat KTM.</p>
                 </div>
               </div>
-              <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
-                <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                  Hai kak, aku Shavira. Ada yang bisa dibantu?
-                </p>
+              <div id="shavira" className="flex flex-col gap-2 mb-4">
+                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                  <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                    <Image
+                      className="rounded-full"
+                      width={24}
+                      height={24}
+                      src={BotLogo}
+                      alt={"Bot"}
+                    />
+                    <p className="font-extrabold">Shavira</p>
+                  </div>
+                </div>
+                <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
+                  <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                    Hai kak, aku Shavira. Ada yang bisa dibantu?
+                  </p>
+                </div>
               </div>
-            </div>
+            </>
           )}
           {messages.map((msg, index) => (
             <React.Fragment key={index}>
@@ -172,9 +195,26 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 sm:w-[700px]">
-                  <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    {msg.user}
-                  </p>
+                  <div className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      rehypePlugins={[rehypeRaw]}
+                      components={{
+                        a: ({ href, children }) => (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline"
+                          >
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >
+                      {msg.user.replace(/\\n/g, "\n")}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
               <div id="shavira" className="flex flex-col gap-2 mb-4">
@@ -199,9 +239,69 @@ export default function Home() {
                       </p>
                     </div>
                   ) : (
-                    <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                      {msg.bot}
-                    </p>
+                    <div className="bg-blue-200 rounded-xl p-3 text-sm sm:text-base break-words max-w-full">
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        rehypePlugins={[rehypeRaw]}
+                        components={{
+                          a: ({ href, children }) => {
+                            if (
+                              href &&
+                              href.startsWith(
+                                "https://aka.undiksha.ac.id/api/ktm/generate"
+                              )
+                            ) {
+                              return (
+                                <>
+                                  {/* Link teks */}
+                                  <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-blue-600 underline"
+                                  >
+                                    {children}
+                                  </a>
+
+                                  {/* Container gambar */}
+                                  <div className="relative inline-block mt-2">
+                                    {/* Gambar */}
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={href}
+                                      alt="Preview KTM"
+                                      className="rounded-lg border border-gray-300"
+                                    />
+
+                                    {/* Tombol download */}
+                                    {/* <a
+                                      href={href}
+                                      download="KTM_Generate.png"
+                                      className="absolute bottom-1 left-1 bg-slate-400 text-white text-xs px-2 py-1 rounded-md hover:bg-slate-500"
+                                    >
+                                      Unduh
+                                    </a> */}
+                                  </div>
+                                </>
+                              );
+                            }
+
+                            return (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 underline inline"
+                              >
+                                {children}
+                              </a>
+                            );
+                          },
+                        }}
+                      >
+                        {msg.bot.replace(/\\n/g, "\n")}
+                      </ReactMarkdown>
+                    </div>
                   )}
                 </div>
               </div>
@@ -235,6 +335,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <PopUpAI />
+
       <div id="opsi-input" className="mt-8">
         <div className="flex flex-col sm:flex-row justify-center w-full gap-2">
           <div className="grid grid-cols-2 gap-2 justify-between items-center">

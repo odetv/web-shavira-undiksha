@@ -13,7 +13,7 @@ const checkApiStatus = async (): Promise<boolean> => {
     });
     if (response.ok) {
       const data = await response.json();
-      return data.message === "API Virtual Assistant Undiksha";
+      return data.statusCode === 200;
     }
     return false;
   } catch (error) {
