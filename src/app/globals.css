@@ -19,3 +19,13 @@
   background-size: 200% 200%;
   animation: smoothGradient 30s ease infinite;
 }
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

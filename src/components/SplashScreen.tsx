@@ -20,7 +20,7 @@ const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
   }, [finishLoading]);
 
   return (
-    <div className="flex flex-col h-screen items-center justify-center bg-white pb-20">
+    <div className="flex min-h-screen min-w-full items-center justify-center bg-white">
       <div
         id="splashscreen"
         className="flex flex-col justify-center items-center gap-2"

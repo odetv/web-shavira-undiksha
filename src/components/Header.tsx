@@ -21,31 +21,40 @@ export default function Header() {
   const menuItems = ["Beranda", "Kontak", "FAQs", "Explore"];
 
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+    <Navbar
+      shouldHideOnScroll
+      isBordered
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
         <NavbarBrand>
-          <Image
-            width={38}
-            height={38}
-            src={UndikshaLogo.src}
-            alt={"Logo Undiksha"}
-          />
-          <p className="pl-2 font-extrabold">SHAVIRA</p>
+          <Link href="/" color="foreground">
+            <Image
+              width={38}
+              height={38}
+              src={UndikshaLogo.src}
+              alt={"Logo Undiksha"}
+            />
+            <p className="pl-2 font-extrabold">SHAVIRA</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
-          <Image
-            width={38}
-            height={38}
-            src={UndikshaLogo.src}
-            alt={"Logo Undiksha"}
-          />
-          <p className="pl-2 font-extrabold">SHAVIRA</p>
+          <Link href="/" color="foreground">
+            <Image
+              width={38}
+              height={38}
+              src={UndikshaLogo.src}
+              alt={"Logo Undiksha"}
+            />
+            <p className="pl-2 font-extrabold">SHAVIRA</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
