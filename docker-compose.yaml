@@ -6,3 +6,4 @@ services:
       - .env.local
     ports:
       - "3002:3002"
+    restart: always
