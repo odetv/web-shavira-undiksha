@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ["aka.undiksha.ac.id"],
+  },
   async rewrites() {
     return [
       {

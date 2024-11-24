@@ -19,9 +19,7 @@ import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
 import encodeComplexData from "@/services/encodeData";
 import decodeComplexData from "@/services/decodeData";
 import Cookies from "js-cookie";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
+import PreProcessMarkdown from "@/components/PreProcessMarkdown";
 import PopUpAI from "@/components/PopUpAI";
 
 export default function Home() {
@@ -235,24 +233,7 @@ export default function Home() {
                 </div>
                 <div className="justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 max-w-fit sm:max-w-[700px]">
                   <div className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm]}
-                      rehypePlugins={[rehypeRaw]}
-                      components={{
-                        a: ({ href, children }) => (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 underline"
-                          >
-                            {children}
-                          </a>
-                        ),
-                      }}
-                    >
-                      {msg.user.replace(/\\n/g, "\n")}
-                    </ReactMarkdown>
+                    {PreProcessMarkdown(msg.user)}
                   </div>
                 </div>
               </div>
@@ -281,68 +262,8 @@ export default function Home() {
                       </p>
                     </div>
                   ) : (
-                    <div className="bg-blue-200 rounded-xl p-3 text-sm sm:text-base break-words max-w-full">
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        rehypePlugins={[rehypeRaw]}
-                        components={{
-                          a: ({ href, children }) => {
-                            if (
-                              href &&
-                              href.startsWith(
-                                "https://aka.undiksha.ac.id/api/ktm/generate"
-                              )
-                            ) {
-                              return (
-                                <>
-                                  {/* Link teks */}
-                                  <a
-                                    href={href}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 underline"
-                                  >
-                                    {children}
-                                  </a>
-
-                                  {/* Container gambar */}
-                                  <div className="relative inline-block mt-2">
-                                    {/* Gambar */}
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                      src={href}
-                                      alt="Preview KTM"
-                                      className="rounded-lg border border-gray-300"
-                                    />
-
-                                    {/* Tombol download */}
-                                    {/* <a
-                                      href={href}
-                                      download="KTM_Generate.png"
-                                      className="absolute bottom-1 left-1 bg-slate-400 text-white text-xs px-2 py-1 rounded-md hover:bg-slate-500"
-                                    >
-                                      Unduh
-                                    </a> */}
-                                  </div>
-                                </>
-                              );
-                            }
-
-                            return (
-                              <a
-                                href={href}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 underline inline"
-                              >
-                                {children}
-                              </a>
-                            );
-                          },
-                        }}
-                      >
-                        {msg.bot.replace(/\\n/g, "\n")}
-                      </ReactMarkdown>
+                    <div className="bg-blue-200 rounded-xl p-4 text-sm sm:text-base break-words max-w-full">
+                      {PreProcessMarkdown(msg.bot)}
                     </div>
                   )}
                 </div>
