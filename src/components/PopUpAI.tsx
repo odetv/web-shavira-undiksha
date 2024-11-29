@@ -24,12 +24,17 @@ export default function PopUpAI() {
 
   return (
     <Modal
+      backdrop="opaque"
       isOpen={isModalOpen}
       isDismissable={false}
       isKeyboardDismissDisabled={true}
       placement="bottom"
       hideCloseButton={true}
       size="lg"
+      classNames={{
+        backdrop:
+          "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
+      }}
     >
       <ModalContent className="m-4">
         <div className="flex flex-row gap-2 justify-center items-center p-1">
@@ -41,7 +46,7 @@ export default function PopUpAI() {
           </ModalBody>
           <ModalFooter>
             <Button
-              className="text-sm"
+              className="text-sm animate-pulse"
               color="primary"
               size="sm"
               onPress={handleAccept}

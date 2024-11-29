@@ -3,16 +3,7 @@ import React from "react";
 import Image from "next/image";
 import BotLogo from "../../assets/logo/bot.png";
 import UserLogo from "../../assets/logo/user.png";
-import {
-  Textarea,
-  Button,
-  Chip,
-  Spinner,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Divider,
-} from "@nextui-org/react";
+import { Textarea, Button, Chip, Divider } from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
 import { useRef, useState, useEffect } from "react";
 import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
@@ -146,190 +137,192 @@ export default function Home() {
         <p className="text-sm sm:text-xl">
           Layanan Helpdesk Undiksha Virtual Assistant
         </p>
+        <div className="mt-4 flex flex-row gap-2 items-center justify-center">
+          <Chip color="warning" className="uppercase" variant="solid">
+            <p className="font-bold text-xs sm:text-sm">Eksperimen</p>
+          </Chip>
+          <Chip
+            color={chatBotReady ? "success" : "danger"}
+            className="uppercase"
+            variant="dot"
+          >
+            <p className="font-bold text-white text-xs sm:text-sm">
+              {chatBotReady ? "Online" : "Offline"}
+            </p>
+          </Chip>
+        </div>
       </div>
-      <div className="mt-4 flex flex-row gap-2 items-center justify-center">
-        <Chip color="warning" className="uppercase" variant="solid">
-          <p className="font-bold text-xs sm:text-sm">Eksperimen</p>
-        </Chip>
-        <Chip
-          color={chatBotReady ? "success" : "danger"}
-          className="uppercase"
-          variant="dot"
-        >
-          <p className="font-bold text-white text-xs sm:text-sm">
-            {chatBotReady ? "Online" : "Offline"}
-          </p>
-        </Chip>
-      </div>
+
       <div
         id="workspace-chat"
-        className="mt-8 bg-white p-4 sm:p-8 rounded-xl container max-w-screen-lg 2xl:max-w-screen-xl"
+        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-xl"
       >
-        <div
-          id="conversation"
-          ref={chatContainerRef}
-          className="flex flex-col gap-6 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
-        >
-          <div className="flex flex-col gap-2 sm:gap-4">
-            <div className="relative">
-              <div className="flex flex-row gap-2 sm:justify-center items-center overflow-x-auto no-scrollbar relative group">
-                {exampleQuestions.map((item, index) => (
-                  <div
-                    key={index}
-                    onClick={() => {
-                      if (!loading) handleSendDirect(item);
-                    }}
-                    className="bg-emerald-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-emerald-600 cursor-pointer transition-all ease-in-out"
-                  >
-                    <p className="sm:whitespace-normal whitespace-nowrap">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
-              <div className="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-black/30 sm:hidden"></div>
-            </div>
-
-            <Divider className="my-2" />
-            {welcomeVisible && (
-              <div id="shavira" className="flex flex-col gap-2 mb-2">
-                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                  <div className="flex flex-row justify-start items-center gap-2 ml-2">
-                    <Image
-                      className="rounded-full"
-                      width={24}
-                      height={24}
-                      src={BotLogo}
-                      alt={"Bot"}
-                    />
-                    <p className="font-extrabold">Shavira</p>
-                  </div>
-                </div>
-                <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
-                  <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    Salam Harmoni🙏
-                    <br /> Aku Shavira, ada yang bisa dibantu?
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-          {messages.map((msg, index) => (
-            <React.Fragment key={index}>
-              <div
-                id="user"
-                className="flex flex-col gap-2 justify-end items-end"
-              >
-                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                  <div className="flex flex-row justify-end items-center gap-2 mr-2">
-                    <p className="font-extrabold">User</p>
-                    <Image
-                      className="rounded-full"
-                      width={24}
-                      height={24}
-                      src={UserLogo}
-                      alt="User"
-                    />
-                  </div>
-                </div>
-                <div className="justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 max-w-fit sm:max-w-[700px]">
-                  <div className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    {PreProcessMarkdown(msg.user)}
-                  </div>
-                </div>
-              </div>
-              <div
-                id="shavira"
-                className="flex flex-col gap-2 justify-start items-start"
-              >
-                <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
-                  <div className="flex flex-row justify-start items-center gap-2 ml-2">
-                    <Image
-                      className="rounded-full"
-                      width={24}
-                      height={24}
-                      src={BotLogo}
-                      alt={"Bot"}
-                    />
-                    <p className="font-extrabold">Shavira</p>
-                  </div>
-                </div>
-                <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:max-w-[700px]">
-                  {loading && index === messages.length - 1 ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <Spinner size="sm" />
-                      <p className="text-sm sm:text-base">
-                        Shavira sedang berpikir...
+        <div className="bg-white p-4 sm:p-8 rounded-xl">
+          <div
+            id="conversation"
+            ref={chatContainerRef}
+            className="flex flex-col gap-6 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
+          >
+            <div className="flex flex-col gap-2 sm:gap-4">
+              <div className="relative">
+                <div className="snap-x flex flex-row gap-2 sm:justify-center items-center overflow-x-auto no-scrollbar relative group">
+                  {exampleQuestions.map((item, index) => (
+                    <div
+                      key={index}
+                      onClick={() => {
+                        if (!loading) handleSendDirect(item);
+                      }}
+                      className="snap-center bg-emerald-500 text-white rounded-lg p-4 text-sm sm:text-base hover:bg-emerald-600 cursor-pointer transition-all ease-in-out"
+                    >
+                      <p className="sm:whitespace-normal whitespace-nowrap">
+                        {item}
                       </p>
                     </div>
-                  ) : (
-                    <div className="bg-blue-200 rounded-xl p-4 text-sm sm:text-base break-words max-w-full">
-                      {PreProcessMarkdown(msg.bot)}
-                    </div>
-                  )}
+                  ))}
                 </div>
+                <div className="absolute top-0 right-0 h-full w-12 pointer-events-none bg-gradient-to-l from-black/30 sm:hidden"></div>
               </div>
-            </React.Fragment>
-          ))}
+
+              <Divider className="my-2" />
+              {welcomeVisible && (
+                <div id="shavira" className="flex flex-col gap-2 mb-2">
+                  <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                    <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={BotLogo}
+                        alt={"Bot"}
+                      />
+                      <p className="font-extrabold">Shavira</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
+                    <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                      Salam Harmoni🙏
+                      <br /> Aku Shavira, ada yang bisa dibantu?
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+            {messages.map((msg, index) => (
+              <React.Fragment key={index}>
+                <div
+                  id="user"
+                  className="flex flex-col gap-2 justify-end items-end"
+                >
+                  <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                    <div className="flex flex-row justify-end items-center gap-2 mr-2">
+                      <p className="font-extrabold">User</p>
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={UserLogo}
+                        alt="User"
+                      />
+                    </div>
+                  </div>
+                  <div className="justify-end ml-10 sm:ml-auto sm:mr-10 mr-2 sm:max-w-[65%] max-w-[85%]">
+                    <div className="bg-slate-200 rounded-xl p-4 text-sm sm:text-base break-words max-w-full">
+                      {PreProcessMarkdown(msg.user)}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  id="shavira"
+                  className="flex flex-col gap-2 justify-start items-start"
+                >
+                  <div className="grid grid-cols-1 justify-between items-center text-xs gap-10">
+                    <div className="flex flex-row justify-start items-center gap-2 ml-2">
+                      <Image
+                        className="rounded-full"
+                        width={24}
+                        height={24}
+                        src={BotLogo}
+                        alt={"Bot"}
+                      />
+                      <p className="font-extrabold">Shavira</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:max-w-[65%] max-w-[85%]">
+                    {loading && index === messages.length - 1 ? (
+                      <div className="pt-2 pb-2 ml-8 sm:ml-0">
+                        <span className="relative flex h-5 w-5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-5 w-5 bg-sky-500"></span>
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="bg-blue-200 rounded-xl p-4 text-sm sm:text-base break-words max-w-full">
+                        {PreProcessMarkdown(msg.bot)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+          <div id="input" className="pt-10">
+            <div className="flex flex-row justify-between items-center gap-2">
+              <Textarea
+                minRows={1}
+                placeholder="Ajukan pertanyaan..."
+                type="text"
+                variant="faded"
+                label=""
+                color="default"
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                onKeyDown={handleKeyPress}
+                isDisabled={loading}
+              />
+              <Button
+                isIconOnly
+                disableRipple
+                disableAnimation
+                variant="solid"
+                onClick={handleSend}
+                isDisabled={loading}
+              >
+                <SendIcon color="primary" />
+              </Button>
+            </div>
+          </div>
         </div>
-        <div id="input" className="pt-10">
-          <div className="flex flex-row justify-between items-center gap-2">
-            <Textarea
-              minRows={1}
-              placeholder="Ajukan pertanyaan..."
-              type="text"
-              variant="faded"
-              label=""
-              color="default"
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              onKeyDown={handleKeyPress}
-              isDisabled={loading}
-            />
+        <div
+          id="opsi-input"
+          className="mt-8 flex flex-col sm:flex-row justify-center gap-2"
+        >
+          <div className="flex justify-center items-center">
             <Button
-              isIconOnly
-              disableRipple
-              disableAnimation
-              variant="solid"
-              onClick={handleSend}
               isDisabled={loading}
+              radius="md"
+              className="bg-gradient-to-tr from-[#2aa9e0] to-[#d79127] text-white shadow-lg py-8"
             >
-              <SendIcon color="primary" />
+              <a href="https://missu.undiksha.ac.id/" className="flex flex-col">
+                <p className="text-wrap">
+                  Saya tidak mendapat jawaban sesuai (Buat Ticket)
+                </p>
+              </a>
+            </Button>
+          </div>
+          <div className="flex justify-center items-center">
+            <Button
+              isDisabled={loading}
+              onClick={handleReset}
+              radius="md"
+              className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-8"
+            >
+              Mulai Ulang Percakapan
             </Button>
           </div>
         </div>
       </div>
 
       <PopUpAI />
-
-      <div
-        id="opsi-input"
-        className="mt-8 flex flex-col sm:flex-row justify-center gap-2"
-      >
-        <div className="flex justify-center items-center">
-          <Button
-            isDisabled={loading}
-            radius="md"
-            className="bg-gradient-to-tr from-[#2aa9e0] to-[#d79127] text-white shadow-lg py-8"
-          >
-            <a href="https://missu.undiksha.ac.id/" className="flex flex-col">
-              <p className="text-wrap">
-                Saya tidak mendapat jawaban sesuai (Buat Ticket)
-              </p>
-            </a>
-          </Button>
-        </div>
-        <div className="flex justify-center items-center">
-          <Button
-            isDisabled={loading}
-            onClick={handleReset}
-            radius="md"
-            className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-8"
-          >
-            Mulai Ulang Percakapan
-          </Button>
-        </div>
-      </div>
     </main>
   );
 }

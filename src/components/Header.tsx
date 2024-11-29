@@ -8,15 +8,31 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Link,
   Button,
 } from "@nextui-org/react";
 import Image from "next/image";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import UndikshaLogo from "../assets/logo/eganesha.png";
 import ExploreIcon from "@mui/icons-material/Explore";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Url } from "next/dist/shared/lib/router/router";
+
+const navItems = [
+  {
+    id: "beranda",
+    label: "Beranda",
+    href: "/",
+  },
+  {
+    id: "faqs",
+    label: "FAQs",
+    href: "/faqs",
+  },
+];
 
 export default function Header() {
+  const pathname = usePathname();
+  const isActive = (path: Url) => pathname === path;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   return (
@@ -31,7 +47,10 @@ export default function Header() {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
         <NavbarBrand>
-          <Link href="/" color="foreground">
+          <Link
+            href={"/"}
+            className="flex flex-row items-center justify-center"
+          >
             <Image
               width={38}
               height={38}
@@ -45,7 +64,10 @@ export default function Header() {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
-          <Link href="/" color="foreground">
+          <Link
+            href={"/"}
+            className="flex flex-row items-center justify-center"
+          >
             <Image
               width={38}
               height={38}
@@ -58,24 +80,23 @@ export default function Header() {
       </NavbarContent>
 
       <NavbarContent
-        className="hidden sm:flex gap-4 font-semibold"
+        className="hidden sm:flex gap-4 font-medium"
         justify="center"
       >
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Beranda
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="https://missu.undiksha.ac.id/#kontak">
-            Kontak
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="https://missu.undiksha.ac.id/#faq">
-            FAQs
-          </Link>
-        </NavbarItem>
+        {navItems.map((eachItem) => (
+          <NavbarItem key={eachItem.id}>
+            <Link
+              href={eachItem.href}
+              className={`${
+                isActive(eachItem.href)
+                  ? "text-blue-500 font-medium"
+                  : "text-black"
+              }`}
+            >
+              {eachItem.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
 
       <NavbarContent justify="end">
@@ -92,27 +113,24 @@ export default function Header() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu className="flex flex-col gap-4 pl-6 pt-4 font-semibold">
-        <NavbarMenuItem>
-          <Link color="foreground" href="#">
-            Beranda
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="https://missu.undiksha.ac.id/#kontak">
-            Kontak
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="https://missu.undiksha.ac.id/#faq">
-            FAQs
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="https://undiksha.ac.id/">
-            Explore
-          </Link>
-        </NavbarMenuItem>
+      <NavbarMenu className="flex flex-col gap-4 pt-4 font-medium">
+        {navItems.map((eachItem) => (
+          <NavbarMenuItem
+            onClick={() => setIsMenuOpen(false)}
+            key={eachItem.id}
+          >
+            <Link
+              href={eachItem.href}
+              className={`${
+                isActive(eachItem.href)
+                  ? "text-blue-500 font-medium"
+                  : "text-black"
+              }`}
+            >
+              {eachItem.label}
+            </Link>
+          </NavbarMenuItem>
+        ))}
       </NavbarMenu>
     </Navbar>
   );
