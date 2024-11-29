@@ -14,11 +14,10 @@ import {
 import Image from "next/image";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import UndikshaLogo from "../assets/logo/eganesha.png";
+import ExploreIcon from "@mui/icons-material/Explore";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const menuItems = ["Beranda", "Kontak", "FAQs", "Explore"];
 
   return (
     <Navbar
@@ -82,14 +81,13 @@ export default function Header() {
       <NavbarContent justify="end">
         <NavbarItem>
           <Button
-            className="pl-6"
-            endContent={<ArrowOutwardIcon />}
             as={Link}
             color="primary"
             href="https://undiksha.ac.id/"
             variant="flat"
           >
             Explore
+            <ExploreIcon />
           </Button>
         </NavbarItem>
       </NavbarContent>

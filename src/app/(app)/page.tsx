@@ -109,10 +109,10 @@ export default function Home() {
 
   const exampleQuestions = [
     "Apa saja fasilitas kampus undiksha?",
-    "Dimana lokasi kampus Undiksha?",
-    "Saya lupa password SSO Undiksha.",
-    "Saya ingin cek kelulusan pendaftaran.",
-    "Cara akses melihat KTM.",
+    "Berita undiksha terbaru hari ini",
+    "Saya lupa password SSO Undiksha",
+    "Saya ingin cek kelulusan pendaftaran",
+    "Cara akses melihat KTM",
   ];
 
   const handleSendDirect = async (questionText: string) => {
@@ -157,7 +157,7 @@ export default function Home() {
           variant="dot"
         >
           <p className="font-bold text-white text-xs sm:text-sm">
-            {chatBotReady ? "Ready" : "Not Ready"}
+            {chatBotReady ? "Online" : "Offline"}
           </p>
         </Chip>
       </div>
@@ -168,7 +168,7 @@ export default function Home() {
         <div
           id="conversation"
           ref={chatContainerRef}
-          className="flex flex-col gap-6 max-h-[428px] overflow-y-auto no-scrollbar"
+          className="flex flex-col gap-6 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
         >
           <div className="flex flex-col gap-2 sm:gap-4">
             <div className="relative">
@@ -207,7 +207,8 @@ export default function Home() {
                 </div>
                 <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
                   <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                    Hai kak, aku Shavira. Ada yang bisa dibantu?
+                    Salam Harmoni🙏
+                    <br /> Aku Shavira, ada yang bisa dibantu?
                   </p>
                 </div>
               </div>
@@ -275,7 +276,7 @@ export default function Home() {
           <div className="flex flex-row justify-between items-center gap-2">
             <Textarea
               minRows={1}
-              placeholder="Ajukan Pertanyaan..."
+              placeholder="Ajukan pertanyaan..."
               type="text"
               variant="faded"
               label=""

@@ -33,33 +33,36 @@ export default function preprocessMarkdown(text: any) {
               if (
                 href?.startsWith("https://aka.undiksha.ac.id/api/ktm/generate")
               ) {
-                const [isDownloading, setIsDownloading] = useState(false); // State untuk status download
+                const [isDownloading, setIsDownloading] = useState(false);
+                const [hasError, setHasError] = useState(false);
 
                 const handleDownload = async () => {
-                  setIsDownloading(true); // Mulai spinner
+                  setIsDownloading(true);
                   try {
-                    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-                    const dynamicUrl = `${proxyUrl}${href}`;
+                    const nextJsImageUrl = `${
+                      window.location.origin
+                    }/_next/image?url=${encodeURIComponent(href)}&w=640&q=100`;
 
-                    const response = await fetch(dynamicUrl); // Fetch gambar
+                    const response = await fetch(nextJsImageUrl);
                     if (!response.ok) {
                       throw new Error("Gagal mengambil gambar");
                     }
+
                     const blob = await response.blob();
                     const url = URL.createObjectURL(blob);
 
                     const link = document.createElement("a");
                     link.href = url;
-                    link.download = "KTM.png"; // Nama file download
+                    link.download = "KTM.png";
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    URL.revokeObjectURL(url); // Bersihkan URL Blob
+                    URL.revokeObjectURL(url);
                   } catch (error) {
                     console.error("Gagal mendownload gambar:", error);
                     alert("Terjadi kesalahan saat mendownload gambar");
                   } finally {
-                    setIsDownloading(false); // Hentikan spinner
+                    setIsDownloading(false);
                   }
                 };
 
@@ -74,17 +77,24 @@ export default function preprocessMarkdown(text: any) {
 
                     {isDownloading && <Spinner size="sm" />}
 
-                    <div className="relative">
-                      <Image
-                        className="rounded-lg my-2"
-                        priority={true}
-                        width={640}
-                        height={402}
-                        quality={100}
-                        placeholder="empty"
-                        src={href}
-                        alt="Preview KTM"
-                      />
+                    <div className="relative my-2">
+                      {!hasError ? (
+                        <Image
+                          className="rounded-lg"
+                          priority={true}
+                          width={640}
+                          height={402}
+                          quality={100}
+                          placeholder="empty"
+                          src={href}
+                          alt="Preview KTM"
+                          onError={() => setHasError(true)}
+                        />
+                      ) : (
+                        <div className="text-red-500 text-center py-4">
+                          Maaf, NIM tidak valid atau gambar tidak dapat dimuat.
+                        </div>
+                      )}
                       <div
                         className="absolute inset-0"
                         onContextMenu={(e) => e.preventDefault()}

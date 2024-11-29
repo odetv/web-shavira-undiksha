@@ -1,7 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["aka.undiksha.ac.id"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "undiksha.ac.id",
+      },
+      {
+        protocol: "https",
+        hostname: "aka.undiksha.ac.id",
+      },
+    ],
   },
   async rewrites() {
     return [

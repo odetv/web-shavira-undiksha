@@ -35,7 +35,8 @@ export default function PopUpAI() {
         <div className="flex flex-row gap-2 justify-center items-center p-1">
           <ModalBody>
             <p className="text-sm">
-              Jawaban yang dihasilkan oleh AI mungkin saja keliru.
+              Jawaban dihasilkan oleh AI mungkin saja keliru, harap verifikasi
+              kembali hasil yang didapatkan.
             </p>
           </ModalBody>
           <ModalFooter>
