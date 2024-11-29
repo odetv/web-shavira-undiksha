@@ -155,13 +155,13 @@ export default function Home() {
 
       <div
         id="workspace-chat"
-        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-xl"
+        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl"
       >
         <div className="bg-white p-4 sm:p-8 rounded-xl">
           <div
             id="conversation"
             ref={chatContainerRef}
-            className="flex flex-col gap-6 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
+            className="flex flex-col gap-4 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
           >
             <div className="flex flex-col gap-2 sm:gap-4">
               <div className="relative">

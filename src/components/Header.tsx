@@ -89,8 +89,8 @@ export default function Header() {
               href={eachItem.href}
               className={`${
                 isActive(eachItem.href)
-                  ? "text-blue-500 font-medium"
-                  : "text-black"
+                  ? "text-blue-500"
+                  : "text-black hover:text-blue-500"
               }`}
             >
               {eachItem.label}
@@ -123,8 +123,8 @@ export default function Header() {
               href={eachItem.href}
               className={`${
                 isActive(eachItem.href)
-                  ? "text-blue-500 font-medium"
-                  : "text-black"
+                  ? "text-blue-500"
+                  : "text-black hover:text-blue-500"
               }`}
             >
               {eachItem.label}

@@ -82,8 +82,8 @@ export default function preprocessMarkdown(text: any) {
                         <Image
                           className="rounded-lg"
                           priority={true}
-                          width={640}
-                          height={402}
+                          width={440}
+                          height={202}
                           quality={100}
                           placeholder="empty"
                           src={href}
