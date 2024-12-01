@@ -143,7 +143,7 @@ export default function Home() {
 
   return (
     <main
-      className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8 
+      className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8
         ${welcomeVisible ? "justify-center" : ""}`}
     >
       <PopUpAI />
@@ -176,7 +176,7 @@ export default function Home() {
 
       <div
         id="workspace-chat"
-        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl"
+        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl mb-20"
       >
         <div className="bg-white p-4 sm:p-8 rounded-2xl">
           <div
