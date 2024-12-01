@@ -160,7 +160,9 @@ export default function Home() {
         </p>
         <div className="mt-4 flex flex-row gap-2 items-center justify-center">
           <Chip color="warning" className="uppercase" variant="solid">
-            <p className="font-bold text-xs sm:text-sm">Eksperimen</p>
+            <p className="font-bold text-xs sm:text-sm text-slate-800">
+              Eksperimen
+            </p>
           </Chip>
           <Chip
             color={chatBotReady ? "success" : "danger"}
