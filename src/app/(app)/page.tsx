@@ -301,13 +301,19 @@ export default function Home() {
         <div className="flex flex-row justify-between items-center gap-2">
           <Dropdown backdrop="opaque" isDisabled={loading} placement="top">
             <DropdownTrigger>
-              <MoreVertIcon
-                color="primary"
-                className="cursor-pointer hover:text-blue-400"
-              />
+              <button>
+                <MoreVertIcon
+                  color="primary"
+                  className="cursor-pointer hover:text-blue-400"
+                />
+              </button>
             </DropdownTrigger>
             <DropdownMenu aria-label="opsi-input">
-              <DropdownItem key="1" className="bg-slate-200 mb-1">
+              <DropdownItem
+                key="1"
+                className="bg-slate-200 mb-1"
+                textValue="Tidak mendapat jawaban sesuai (Buat Ticket)"
+              >
                 <Button variant="light" fullWidth className="font-semibold">
                   <a
                     href="https://missu.undiksha.ac.id/"
@@ -317,7 +323,11 @@ export default function Home() {
                   </a>
                 </Button>
               </DropdownItem>
-              <DropdownItem key="2" className="bg-slate-200">
+              <DropdownItem
+                key="2"
+                className="bg-slate-200"
+                textValue="Mulai Ulang Percakapan"
+              >
                 <Button
                   onClick={handleReset}
                   variant="light"
