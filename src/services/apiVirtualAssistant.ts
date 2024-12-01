@@ -1,8 +1,8 @@
-const API_URL = `${process.env.NEXT_PUBLIC_VERCEL_VA_API_URL}`;
+const API_URL = `${process.env.NEXT_PUBLIC_VA_API_URL}`;
 
 const headers = () => ({
   "Content-Type": "application/json",
-  Authorization: `Bearer ${process.env.NEXT_PUBLIC_VERCEL_VA_API_KEY}`,
+  Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
 });
 
 const checkApiStatus = async (): Promise<boolean> => {

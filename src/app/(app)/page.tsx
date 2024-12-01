@@ -3,7 +3,16 @@ import React from "react";
 import Image from "next/image";
 import BotLogo from "../../assets/logo/bot.png";
 import UserLogo from "../../assets/logo/user.png";
-import { Textarea, Button, Chip, Divider } from "@nextui-org/react";
+import {
+  Textarea,
+  Button,
+  Chip,
+  Divider,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@nextui-org/react";
 import SendIcon from "@mui/icons-material/Send";
 import { useRef, useState, useEffect } from "react";
 import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
@@ -12,6 +21,8 @@ import decodeComplexData from "@/services/decodeData";
 import Cookies from "js-cookie";
 import PreProcessMarkdown from "@/components/PreProcessMarkdown";
 import PopUpAI from "@/components/PopUpAI";
+import ShaviraButton from "../../components/HiddenKey";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 export default function Home() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -68,6 +79,7 @@ export default function Home() {
     const newUserMessage = { user: question, bot: "", timestamp: "" };
     setMessages((prev) => [...prev, newUserMessage]);
     setLoading(true);
+    setWelcomeVisible(false);
     setQuestion("");
 
     const response = await chatResponse(question);
@@ -89,6 +101,7 @@ export default function Home() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+      setWelcomeVisible(false);
     }
   };
 
@@ -107,6 +120,7 @@ export default function Home() {
   ];
 
   const handleSendDirect = async (questionText: string) => {
+    setWelcomeVisible(false);
     if (!questionText.trim()) return;
 
     const newUserMessage = { user: questionText, bot: "", timestamp: "" };
@@ -128,10 +142,17 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col items-center p-4 smooth-gradient min-h-screen 2xl:justify-center pt-6">
+    <main
+      className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8 
+        ${welcomeVisible ? "justify-center" : ""}`}
+    >
+      <PopUpAI />
+      <ShaviraButton />
+
       <div
         id="info-bot"
-        className="text-center text-white tracking-wide 2xl:-mt-20 -mt-0"
+        className={`text-center text-white tracking-wide text-3xl sm:text-5xl
+          ${welcomeVisible ? "sm:-mt-20 -mt-32" : ""}`}
       >
         <h1 className="text-3xl sm:text-5xl font-bold pb-2">Shavira</h1>
         <p className="text-sm sm:text-xl">
@@ -157,11 +178,11 @@ export default function Home() {
         id="workspace-chat"
         className="mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl"
       >
-        <div className="bg-white p-4 sm:p-8 rounded-xl">
+        <div className="bg-white p-4 sm:p-8 rounded-2xl">
           <div
             id="conversation"
             ref={chatContainerRef}
-            className="flex flex-col gap-4 max-h-[428px] overflow-y-auto no-scrollbar scroll-smooth"
+            className="flex flex-col gap-4 min-h-[286px] max-h-[528px] overflow-y-auto no-scrollbar scroll-smooth"
           >
             <div className="flex flex-col gap-2 sm:gap-4">
               <div className="relative">
@@ -265,63 +286,74 @@ export default function Home() {
               </React.Fragment>
             ))}
           </div>
-          <div id="input" className="pt-10">
-            <div className="flex flex-row justify-between items-center gap-2">
-              <Textarea
-                minRows={1}
-                placeholder="Ajukan pertanyaan..."
-                type="text"
-                variant="faded"
-                label=""
-                color="default"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyDown={handleKeyPress}
-                isDisabled={loading}
-              />
-              <Button
-                isIconOnly
-                disableRipple
-                disableAnimation
-                variant="solid"
-                onClick={handleSend}
-                isDisabled={loading}
-              >
-                <SendIcon color="primary" />
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div
-          id="opsi-input"
-          className="mt-8 flex flex-col sm:flex-row justify-center gap-2"
-        >
-          <div className="flex justify-center items-center">
-            <Button
-              isDisabled={loading}
-              radius="md"
-              className="bg-gradient-to-tr from-[#2aa9e0] to-[#d79127] text-white shadow-lg py-8"
-            >
-              <a href="https://missu.undiksha.ac.id/" className="flex flex-col">
-                <p className="text-wrap">
-                  Saya tidak mendapat jawaban sesuai (Buat Ticket)
-                </p>
-              </a>
-            </Button>
-          </div>
-          <div className="flex justify-center items-center">
-            <Button
-              isDisabled={loading}
-              onClick={handleReset}
-              radius="md"
-              className="bg-gradient-to-tr from-[#d79127] to-[#2aa9e0] text-white shadow-lg py-8"
-            >
-              Mulai Ulang Percakapan
-            </Button>
-          </div>
         </div>
       </div>
 
+      <div
+        id="input"
+        className={`bg-white p-4 rounded-2xl mt-4 max-w-screen-lg 2xl:max-w-screen-2xl
+          ${
+            welcomeVisible
+              ? "container"
+              : "fixed bottom-4 left-0 right-0 mx-4 sm:mx-auto shadow-black shadow-2xl drop-shadow-2xl"
+          }`}
+      >
+        <div className="flex flex-row justify-between items-center gap-2">
+          <Dropdown backdrop="opaque" isDisabled={loading} placement="top">
+            <DropdownTrigger>
+              <MoreVertIcon
+                color="primary"
+                className="cursor-pointer hover:text-blue-400"
+              />
+            </DropdownTrigger>
+            <DropdownMenu aria-label="opsi-input">
+              <DropdownItem key="1" className="bg-slate-200 mb-1">
+                <Button variant="light" fullWidth className="font-semibold">
+                  <a
+                    href="https://missu.undiksha.ac.id/"
+                    className="flex flex-col text-wrap text-center"
+                  >
+                    Tidak mendapat jawaban sesuai (Buat Ticket)
+                  </a>
+                </Button>
+              </DropdownItem>
+              <DropdownItem key="2" className="bg-slate-200">
+                <Button
+                  onClick={handleReset}
+                  variant="light"
+                  fullWidth
+                  className="font-semibold"
+                >
+                  Mulai Ulang Percakapan
+                </Button>
+              </DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          <Textarea
+            minRows={1}
+            placeholder="Kirim pesan ke Shavira"
+            type="text"
+            variant="faded"
+            label=""
+            color="default"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            onKeyDown={handleKeyPress}
+            isDisabled={loading}
+          />
+
+          <Button
+            isIconOnly
+            disableRipple
+            disableAnimation
+            variant="solid"
+            onClick={handleSend}
+            isDisabled={loading}
+          >
+            <SendIcon color="primary" />
+          </Button>
+        </div>
+      </div>
       <PopUpAI />
     </main>
   );
