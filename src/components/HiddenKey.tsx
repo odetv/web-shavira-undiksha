@@ -8,6 +8,7 @@ import {
   ModalFooter,
 } from "@nextui-org/react";
 import { hashKey } from "../components/HashKey";
+import Link from "next/link";
 
 const ShaviraButton = () => {
   const targetKey = `${process.env.NEXT_PUBLIC_VA_ADMIN_KEY}`;
@@ -141,17 +142,26 @@ const ShaviraButton = () => {
               {showCountdown ? (
                 <div className="text-center">
                   <p className="text-sm sm:text-base pb-2">
-                    Anda sudah login sebelumnya, anda akan diarahkan ke admin
-                    panel dalam {countdown} detik.
+                    Anda sudah login sebelumnya, akan diarahkan otomatis ke
+                    admin panel dalam {countdown} detik.
                   </p>
-                  <Button
-                    variant="solid"
-                    color="danger"
-                    className="-mb-10 font-semibold"
-                    onClick={handleLoginAgain}
-                  >
-                    Reset Session
-                  </Button>
+                  <div className="flex flex-row gap-2 justify-center items-center -mb-5">
+                    <Button
+                      variant="solid"
+                      color="danger"
+                      className="font-semibold"
+                      onClick={handleLoginAgain}
+                    >
+                      Reset Session
+                    </Button>
+                    <Button
+                      variant="solid"
+                      color="primary"
+                      className="font-semibold"
+                    >
+                      <Link href={urlAdmin}>Admin Panel</Link>
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <>
