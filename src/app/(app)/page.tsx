@@ -178,7 +178,8 @@ export default function Home() {
 
       <div
         id="workspace-chat"
-        className="mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl mb-20"
+        className={`mt-8 container max-w-screen-lg 2xl:max-w-screen-2xl
+        ${welcomeVisible ? "" : "mb-20"}`}
       >
         <div className="bg-white p-4 sm:p-8 rounded-2xl">
           <div
