@@ -73,4 +73,40 @@ const chatResponse = async (
   }
 };
 
-export { checkApiStatus, chatResponse };
+const getLogsActivity = async (): Promise<{
+  success: boolean;
+  data: any[];
+  message?: string;
+}> => {
+  try {
+    const response = await fetch(`${API_URL}/logs`, {
+      method: "GET",
+      headers: headers(),
+    });
+
+    if (!response.ok) {
+      console.error(`Error fetching logs: ${response.status}`);
+      return {
+        success: false,
+        data: [],
+        message: "Gagal mengambil data log dari server.",
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.data,
+      message: "Logs fetched successfully.",
+    };
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+    return {
+      success: false,
+      data: [],
+      message: "Terjadi kesalahan saat mengambil data log.",
+    };
+  }
+};
+
+export { checkApiStatus, chatResponse, getLogsActivity };
