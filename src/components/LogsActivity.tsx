@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -9,130 +9,57 @@ import {
   Pagination,
   getKeyValue,
 } from "@nextui-org/react";
-
-const logs = [
-  {
-    id: "MSRT3D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "SDJK3D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "UIJ89D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "MSRT3Q",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "SDJK2D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "UIJ897",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "8SRT3D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "GDJK3D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "PIJ89D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "MSRU3Q",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "OIJK2D",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-  {
-    id: "QAJ897",
-    timestamp: "2023-01-01 10:00:00",
-    method: "GET",
-    status: 200,
-    success: "true",
-    description:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adip isci. Lorem ipsum dolor sit amet, consect et sapien. Lorem ipsum dolor sit amet, con sectetur adip isci.",
-  },
-];
+import { useEffect, useState } from "react";
+import { getLogsActivity } from "../services/apiVirtualAssistant";
 
 export default function LogsActivity() {
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 10;
 
-  const pages = Math.ceil(logs.length / rowsPerPage);
+  useEffect(() => {
+    const fetchLogs = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await getLogsActivity();
+        if (response.success) {
+          setLogs(response.data);
+        } else {
+          setError(response.message || "Gagal memuat log.");
+        }
+      } catch (err) {
+        setError("Terjadi kesalahan saat mengambil data log.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const items = React.useMemo(() => {
-    const start = (page - 1) * rowsPerPage;
-    const end = start + rowsPerPage;
+    fetchLogs();
+  }, []);
 
-    return logs.slice(start, end);
-  }, [page, rowsPerPage]);
+  // Hitung jumlah halaman
+  const totalPages = useMemo(
+    () => Math.ceil(logs.length / rowsPerPage),
+    [logs, rowsPerPage]
+  );
+
+  // Data yang akan ditampilkan pada halaman saat ini
+  const currentItems = useMemo(() => {
+    const startIndex = (page - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    return logs.slice(startIndex, endIndex);
+  }, [logs, page, rowsPerPage]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error: {error}</p>;
+  }
 
   return (
     <Table
@@ -145,7 +72,7 @@ export default function LogsActivity() {
             showShadow
             color="secondary"
             page={page}
-            total={pages}
+            total={totalPages}
             onChange={(page) => setPage(page)}
           />
         </div>
@@ -162,12 +89,15 @@ export default function LogsActivity() {
         <TableColumn key="success">SUCCESS</TableColumn>
         <TableColumn key="description">DESCTIPTION</TableColumn>
       </TableHeader>
-      <TableBody items={items}>
+      <TableBody items={currentItems}>
         {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell>{getKeyValue(item, columnKey)}</TableCell>
-            )}
+          <TableRow key={item.ID}>
+            <TableCell>{item.ID}</TableCell>
+            <TableCell>{item.Timestamp}</TableCell>
+            <TableCell>{item.Method}</TableCell>
+            <TableCell>{item["Status Code"]}</TableCell>
+            <TableCell>{item.Success ? "true" : "false"}</TableCell>
+            <TableCell>{item.Description}</TableCell>
           </TableRow>
         )}
       </TableBody>
