@@ -109,4 +109,80 @@ const getLogsActivity = async (): Promise<{
   }
 };
 
-export { checkApiStatus, chatResponse, getLogsActivity };
+const getGraphImage = async (): Promise<Blob | null> => {
+  try {
+    const response = await fetch(`${API_URL}/graph`, {
+      method: "GET",
+      headers: headers(),
+    });
+
+    if (response.ok) {
+      return await response.blob();
+    } else {
+      console.error("Failed to fetch graph image:", response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching graph image:", error);
+    return null;
+  }
+};
+
+// Fungsi untuk mengupdate konfigurasi
+const setupConfig = async (configData: {
+  llm: string;
+  model_llm: string;
+  embedder: string;
+  model_embedder: string;
+  chunk_size: number;
+  chunk_overlap: number;
+}): Promise<boolean> => {
+  try {
+    const response = await fetch(`${API_URL}/setup`, {
+      method: "POST",
+      headers: headers(),
+      body: JSON.stringify(configData),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.success;
+    } else {
+      console.error("Failed to update config:", response.status);
+      return false;
+    }
+  } catch (error) {
+    console.error("Error updating config:", error);
+    return false;
+  }
+};
+
+// Fungsi untuk mendapatkan konfigurasi terakhir
+const checkConfig = async (): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/checkmodel`, {
+      method: "GET",
+      headers: headers(),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data.data;
+    } else {
+      console.error("Failed to fetch last config:", response.status);
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching last config:", error);
+    return null;
+  }
+};
+
+export {
+  checkApiStatus,
+  chatResponse,
+  getLogsActivity,
+  getGraphImage,
+  setupConfig,
+  checkConfig,
+};
