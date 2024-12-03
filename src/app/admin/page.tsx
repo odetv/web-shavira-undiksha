@@ -63,7 +63,7 @@ export default function Admin() {
         <p className="text-sm sm:text-xl">Selamat datang di Admin Panel</p>
       </div>
       <div className="flex flex-col gap-4 w-full pt-4 justify-center items-center">
-        <div className="grid sm:grid-cols-4 sm:grid-rows-1 gap-2 grid-rows-2 grid-cols-2">
+        <div className="flex flex-wrap justify-center items-center gap-2">
           <Button
             variant="solid"
             radius="sm"
@@ -74,21 +74,14 @@ export default function Admin() {
           <Button
             variant="solid"
             radius="sm"
-            className="bg-emerald-500 text-white text-sm sm:text-base font-medium"
-          >
-            <Link href="/admin/setup-model">Setup Model</Link>
-          </Button>
-          <Button
-            variant="solid"
-            radius="sm"
             className="bg-orange-500 text-white text-sm sm:text-base font-medium"
           >
-            <Link href="/admin/check-model">Check Model</Link>
+            <Link href="/admin/config-model">Configuration Model</Link>
           </Button>
           <Button
             variant="solid"
             radius="sm"
-            className="bg-zinc-500 text-white text-sm sm:text-base font-medium"
+            className="bg-emerald-500 text-white text-sm sm:text-base font-medium"
           >
             <Link href="/admin/visualize-graph">Visualize Graph</Link>
           </Button>

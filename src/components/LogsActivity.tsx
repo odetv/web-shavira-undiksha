@@ -39,7 +39,7 @@ export default function LogsActivity() {
   };
 
   const highlightText = (text: string, query: string) => {
-    if (!query) return text; // Jika tidak ada query, kembalikan teks asli
+    if (!query) return text;
     const regex = new RegExp(`(${query})`, "gi");
     return text.replace(
       regex,
@@ -128,10 +128,7 @@ export default function LogsActivity() {
         <TableColumn key="success">SUCCESS</TableColumn>
         <TableColumn key="description">DESCTIPTION</TableColumn>
       </TableHeader>
-      <TableBody
-        items={currentItems}
-        emptyContent={"Tidak ada logs atau masih dalam proses..."}
-      >
+      <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan."}>
         {(item) => (
           <TableRow key={item.ID}>
             <TableCell>
