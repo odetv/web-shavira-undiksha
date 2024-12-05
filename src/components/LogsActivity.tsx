@@ -38,15 +38,6 @@ export default function LogsActivity() {
     await fetchLogs();
   };
 
-  const highlightText = (text: string, query: string) => {
-    if (!query) return text;
-    const regex = new RegExp(`(${query})`, "gi");
-    return text.replace(
-      regex,
-      `<mark style="background-color: yellow;">$1</mark>`
-    );
-  };
-
   const filteredLogs = useMemo(() => {
     if (!searchQuery) return logs;
     return logs.filter((log) => {
@@ -121,6 +112,7 @@ export default function LogsActivity() {
       }}
     >
       <TableHeader>
+        <TableColumn key="id">NO</TableColumn>
         <TableColumn key="id">ID</TableColumn>
         <TableColumn key="timestamp">TIMESTAMP</TableColumn>
         <TableColumn key="method">METHOD</TableColumn>
@@ -132,56 +124,18 @@ export default function LogsActivity() {
         {(item) => (
           <TableRow key={item.ID}>
             <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(item.ID.toString(), searchQuery),
-                }}
-              />
+              <div>
+                {(page - 1) * rowsPerPage + currentItems.indexOf(item) + 1}
+              </div>
             </TableCell>
             <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(item.Timestamp.toString(), searchQuery),
-                }}
-              />
+              <div>{item.ID.toString()}</div>
             </TableCell>
-            <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(item.Method.toString(), searchQuery),
-                }}
-              />
-            </TableCell>
-            <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    item["Status Code"].toString(),
-                    searchQuery
-                  ),
-                }}
-              />
-            </TableCell>
-            <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    item.Success ? "true" : "false",
-                    searchQuery
-                  ),
-                }}
-              />
-            </TableCell>
-            <TableCell>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: highlightText(
-                    item.Description.toString(),
-                    searchQuery
-                  ),
-                }}
-              />
-            </TableCell>
+            <TableCell>{item.Timestamp.toString()},</TableCell>
+            <TableCell>{item.Method.toString()}</TableCell>
+            <TableCell>{item["Status Code"].toString()}</TableCell>
+            <TableCell>{item.Success ? "true" : "false"}</TableCell>
+            <TableCell>{item.Description.toString()}</TableCell>
           </TableRow>
         )}
       </TableBody>

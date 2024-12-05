@@ -1,16 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { hashKey } from "../../components/HashKey";
 import Link from "next/link";
 import { Button, Chip, Divider } from "@nextui-org/react";
 import LogsActivity from "@/components/LogsActivity";
 import { checkApiStatus } from "@/services/apiVirtualAssistant";
+import AccessChecker from "@/components/AccessChecker";
+import AccessNotAllowed from "@/components/AccessNotAllowed";
+import { hashKey } from "@/components/HashKey";
 
 export default function Admin() {
-  const targetKey = `${process.env.NEXT_PUBLIC_VA_ADMIN_KEY}`;
-  const baseUrl = "/";
-  const [isValidKey, setIsValidKey] = useState<boolean>(false);
-
   const [chatBotReady, setChatBotReady] = useState(false);
 
   useEffect(() => {
@@ -21,6 +19,8 @@ export default function Admin() {
     fetchApiStatus();
   }, []);
 
+  const targetKey = `${process.env.NEXT_PUBLIC_VA_ADMIN_KEY}`;
+  const [isValidKey, setIsValidKey] = useState<boolean>(false);
   useEffect(() => {
     const checkStoredKey = async () => {
       const storedHash = sessionStorage.getItem("adminKey");
@@ -31,29 +31,10 @@ export default function Admin() {
         setIsValidKey(false);
       }
     };
-
     checkStoredKey();
   }, [targetKey]);
-
   if (!isValidKey) {
-    return (
-      <main className="min-h-screen flex justify-center items-center -mt-20">
-        <div
-          id="info-bot"
-          className="text-center text-black tracking-wide flex flex-col items-center justify-center"
-        >
-          <h1 className="text-3xl sm:text-5xl font-bold pb-2">
-            Akses ditolak!
-          </h1>
-          <Link
-            href={baseUrl}
-            className="text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer transition-all ease-in-out"
-          >
-            Kembali ke Beranda
-          </Link>
-        </div>
-      </main>
-    );
+    return <AccessNotAllowed />;
   }
 
   return (

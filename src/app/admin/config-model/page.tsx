@@ -15,6 +15,9 @@ import {
   Button,
 } from "@nextui-org/react";
 import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
+import AccessChecker from "@/components/AccessChecker";
+import { hashKey } from "@/components/HashKey";
+import AccessNotAllowed from "@/components/AccessNotAllowed";
 
 export default function CheckModel() {
   const [lastConfig, setLastConfig] = useState<any>(null);
@@ -58,6 +61,24 @@ export default function CheckModel() {
       console.error("Failed to update configuration.");
     }
   };
+
+  const targetKey = `${process.env.NEXT_PUBLIC_VA_ADMIN_KEY}`;
+  const [isValidKey, setIsValidKey] = useState<boolean>(false);
+  useEffect(() => {
+    const checkStoredKey = async () => {
+      const storedHash = sessionStorage.getItem("adminKey");
+      const hashedTargetKey = hashKey(targetKey);
+      if (storedHash === hashedTargetKey) {
+        setIsValidKey(true);
+      } else {
+        setIsValidKey(false);
+      }
+    };
+    checkStoredKey();
+  }, [targetKey]);
+  if (!isValidKey) {
+    return <AccessNotAllowed />;
+  }
 
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-lg 2xl:max-w-screen-2xl">
@@ -160,6 +181,14 @@ export default function CheckModel() {
               color="primary"
               onClick={handleSetupConfig}
               isLoading={isLoading}
+              isDisabled={
+                llm === "" ||
+                modelLLM === "" ||
+                embedder === "" ||
+                modelEmbedder === "" ||
+                chunkSize === 0 ||
+                chunkOverlap === 0
+              }
             >
               Update
             </Button>
