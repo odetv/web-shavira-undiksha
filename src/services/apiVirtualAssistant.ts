@@ -128,7 +128,6 @@ const getGraphImage = async (): Promise<Blob | null> => {
   }
 };
 
-// Fungsi untuk mengupdate konfigurasi
 const setupConfig = async (configData: {
   llm: string;
   model_llm: string;
@@ -157,7 +156,6 @@ const setupConfig = async (configData: {
   }
 };
 
-// Fungsi untuk mendapatkan konfigurasi terakhir
 const checkConfig = async (): Promise<any> => {
   try {
     const response = await fetch(`${API_URL}/checkmodel`, {
@@ -178,6 +176,87 @@ const checkConfig = async (): Promise<any> => {
   }
 };
 
+const getDatasets = async () => {
+  try {
+    const response = await fetch(`${API_URL}/datasets/list`, {
+      method: "GET",
+      headers: headers(),
+    });
+    const data = await response.json();
+    if (data.success) {
+      return data.data;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error fetching datasets:", error);
+    return [];
+  }
+};
+
+const readDataset = async (filename: string): Promise<string | null> => {
+  try {
+    const fileUrl = `${API_URL}/datasets/read/${encodeURIComponent(filename)}`;
+    return fileUrl;
+  } catch (error) {
+    console.error("Error generating file URL:", error);
+    return null;
+  }
+};
+
+const deleteDataset = async (filenames: string[]): Promise<any> => {
+  try {
+    const response = await fetch(`${API_URL}/datasets/delete`, {
+      method: "DELETE",
+      headers: headers(),
+      body: JSON.stringify({ filenames }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting dataset:", error);
+    return { success: false, message: "Failed to delete dataset" };
+  }
+};
+
+const uploadDataset = async (files: File[]): Promise<any> => {
+  const formData = new FormData();
+  files.forEach((file) => formData.append("files", file));
+
+  try {
+    const response = await fetch(`${API_URL}/datasets/upload`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
+      },
+      body: formData,
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error uploading dataset:", error);
+    return { success: false, message: "Failed to upload dataset" };
+  }
+};
+
+const updateDataset = async (target: string, file: File): Promise<any> => {
+  const formData = new FormData();
+  formData.append("target", target);
+  formData.append("file", file);
+
+  try {
+    const response = await fetch(`${API_URL}/datasets/update`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
+      },
+      body: formData,
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating dataset:", error);
+    return { success: false, message: "Failed to update dataset" };
+  }
+};
+
 export {
   checkApiStatus,
   chatResponse,
@@ -185,4 +264,9 @@ export {
   getGraphImage,
   setupConfig,
   checkConfig,
+  getDatasets,
+  readDataset,
+  deleteDataset,
+  uploadDataset,
+  updateDataset,
 };
