@@ -21,8 +21,10 @@ import decodeComplexData from "@/services/decodeData";
 import Cookies from "js-cookie";
 import PreProcessMarkdown from "@/components/PreProcessMarkdown";
 import PopUpAI from "@/components/PopUpAI";
-import ShaviraButton from "../../components/HiddenKey";
+import ShaviraButton from "@/components/HiddenKey";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 
 export default function Home() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -224,8 +226,8 @@ export default function Home() {
                   </div>
                   <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
                     <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
-                      Salam Harmoni🙏
-                      <br /> Aku Shavira, ada yang bisa dibantu?
+                      {PreProcessMarkdown("**Salam Harmoni🙏**")}
+                      Aku Shavira, ada yang bisa dibantu?
                     </p>
                   </div>
                 </div>
@@ -313,31 +315,39 @@ export default function Home() {
             </DropdownTrigger>
             <DropdownMenu aria-label="opsi-input">
               <DropdownItem
-                key="1"
+                key="ticket"
                 className="bg-slate-200 mb-1"
-                textValue="Tidak mendapat jawaban sesuai (Buat Ticket)"
+                textValue="ticket"
               >
-                <Button variant="light" fullWidth className="font-semibold">
+                <Button
+                  color="secondary"
+                  startContent={<ConfirmationNumberIcon />}
+                  variant="light"
+                  fullWidth
+                  className="font-semibold"
+                >
                   <a
                     href="https://missu.undiksha.ac.id/"
                     className="flex flex-col text-wrap text-center"
                   >
-                    Tidak mendapat jawaban sesuai (Buat Ticket)
+                    Buat Ticket
                   </a>
                 </Button>
               </DropdownItem>
               <DropdownItem
-                key="2"
+                key="reset"
                 className="bg-slate-200"
-                textValue="Mulai Ulang Percakapan"
+                textValue="reset"
               >
                 <Button
+                  color="secondary"
+                  startContent={<RestartAltIcon />}
                   onClick={handleReset}
                   variant="light"
                   fullWidth
                   className="font-semibold"
                 >
-                  Mulai Ulang Percakapan
+                  Reset Chat
                 </Button>
               </DropdownItem>
             </DropdownMenu>

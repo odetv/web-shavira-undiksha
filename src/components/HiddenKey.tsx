@@ -129,7 +129,7 @@ const ShaviraButton = () => {
             clearInterval(intervalRef.current);
           }
         }}
-        placement="center"
+        placement="auto"
         size="xl"
         classNames={{
           backdrop:
@@ -174,7 +174,7 @@ const ShaviraButton = () => {
                     label="Key"
                     value={inputKey}
                     onChange={handleInputChange}
-                    onKeyDown={handleKeyPress}
+                    // onKeyDown={handleKeyPress}
                     isInvalid={!!errorMessage}
                     errorMessage={errorMessage}
                   />
