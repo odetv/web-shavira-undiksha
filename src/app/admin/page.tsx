@@ -38,21 +38,21 @@ export default function Admin() {
             radius="sm"
             className="bg-blue-500 text-white text-sm sm:text-base font-medium"
           >
-            <Link href="/admin/manajemen-datasets">Manajemen Datasets</Link>
+            <Link href="/admin/management-datasets">Manajemen Dataset</Link>
           </Button>
           <Button
             variant="solid"
             radius="sm"
             className="bg-orange-500 text-white text-sm sm:text-base font-medium"
           >
-            <Link href="/admin/config-model">Configuration Model</Link>
+            <Link href="/admin/configuration-models">Konfigurasi Model</Link>
           </Button>
           <Button
             variant="solid"
             radius="sm"
             className="bg-emerald-500 text-white text-sm sm:text-base font-medium"
           >
-            <Link href="/admin/visualize-graph">Visualize Graph</Link>
+            <Link href="/admin/visualize-graph">Visualisasi Graph</Link>
           </Button>
         </div>
         <div className="w-full">
@@ -68,7 +68,7 @@ export default function Admin() {
             </Chip>
             <p className="pl-2 pr-2 text-slate-400">|</p>
             <p className="text-center font-semibold sm:text-base">
-              Log Aktivitas Pengguna
+              Riwayat Aktivitas
             </p>
           </div>
           <LogsActivity />

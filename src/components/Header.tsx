@@ -24,9 +24,9 @@ const navItems = [
     href: "/",
   },
   {
-    id: "faqs",
-    label: "FAQs",
-    href: "/faqs",
+    id: "faq",
+    label: "FAQ",
+    href: "/faq",
   },
 ];
 

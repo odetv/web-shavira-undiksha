@@ -35,15 +35,17 @@ export default function VisualizeGraph() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-lg 2xl:max-w-screen-2xl">
       <div id="info-bot" className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Visualize Graph</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">
+          Visualisasi Graph
+        </h1>
       </div>
       <div className="pt-6">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt="Graph"
-            width={300}
-            height={200}
+            width={200}
+            height={100}
             className="drop-shadow-2xl"
           ></Image>
         ) : (

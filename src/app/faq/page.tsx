@@ -49,11 +49,11 @@ const faqList = [
   },
 ];
 
-export default function FAQs() {
+export default function FAQ() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-lg 2xl:max-w-screen-2xl">
       <div id="info-bot" className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">FAQs</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">FAQ</h1>
         <p className="text-sm sm:text-xl font-semibold">
           Coba cek masalah anda di FAQ kami
         </p>
