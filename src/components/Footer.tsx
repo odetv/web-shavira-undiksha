@@ -5,7 +5,7 @@ import CallIcon from "@mui/icons-material/Call";
 import ArticleIcon from "@mui/icons-material/Article";
 import EmailIcon from "@mui/icons-material/Email";
 import LanguageIcon from "@mui/icons-material/Language";
-import UndikshaLogo from "../assets/logo/undiksha.png";
+import UndikshaLogo from "../assets/logo/eganesha.png";
 
 export default function Footer() {
   return (
@@ -14,16 +14,23 @@ export default function Footer() {
         <div className="lg:w-1/3">
           <div className="flex justify-center space-x-3 lg:justify-start">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-center w-32 h-32 rounded-full bg-[#2aa9e0]">
-                <Image width={96} height={96} src={UndikshaLogo.src} alt="" />
+              <div className="flex items-center justify-center w-32 h-32 rounded-full bg-[#acd8eb]">
+                <Image
+                  className="p-1"
+                  width={96}
+                  height={96}
+                  src={UndikshaLogo.src}
+                  alt=""
+                />
               </div>
               <span className="text-xl sm:text-2xl font-semibold uppercase">
                 Undiksha Virtual Assistant
               </span>
               <p className="text-tiny sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-                Website Resmi Helpdesk Shavira (Undiksha Virtual Assistant).
-                Chatbot bantuan informasi dan layanan akademik untuk civitas
-                akademik di Universitas Pendidikan Ganesha.
+                Website Resmi Helpdesk Undiksha Virtual Assistant (Shavira).
+                Sebuah virtual assistant yang menyediakan bantuan informasi dan
+                layanan akademik untuk civitas akademika di Universitas
+                Pendidikan Ganesha.
               </p>
             </div>
           </div>
@@ -91,7 +98,7 @@ export default function Footer() {
                   href="/#faq"
                   className="hover:text-[#d79127] transition-all ease-in-out"
                 >
-                  FAQs
+                  FAQ
                 </Link>
               </li>
               <li key="explore">

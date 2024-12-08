@@ -8,104 +8,129 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Link,
   Button,
 } from "@nextui-org/react";
 import Image from "next/image";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import UndikshaLogo from "../assets/logo/undiksha.png";
+import UndikshaLogo from "../assets/logo/eganesha.png";
+import ExploreIcon from "@mui/icons-material/Explore";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Url } from "next/dist/shared/lib/router/router";
+
+const navItems = [
+  {
+    id: "beranda",
+    label: "Beranda",
+    href: "/",
+  },
+  {
+    id: "faq",
+    label: "FAQ",
+    href: "/faq",
+  },
+];
 
 export default function Header() {
+  const pathname = usePathname();
+  const isActive = (path: Url) => pathname === path;
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const menuItems = ["Beranda", "Kontak", "FAQs", "Explore"];
-
   return (
-    <Navbar isBordered isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+    <Navbar
+      shouldHideOnScroll
+      isBordered
+      isMenuOpen={isMenuOpen}
+      onMenuOpenChange={setIsMenuOpen}
+    >
       <NavbarContent className="sm:hidden" justify="start">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
         />
         <NavbarBrand>
-          <Image
-            width={38}
-            height={38}
-            src={UndikshaLogo.src}
-            alt={"Logo Undiksha"}
-          />
-          <p className="pl-2 font-semibold">Shavira</p>
+          <Link
+            href={"/"}
+            className="flex flex-row items-center justify-center"
+          >
+            <Image
+              width={38}
+              height={38}
+              src={UndikshaLogo.src}
+              alt={"Logo Undiksha"}
+            />
+            <p className="pl-2 font-extrabold">SHAVIRA</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent className="hidden sm:flex gap-4" justify="start">
         <NavbarBrand>
-          <Image
-            width={38}
-            height={38}
-            src={UndikshaLogo.src}
-            alt={"Logo Undiksha"}
-          />
-          <p className="pl-2 font-semibold">Shavira</p>
+          <Link
+            href={"/"}
+            className="flex flex-row items-center justify-center"
+          >
+            <Image
+              width={38}
+              height={38}
+              src={UndikshaLogo.src}
+              alt={"Logo Undiksha"}
+            />
+            <p className="pl-2 font-extrabold">SHAVIRA</p>
+          </Link>
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent
-        className="hidden sm:flex gap-4 font-semibold"
+        className="hidden sm:flex gap-4 font-medium"
         justify="center"
       >
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Beranda
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            Kontak
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="#">
-            FAQs
-          </Link>
-        </NavbarItem>
+        {navItems.map((eachItem) => (
+          <NavbarItem key={eachItem.id}>
+            <Link
+              href={eachItem.href}
+              className={`${
+                isActive(eachItem.href)
+                  ? "text-blue-500"
+                  : "text-black hover:text-blue-500"
+              }`}
+            >
+              {eachItem.label}
+            </Link>
+          </NavbarItem>
+        ))}
       </NavbarContent>
 
       <NavbarContent justify="end">
         <NavbarItem>
           <Button
-            className="pl-6"
-            endContent={<ArrowOutwardIcon />}
             as={Link}
             color="primary"
             href="https://undiksha.ac.id/"
             variant="flat"
           >
             Explore
+            <ExploreIcon />
           </Button>
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu className="flex flex-col gap-4 pl-6 pt-4 font-semibold">
-        <NavbarMenuItem>
-          <Link color="foreground" href="#">
-            Beranda
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="#">
-            Kontak
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="#">
-            FAQs
-          </Link>
-        </NavbarMenuItem>
-        <NavbarMenuItem>
-          <Link color="foreground" href="https://undiksha.ac.id/">
-            Explore
-          </Link>
-        </NavbarMenuItem>
+      <NavbarMenu className="flex flex-col gap-4 pt-4 font-medium">
+        {navItems.map((eachItem) => (
+          <NavbarMenuItem
+            onClick={() => setIsMenuOpen(false)}
+            key={eachItem.id}
+          >
+            <Link
+              href={eachItem.href}
+              className={`${
+                isActive(eachItem.href)
+                  ? "text-blue-500"
+                  : "text-black hover:text-blue-500"
+              }`}
+            >
+              {eachItem.label}
+            </Link>
+          </NavbarMenuItem>
+        ))}
       </NavbarMenu>
     </Navbar>
   );
