@@ -7,6 +7,7 @@ import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import { hashKey } from "@/components/HashKey";
 import AccessNotAllowed from "@/components/AccessNotAllowed";
+import AccessChecker from "@/components/AccessChecker";
 
 export default function VisualizeGraph() {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -23,22 +24,12 @@ export default function VisualizeGraph() {
     fetchImage();
   }, []);
 
-  const targetKey = `${process.env.NEXT_PUBLIC_VA_ADMIN_KEY}`;
   const [isValidKey, setIsValidKey] = useState<boolean>(false);
-  useEffect(() => {
-    const checkStoredKey = async () => {
-      const storedHash = sessionStorage.getItem("adminKey");
-      const hashedTargetKey = hashKey(targetKey);
-      if (storedHash === hashedTargetKey) {
-        setIsValidKey(true);
-      } else {
-        setIsValidKey(false);
-      }
-    };
-    checkStoredKey();
-  }, [targetKey]);
+  const handleAccessChecked = (valid: boolean) => {
+    setIsValidKey(valid);
+  };
   if (!isValidKey) {
-    return <AccessNotAllowed />;
+    return <AccessChecker onAccessChecked={handleAccessChecked} />;
   }
 
   return (
