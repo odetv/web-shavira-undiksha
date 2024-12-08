@@ -377,7 +377,6 @@ export default function Home() {
           </Button>
         </div>
       </div>
-      <PopUpAI />
     </main>
   );
 }
