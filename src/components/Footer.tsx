@@ -98,7 +98,7 @@ export default function Footer() {
                   href="/#faq"
                   className="hover:text-[#d79127] transition-all ease-in-out"
                 >
-                  FAQs
+                  FAQ
                 </Link>
               </li>
               <li key="explore">

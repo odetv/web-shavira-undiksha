@@ -71,7 +71,9 @@ export default function CheckModel() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-lg 2xl:max-w-screen-2xl">
       <div id="info-bot" className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Config Model</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">
+          Konfigurasi Model
+        </h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
         <div
@@ -79,7 +81,7 @@ export default function CheckModel() {
           className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap justify-center items-center"
         >
           <p className="text-center font-semibold sm:text-base pb-4">
-            Update Konfigurasi
+            Perbarui Konfigurasi
           </p>
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
             <Select
@@ -165,7 +167,6 @@ export default function CheckModel() {
           </div>
           <div className="pt-4">
             <Button
-              size="sm"
               color="primary"
               onClick={handleSetupConfig}
               isLoading={isLoading}
@@ -178,7 +179,7 @@ export default function CheckModel() {
                 chunkOverlap === 0
               }
             >
-              Update
+              Perbarui
             </Button>
           </div>
         </div>

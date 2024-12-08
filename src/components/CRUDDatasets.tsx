@@ -220,9 +220,9 @@ export default function CRUDDatasets() {
             {selectedKeys.size > 0 && (
               <button
                 onClick={handleDeleteMultiple}
-                className="bg-red-500 px-2 py-2 rounded-lg text-white"
+                className="bg-red-500 px-4 py-2 rounded-lg text-white"
               >
-                <DeleteIcon /> {selectedKeys.size} File
+                <DeleteIcon /> {selectedKeys.size}
               </button>
             )}
 
@@ -303,7 +303,7 @@ export default function CRUDDatasets() {
                       <VisibilityOutlinedIcon />
                     </span>
                   </Tooltip>
-                  <Tooltip content="Edit File">
+                  <Tooltip content="Perbarui File">
                     <span
                       className="text-lg text-default-400 cursor-pointer active:opacity-50"
                       onClick={() => {
@@ -389,7 +389,7 @@ export default function CRUDDatasets() {
       >
         <ModalContent className="m-4 p-1">
           <ModalHeader>
-            <h4>Upload Datasets</h4>
+            <h4>Tambahkan Dataset</h4>
           </ModalHeader>
           <ModalBody>
             <Input
@@ -432,7 +432,7 @@ export default function CRUDDatasets() {
               isLoading={loadingAdd}
               isDisabled={selectedFiles.length === 0}
             >
-              Upload
+              Tambah
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -450,7 +450,7 @@ export default function CRUDDatasets() {
       >
         <ModalContent className="m-4 p-1">
           <ModalHeader>
-            <h4>Update Dataset</h4>
+            <h4>Perbarui Dataset</h4>
           </ModalHeader>
           <ModalBody className="flex flex-col gap-6">
             <div>
@@ -482,7 +482,7 @@ export default function CRUDDatasets() {
               isLoading={loadingUpdate}
               isDisabled={!newFile}
             >
-              Update
+              Perbarui
             </Button>
           </ModalFooter>
         </ModalContent>

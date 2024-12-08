@@ -131,7 +131,7 @@ export default function LogsActivity() {
             <TableCell>
               <div>{item.ID.toString()}</div>
             </TableCell>
-            <TableCell>{item.Timestamp.toString()},</TableCell>
+            <TableCell>{item.Timestamp.toString()}</TableCell>
             <TableCell>{item.Method.toString()}</TableCell>
             <TableCell>{item["Status Code"].toString()}</TableCell>
             <TableCell>{item.Success ? "true" : "false"}</TableCell>
