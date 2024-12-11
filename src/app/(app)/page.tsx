@@ -157,9 +157,7 @@ export default function Home() {
           ${welcomeVisible ? "sm:-mt-20 -mt-32" : ""}`}
       >
         <h1 className="text-3xl sm:text-5xl font-bold pb-2">Shavira</h1>
-        <p className="text-sm sm:text-xl">
-          Layanan Helpdesk Undiksha Virtual Assistant
-        </p>
+        <p className="text-sm sm:text-xl">Undiksha Virtual Assistant</p>
         <div className="mt-4 flex flex-row gap-2 items-center justify-center">
           <Chip color="warning" className="uppercase" variant="solid">
             <p className="font-bold text-xs sm:text-sm text-slate-800">
@@ -187,7 +185,7 @@ export default function Home() {
           <div
             id="conversation"
             ref={chatContainerRef}
-            className="flex flex-col gap-4 min-h-[200px] max-h-[528px] overflow-y-auto no-scrollbar scroll-smooth"
+            className="flex flex-col gap-4 min-h-[186px] max-h-[528px] overflow-y-auto no-scrollbar scroll-smooth"
           >
             <div className="flex flex-col gap-2 sm:gap-4">
               <div className="relative">

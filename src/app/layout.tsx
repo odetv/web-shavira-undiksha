@@ -39,7 +39,7 @@ export default function RootLayout({
           <Providers>
             <Header />
             {children}
-            <Copyright />
+            {/* <Copyright /> */}
             {/* <Footer /> */}
           </Providers>
         )}
