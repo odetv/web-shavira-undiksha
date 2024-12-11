@@ -9,7 +9,9 @@ import {
   NavbarContent,
   NavbarItem,
   Button,
+  Avatar
 } from "@nextui-org/react";
+import {Popover, PopoverTrigger, PopoverContent} from "@nextui-org/react";
 import Image from "next/image";
 import UndikshaLogo from "../assets/logo/eganesha.png";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -110,6 +112,19 @@ export default function Header() {
             Explore
             <ExploreIcon />
           </Button>
+        </NavbarItem>
+        <NavbarItem>
+          <Popover showArrow offset={20} placement="bottom">
+            <PopoverTrigger>
+              <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />
+            </PopoverTrigger>
+            <PopoverContent>
+              <div className="px-1 py-2">
+                <div className="text-small font-bold">Popover Content</div>
+                <div className="text-tiny">This is the popover content</div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </NavbarItem>
       </NavbarContent>
 
