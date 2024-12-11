@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { useEffect, useState } from "react";
 import SplashScreen from "@/components/SplashScreen";
 import { usePathname } from "next/navigation";
+import Copyright from "@/components/Copyright";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +39,7 @@ export default function RootLayout({
           <Providers>
             <Header />
             {children}
+            <Copyright />
             {/* <Footer /> */}
           </Providers>
         )}

@@ -187,7 +187,7 @@ export default function Home() {
           <div
             id="conversation"
             ref={chatContainerRef}
-            className="flex flex-col gap-4 min-h-[286px] max-h-[528px] overflow-y-auto no-scrollbar scroll-smooth"
+            className="flex flex-col gap-4 min-h-[200px] max-h-[528px] overflow-y-auto no-scrollbar scroll-smooth"
           >
             <div className="flex flex-col gap-2 sm:gap-4">
               <div className="relative">
