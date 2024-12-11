@@ -14,7 +14,8 @@
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "@mui/styled-engine-sc": "^6.0.2",
-    "@nextui-org/react": "^2.4.6",
+    "@nextui-org/react": "^2.6.7",
+    "@nextui-org/table": "^2.2.6",
     "@types/crypto-js": "^4.2.2",
     "animejs": "^3.2.2",
     "crypto-js": "^4.2.0",
@@ -31,7 +32,8 @@
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.0",
     "sharp": "^0.33.5",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
     "@types/animejs": "^3.1.12",
