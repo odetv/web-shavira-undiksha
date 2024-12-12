@@ -6,6 +6,12 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccessChecker from "@/components/AccessChecker";
 import SearchIcon from "@mui/icons-material/Search";
+import PersonIcon from '@mui/icons-material/Person';
+import EmailIcon from '@mui/icons-material/Email';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+
+
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 
@@ -61,6 +67,19 @@ export default function CheckModel() {
   const [isEditUserActive, setEditUserActive] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Fungsi untuk menampilkan password
+  const toggleShowPassword = () => setShowPassword(!showPassword);
+  const toggleShowConfirmPassword = () => setShowConfirmPassword(!showConfirmPassword);
+
+  // Fungsi menyembunyikan semua password
+  const hideAllPassword = () => {
+    setShowPassword(false);
+    setShowConfirmPassword(false);
+  };
+
 
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 10;
@@ -90,7 +109,10 @@ export default function CheckModel() {
   // Fungsi untuk mengelola Modal
   // 1. Modal Add User
   const openAddUserModal = () => setAddUserActive(true)
-  const closeAddUserModal = () => setAddUserActive(false)
+  const closeAddUserModal = () => {
+    hideAllPassword();
+    setAddUserActive(false)
+  }
   
   // 2. Modal Delete User
   const openDeleteUserModal = (user: User) => {
@@ -108,6 +130,7 @@ export default function CheckModel() {
     setEditUserActive(true); // Membuka modal edit
   };
   const closeEditUserModal = () => {
+    hideAllPassword();
     setSelectedUser(null)
     setEditUserActive(false)
   }
@@ -263,6 +286,7 @@ export default function CheckModel() {
                 name="Username"
                 placeholder="Masukkan nama lengkap"
                 type="text"
+                endContent={<PersonIcon color="disabled" />}
               />
               <Input
                 isRequired
@@ -272,6 +296,7 @@ export default function CheckModel() {
                 name="email"
                 placeholder="Masukkan email"
                 type="email"
+                endContent={<EmailIcon color="disabled" />}
               />
               <Input
                 isRequired
@@ -280,7 +305,20 @@ export default function CheckModel() {
                 labelPlacement="outside"
                 name="password"
                 placeholder="Masukkan password"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleShowPassword}
+                  >
+                    {showPassword ? (
+                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
               />
               <Input
                 isRequired
@@ -289,7 +327,20 @@ export default function CheckModel() {
                 labelPlacement="outside"
                 name="konfirmasi-password"
                 placeholder="Konfirmasi password"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleShowConfirmPassword}
+                  >
+                    {showConfirmPassword? (
+                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
               />
               <Select
                 isRequired
@@ -365,6 +416,7 @@ export default function CheckModel() {
                 isRequired
                 labelPlacement="outside"
                 value={selectedUser?.nama || ''}
+                endContent={<PersonIcon color="disabled" />}
                 onChange={(e) => setSelectedUser({ ...selectedUser!, nama: e.target.value })}
               />
               <Input
@@ -373,15 +425,41 @@ export default function CheckModel() {
                 isRequired
                 labelPlacement="outside"
                 placeholder="Masukkan password baru"
-                type="password"
+                type={showPassword ? "text" : "password"}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleShowPassword}
+                  >
+                    {showPassword ? (
+                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
               />
               <Input
                 label="Konfirmasi Password"
                 className="mb-4"
                 isRequired
                 labelPlacement="outside"
-                type="password"
                 placeholder="Ketik ulang password baru"
+                type={showConfirmPassword ? "text" : "password"}
+                endContent={
+                  <button
+                    className="focus:outline-none"
+                    type="button"
+                    onClick={toggleShowConfirmPassword}
+                  >
+                    {showConfirmPassword? (
+                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
+                    ) : (
+                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
+                    )}
+                  </button>
+                }
               />
               <Select
                 label="Role"
