@@ -1,33 +1,90 @@
 "use client";
 import { useEffect, useState } from "react";
-import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Modal, ModalContent, ModalBody, Alert, ModalHeader, ModalFooter, Form, Input, Select, SelectItem} from "@nextui-org/react";
-import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
+import React from "react";
+import {Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Button, Pagination, getKeyValue, Modal, ModalContent, ModalBody, Alert, ModalHeader, ModalFooter, Form, Input, Select, SelectItem} from "@nextui-org/react";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import AccessChecker from "@/components/AccessChecker";
 import SearchIcon from "@mui/icons-material/Search";
+import GoBackHome from "@/components/GoBackHome";
+import GoBackAdmin from "@/components/GoBackAdmin";
+
+
+type User = {
+  nama: string;
+  email: string;
+  tipe_login: string;
+  role: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+};
+
+// Contoh data dummy
+const users = [
+  {
+    id: 1,
+    nama: "gelgel",
+    email: "gelgel@example.com",
+    tipe_login: "Manual",
+    role: "admin",
+    status: "active",
+    created_at: '2023-12-12 00:00:00',
+    updated_at: '2024-12-12 00:00:00'
+  },
+  {
+    id: 2,
+    nama: 'Diar',
+    email: 'sudiar@example.com',
+    tipe_login: 'Google',
+    role: 'admin',
+    status: 'active',
+    created_at: '2023-12-12 00:00:00',
+    updated_at: '2024-12-12 00:00:00'
+  },
+  {
+    id: 3,
+    nama: 'Alya',
+    email: 'alyad@example.com',
+    tipe_login: 'Google',
+    role: 'member',
+    status: 'suspend',
+    created_at: '2023-12-12 00:00:00',
+    updated_at: '2024-12-12 00:00:00'
+  }
+]
 
 export default function CheckModel() {
-  type User = {
-    nama: string;
-    email: string;
-    tipe_login: string;
-    role: string;
-    status: string;
-    created_at: string;
-    updated_at: string;
-  };
-
-  const [lastConfig, setLastConfig] = useState<any>(null);
-  const [llm, setLLM] = useState("");
-  const [modelLLM, setModelLLM] = useState("");
-  const [embedder, setEmbedder] = useState("");
-  const [modelEmbedder, setModelEmbedder] = useState("");
-  const [chunkSize, setChunkSize] = useState(0);
-  const [chunkOverlap, setChunkOverlap] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isAddUserActive, setAddUserActive] = useState(false)
   const [isDeleteUserActive, setDeleteUserActive] = useState(false)
   const [isEditUserActive, setEditUserActive] = useState(false)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  const [page, setPage] = React.useState(1);
+  const rowsPerPage = 10;
+
+  const filteredUsers = React.useMemo(() => {
+    if (!searchQuery) return users;
+    return users.filter((user) =>
+      user.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.tipe_login.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.status.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+  
+
+
+  const pages = Math.ceil(filteredUsers.length / rowsPerPage); // Menggunakan filteredUsers untuk menghitung jumlah halaman
+
+  const items = React.useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+    return filteredUsers.slice(start, end); // Menampilkan data yang sudah difilter
+  }, [page, filteredUsers, rowsPerPage]);
 
 
   // Fungsi untuk mengelola Modal
@@ -55,38 +112,9 @@ export default function CheckModel() {
     setEditUserActive(false)
   }
 
-  useEffect(() => {
-    const fetchCheckConfig = async () => {
-      const config = await checkConfig();
-      if (config) {
-        setLastConfig(config);
-      }
-    };
-    fetchCheckConfig();
+  const onClear = React.useCallback(() => {
+    setSearchQuery("");
   }, []);
-
-  const handleSetupConfig = async () => {
-    setIsLoading(true);
-    const configData = {
-      llm: llm,
-      model_llm: modelLLM,
-      embedder: embedder,
-      model_embedder: modelEmbedder,
-      chunk_size: chunkSize,
-      chunk_overlap: chunkOverlap,
-    };
-
-    const success = await setupConfig(configData);
-    setIsLoading(false);
-
-    if (success) {
-      console.log("Configuration updated successfully!");
-      const updatedConfig = await checkConfig();
-      setLastConfig(updatedConfig);
-    } else {
-      console.error("Failed to update configuration.");
-    }
-  };
 
   const [isValidKey, setIsValidKey] = useState<boolean>(false);
   const handleAccessChecked = (valid: boolean) => {
@@ -96,56 +124,33 @@ export default function CheckModel() {
     return <AccessChecker onAccessChecked={handleAccessChecked} />;
   }
 
-  // Contoh data dummy
-  const users = [
-    {
-      id: 1,
-      nama: "gelgel",
-      email: "gelgel@example.com",
-      tipe_login: "manual",
-      role: "admin",
-      status: "aktif",
-      created_at: '2023-12-12 00:00:00',
-      updated_at: '2024-12-12 00:00:00'
-    },
-    {
-      id: 2,
-      nama: 'Diar',
-      email: 'sudiar@example.com',
-      tipe_login: 'Google',
-      role: 'admin',
-      status: 'aktif',
-      created_at: '2023-12-12 00:00:00',
-      updated_at: '2024-12-12 00:00:00'
-    },
-    {
-      id: 3,
-      nama: 'Alya',
-      email: 'alyad@example.com',
-      tipe_login: 'Facebook',
-      role: 'member',
-      status: 'suspend',
-      created_at: '2023-12-12 00:00:00',
-      updated_at: '2024-12-12 00:00:00'
-    }
-  ]
-
-
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-xl 2xl:max-w-screen-2xl">
-      <div id="" className="text-center text-black tracking-wide">
+      <div className="text-center text-black tracking-wide">
         <h1 className="text-3xl sm:text-5xl font-bold pb-2">
           Manajemen User
         </h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
-
-        <div id="last-config">
+        <div>
           <div className="pb-4 flex justify-end">
           </div>
           <Table
             className="w-full"
             aria-label="Configuration Model"
+            bottomContent={
+              <div className="flex w-full justify-center">
+                <Pagination
+                  isCompact
+                  showControls
+                  showShadow
+                  color="secondary"
+                  page={page}
+                  total={pages}
+                  onChange={setPage}
+                />
+              </div>
+            }
             topContent={
               <div className="flex flex-wrap w-full justify-end gap-2 py-3">
                 {/* Tombol Open Add User Modal */}
@@ -161,8 +166,9 @@ export default function CheckModel() {
                   className="w-full sm:max-w-[25%] max-w-[55%]"
                   placeholder="Search"
                   startContent={<SearchIcon color="disabled" />}
-                  // value={searchQuery}
-                  // onChange={(e) => setSearchQuery(e.target.value)}
+                  onClear={() => onClear()}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
 
               </div>
@@ -180,8 +186,8 @@ export default function CheckModel() {
               <TableColumn>Aksi</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"Konfigurasi tidak ditemukan."}>
-              {users.map((user, index) => (
-                <TableRow key="x">
+              {items.map((user, index) => (
+                <TableRow key={user.id}> 
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{user.nama}</TableCell>
                 <TableCell>{user.email}</TableCell>
@@ -191,7 +197,7 @@ export default function CheckModel() {
                     <Select
                       isRequired
                       labelPlacement="outside"
-                      name="role"
+                      aria-label="role"
                       defaultSelectedKeys={[user.role]}
                     >
                       <SelectItem key="admin" value="admin">
@@ -207,21 +213,7 @@ export default function CheckModel() {
                   </Form>
                 </TableCell>
                 <TableCell>
-                  <Form className="w-28">
-                    <Select
-                      isRequired
-                      labelPlacement="outside"
-                      name="status"
-                      defaultSelectedKeys={[user.status]}
-                    >
-                      <SelectItem key="aktif" value="aktif">
-                        Aktif
-                      </SelectItem>
-                      <SelectItem key="suspend" value="suspend">
-                        Suspend
-                      </SelectItem>
-                    </Select>
-                  </Form>
+                  {user.status == "active" ? <CheckCircleIcon color="success" /> : <CancelIcon color="error" />}
                 </TableCell>
                 <TableCell>
                   {user.created_at}
@@ -250,6 +242,10 @@ export default function CheckModel() {
           </Table>
         </div>
       </div>
+      <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
+        <GoBackHome />
+        <GoBackAdmin />
+      </div>
 
       {/* Tampilan Modal untuk Add User */}
       <Modal isOpen={isAddUserActive} onOpenChange={closeAddUserModal} className="mt-8">
@@ -260,14 +256,14 @@ export default function CheckModel() {
           <ModalBody>
             <Form>
               <Input
-                  isRequired
-                  label="Nama Lengkap"
-                  className="mb-1"
-                  labelPlacement="outside"
-                  name="Username"
-                  placeholder="Masukkan nama lengkap"
-                  type="text"
-                />
+                isRequired
+                label="Nama Lengkap"
+                className="mb-1"
+                labelPlacement="outside"
+                name="Username"
+                placeholder="Masukkan nama lengkap"
+                type="text"
+              />
               <Input
                 isRequired
                 className="mb-1"
@@ -319,10 +315,10 @@ export default function CheckModel() {
                 label="Status"
                 labelPlacement="outside"
                 name="status"
-                defaultSelectedKeys={["aktif"]}
+                defaultSelectedKeys={["active"]}
               >
-                <SelectItem key="aktif" value="aktif">
-                  Aktif
+                <SelectItem key="active" value="active">
+                  Active
                 </SelectItem>
                 <SelectItem key="suspend" value="suspend">
                   Suspend
@@ -409,7 +405,7 @@ export default function CheckModel() {
                 value={selectedUser?.status || ''}
                 onChange={(e) => setSelectedUser({ ...selectedUser!, status: e.target.value })}
               >
-                <SelectItem key="aktif" value="aktif">Aktif</SelectItem>
+                <SelectItem key="active" value="active">Aktif</SelectItem>
                 <SelectItem key="suspend" value="suspend">Suspend</SelectItem>
               </Select>
             </Form>
