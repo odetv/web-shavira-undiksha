@@ -22,8 +22,6 @@ import {
   Checkbox,
   Tabs,
   Tab,
-  Card,
-  CardBody,
 } from "@nextui-org/react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -36,6 +34,14 @@ import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Divider } from "@mui/material";
+import {
+  signUpManual,
+  signInManual,
+  signUpGoogle,
+  signInGoogle,
+} from "@/services/apiDatabase";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 const navItems = [
   {
@@ -59,6 +65,61 @@ export default function Header() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const [emailLogin, setEmailLogin] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
+  const [nameRegister, setNameRegister] = useState("");
+  const [emailRegister, setEmailRegister] = useState("");
+  const [passwordRegister, setPasswordRegister] = useState("");
+  const [confirmPasswordRegister, setConfirmPasswordRegister] = useState("");
+
+  // Fungsi untuk meng-handle login manual
+  const handleLoginManual = async () => {
+    try {
+      const result = await signInManual(emailLogin, passwordLogin);
+      console.log("Login berhasil", result);
+      // Lakukan sesuatu dengan data login, seperti redirect atau simpan session
+    } catch (error) {
+      console.error("Login gagal", error);
+    }
+  };
+
+  // Fungsi untuk meng-handle register manual
+  const handleRegisterManual = async () => {
+    if (passwordRegister !== confirmPasswordRegister) {
+      alert("Password dan konfirmasi password tidak cocok");
+      return;
+    }
+    try {
+      const result = await signUpManual({
+        name: nameRegister,
+        email: emailRegister,
+        password: passwordRegister,
+        photo_url: "", // Atau bisa diambil dari input jika ada
+        role: "user", // Sesuaikan dengan role
+        status: "active",
+      });
+      console.log("Registrasi berhasil", result);
+      // Lakukan sesuatu setelah registrasi berhasil, misal login otomatis
+    } catch (error) {
+      console.error("Registrasi gagal", error);
+    }
+  };
+
+  // Tambahkan di dalam fungsi handleGoogleSignIn dan handleGoogleSignUp
+  const handleGoogleSignIn = async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await firebase.auth().signInWithPopup(provider);
+    const idToken = await result.user.getIdToken();
+    await signInGoogle(idToken);
+  };
+
+  const handleGoogleSignUp = async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await firebase.auth().signInWithPopup(provider);
+    const idToken = await result.user.getIdToken();
+    await signUpGoogle(idToken);
+  };
 
   // Fungsi untuk menampilkan password login
   const toggleLoginPassword = () => setShowLoginPassword(!showLoginPassword);
@@ -118,7 +179,7 @@ export default function Header() {
                 src={UndikshaLogo.src}
                 alt={"Logo Undiksha"}
               />
-              <p className="pl-2 font-extrabold">SHAVIRA</p>
+              <p className="pl-2 font-extrabold text-black">SHAVIRA</p>
             </Link>
           </NavbarBrand>
         </NavbarContent>
@@ -135,7 +196,7 @@ export default function Header() {
                 src={UndikshaLogo.src}
                 alt={"Logo Undiksha"}
               />
-              <p className="pl-2 font-extrabold">SHAVIRA</p>
+              <p className="pl-2 font-extrabold text-black">SHAVIRA</p>
             </Link>
           </NavbarBrand>
         </NavbarContent>
@@ -192,13 +253,13 @@ export default function Header() {
             </NavbarMenuItem>
           ))}
         </NavbarMenu>
-        {/* Trigger untuk membuka form */}
       </Navbar>
       <Modal
+        placement="center"
         isOpen={isOpenForm}
         onOpenChange={closeForm}
         backdrop="blur"
-        className="p-4"
+        className="p-4 m-2"
       >
         <ModalContent>
           <div className="flex w-full flex-col">
@@ -226,7 +287,8 @@ export default function Header() {
                     label="Email"
                     placeholder="Email"
                     variant="bordered"
-                    // onChange={(e) => setEmail(e.target.value)}
+                    value={emailLogin}
+                    onChange={(e) => setEmailLogin(e.target.value)}
                   />
                   <Input
                     id="passwordMasuk"
@@ -248,7 +310,8 @@ export default function Header() {
                     }
                     type={showLoginPassword ? "text" : "password"}
                     variant="bordered"
-                    // onChange={(e) => setPassword(e.target.value)}
+                    value={passwordLogin}
+                    onChange={(e) => setPasswordLogin(e.target.value)}
                   />
                   <div className="flex py-2 px-1 justify-between">
                     <Checkbox
@@ -271,7 +334,7 @@ export default function Header() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
-                      //   onClick={n}
+                      onClick={handleLoginManual}
                       className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
                     >
                       Masuk
@@ -279,10 +342,7 @@ export default function Header() {
                     <Divider className="text-xs">Atau</Divider>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-center w-full mx-auto">
-                        <button
-                          //   onClick={signInWithGoogle}
-                          className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out"
-                        >
+                        <button className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out">
                           <Image
                             className="w-6 h-6"
                             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -294,7 +354,7 @@ export default function Header() {
                           <p className="text-sm">Lanjutkan dengan Google</p>
                         </button>
                       </div>
-                      <div className="flex flex-row gap-1 justify-center pb-6">
+                      <div className="flex flex-row gap-1 justify-center">
                         <p className="text-sm">Belum punya akun?</p>
                         <Link
                           className="text-sm font-semibold text-blue-700 hover:text-blue-800 transition-all ease-in-out cursor-pointer"
@@ -322,8 +382,8 @@ export default function Header() {
                     label="Nama Lengkap"
                     placeholder="Nama Lengkap"
                     variant="bordered"
-                    // value={fullName}
-                    // onChange={(e) => setdisplayName(e.target.value)}
+                    value={nameRegister}
+                    onChange={(e) => setNameRegister(e.target.value)}
                   />
                   <Input
                     id="emailDaftar"
@@ -332,8 +392,8 @@ export default function Header() {
                     label="Email"
                     placeholder="Email"
                     variant="bordered"
-                    // value={email}
-                    // onChange={(e) => setEmail(e.target.value)}
+                    value={emailRegister}
+                    onChange={(e) => setEmailRegister(e.target.value)}
                   />
                   <Input
                     id="passwordDaftar"
@@ -355,8 +415,8 @@ export default function Header() {
                     }
                     type={showRegisterPassword ? "text" : "password"}
                     variant="bordered"
-                    // value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
+                    value={passwordRegister}
+                    onChange={(e) => setPasswordRegister(e.target.value)}
                   />
                   <Input
                     id="passwordDaftarKonfirmasi"
@@ -378,22 +438,22 @@ export default function Header() {
                     }
                     type={showConfirmPassword ? "text" : "password"}
                     variant="bordered"
-                    // value={confirmPassword}
-                    // onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={confirmPasswordRegister}
+                    onChange={(e) => setConfirmPasswordRegister(e.target.value)}
                   />
 
                   <div className="flex flex-col gap-2">
-                    <button className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold">
+                    <button
+                      onClick={handleRegisterManual}
+                      className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
+                    >
                       Daftar
                     </button>
 
                     <Divider className="text-xs">Atau</Divider>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-center w-full mx-auto">
-                        <button
-                          //   onClick={signInWithGoogle}
-                          className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out"
-                        >
+                        <button className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out">
                           <Image
                             className="w-6 h-6"
                             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -405,7 +465,7 @@ export default function Header() {
                           <p className="text-sm">Lanjutkan dengan Google</p>
                         </button>
                       </div>
-                      <div className="flex flex-row gap-1 justify-center pb-6">
+                      <div className="flex flex-row gap-1 justify-center">
                         <p className="text-sm">Sudah punya akun?</p>
 
                         <Link
