@@ -38,6 +38,13 @@ export default function Admin() {
             radius="sm"
             className="bg-blue-500 text-white text-sm sm:text-base font-medium"
           >
+            <Link href="/admin/management-users">Manajemen Pengguna</Link>
+          </Button>
+          <Button
+            variant="solid"
+            radius="sm"
+            className="bg-zinc-500 text-white text-sm sm:text-base font-medium"
+          >
             <Link href="/admin/management-datasets">Manajemen Dataset</Link>
           </Button>
           <Button
@@ -72,6 +79,7 @@ export default function Admin() {
             </p>
           </div>
           <LogsActivity />
+
         </div>
       </div>
     </main>

@@ -14,7 +14,10 @@
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "@mui/styled-engine-sc": "^6.0.2",
-    "@nextui-org/react": "^2.4.6",
+    "@nextui-org/modal": "^2.2.5",
+    "@nextui-org/popover": "^2.3.7",
+    "@nextui-org/react": "^2.6.7",
+    "@nextui-org/table": "^2.2.6",
     "@types/crypto-js": "^4.2.2",
     "animejs": "^3.2.2",
     "crypto-js": "^4.2.0",
@@ -22,7 +25,7 @@
     "html-react-parser": "^5.1.18",
     "http-proxy-middleware": "^3.0.3",
     "js-cookie": "^3.0.5",
-    "next": "14.2.7",
+    "next": "^14.2.20",
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^9.0.1",
@@ -31,7 +34,8 @@
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.0",
     "sharp": "^0.33.5",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
     "@types/animejs": "^3.1.12",

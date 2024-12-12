@@ -112,7 +112,7 @@ export default function LogsActivity() {
       }}
     >
       <TableHeader>
-        <TableColumn key="id">NO</TableColumn>
+        <TableColumn key="no">NO</TableColumn>
         <TableColumn key="id">ID</TableColumn>
         <TableColumn key="timestamp">TIMESTAMP</TableColumn>
         <TableColumn key="method">METHOD</TableColumn>

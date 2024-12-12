@@ -29,6 +29,7 @@ import {
   updateDataset,
   deleteDataset,
 } from "@/services/apiVirtualAssistant";
+import React from "react";
 
 export default function CRUDDatasets() {
   const [datasets, setDatasets] = useState<string[]>([]);
@@ -204,6 +205,10 @@ export default function CRUDDatasets() {
     setIsModalDeleteOpen(true);
   };
 
+  const onClear = React.useCallback(() => {
+    setSearchQuery("");
+  }, []);
+
   return (
     <main className="w-full">
       <Table
@@ -240,6 +245,7 @@ export default function CRUDDatasets() {
               className="w-full sm:max-w-[25%] max-w-[55%]"
               placeholder="Search"
               startContent={<SearchIcon color="disabled" />}
+              onClear={() => onClear()}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
