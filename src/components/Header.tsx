@@ -1,6 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Link,
   Navbar,
@@ -10,13 +9,11 @@ import {
   NavbarMenu,
   NavbarContent,
   NavbarItem,
-  Button,
   Avatar,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   Input,
   Tooltip,
   Checkbox,
@@ -27,23 +24,26 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import Image from "next/image";
+import { Url } from "next/dist/shared/lib/router/router";
+import { usePathname } from "next/navigation";
+import { Divider } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import Image from "next/image";
-import UndikshaLogo from "../assets/logo/eganesha.png";
-import { usePathname } from "next/navigation";
-import { Url } from "next/dist/shared/lib/router/router";
+import UndikshaLogo from "@/assets/logo/eganesha.png";
 import GuestIcon from "@/assets/logo/Guest.png";
 import PersonIcon from "@mui/icons-material/Person";
 import EmailIcon from "@mui/icons-material/Email";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { Divider } from "@mui/material";
 import {
   signUpManual,
   signInManual,
+  signInGoogle,
+  signUpGoogle,
   signOutUser,
 } from "@/services/apiDatabase";
-import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/services/firebase";
 
 const navItems = [
   {
@@ -78,11 +78,41 @@ export default function Header() {
     useState("");
   const [photoUrlSignUpManual, setPhotoUrlSignUpManual] = useState("");
 
+  const [name, setName] = useState<string>("");
+  const [photoUrl, setPhotoUrl] = useState<string>("");
+  const [role, setRole] = useState<string>("");
+
+  const isSignInEnabled =
+    emailSignInManual !== "" && passwordSignInManual !== "";
+  const isSignUpEnabled =
+    nameSignUpManual !== "" &&
+    emailSignUpManual !== "" &&
+    passwordSignUpManual !== "" &&
+    confirmPasswordSignUpManual !== "" &&
+    passwordSignUpManual === confirmPasswordSignUpManual;
+
   useEffect(() => {
-    const auth = getAuth();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDocSnap = await getDoc(userDocRef);
+
+        if (userDocSnap.exists()) {
+          const userData = userDocSnap.data();
+          const newPhotoUrl =
+            userData?.photo_url ||
+            "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg";
+          setPhotoUrl(newPhotoUrl);
+          setRole(userData?.role || "registered");
+          setName(userData?.name || null);
+        }
+      } else {
+        setUser(null);
+      }
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -99,7 +129,6 @@ export default function Header() {
       alert("Password dan konfirmasi password tidak cocok.");
       return;
     }
-
     try {
       const user = await signUpManual(
         nameSignUpManual,
@@ -107,9 +136,9 @@ export default function Header() {
         passwordSignUpManual,
         photoUrlSignUpManual
       );
-      alert("Signup berhasil, welcome " + user?.displayName);
       setUser(user);
       closeForm();
+      window.location.reload();
     } catch (error: any) {
       alert("Terjadi kesalahan: " + error.message);
     }
@@ -118,11 +147,33 @@ export default function Header() {
   const handleSignInManual = async () => {
     try {
       const user = await signInManual(emailSignInManual, passwordSignInManual);
-      alert("Login berhasil, welcome " + user?.displayName);
       setUser(user);
       closeForm();
+      window.location.reload();
     } catch (error: any) {
       alert("Terjadi kesalahan: " + error.message);
+    }
+  };
+
+  const handleSignInGoogle = async () => {
+    try {
+      const user = await signInGoogle();
+      setUser(user);
+      closeForm();
+      window.location.reload();
+    } catch (error: any) {
+      alert("Terjadi kesalahan saat login dengan Google: " + error.message);
+    }
+  };
+
+  const handleSignUpGoogle = async () => {
+    try {
+      const user = await signUpGoogle();
+      setUser(user);
+      closeForm();
+      window.location.reload();
+    } catch (error: any) {
+      alert("Terjadi kesalahan saat sign up dengan Google: " + error.message);
     }
   };
 
@@ -130,6 +181,7 @@ export default function Header() {
     try {
       await signOutUser();
       setUser(null);
+      window.location.reload();
     } catch (error: any) {
       console.error("Logout failed: ", error);
     }
@@ -240,50 +292,80 @@ export default function Header() {
                       isBordered
                       as="button"
                       className="transition-transform"
-                      src={user.photoURL || ""}
+                      src={photoUrl || GuestIcon.src}
+                      key={photoUrl}
                     />
                   ) : (
                     <Avatar
                       isBordered
                       as="button"
                       className="transition-transform"
-                      src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                      src={GuestIcon.src}
                     />
                   )}
                 </DropdownTrigger>
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem
                     key="profile"
+                    textValue="profile"
                     className="h-14 gap-2 bg-slate-200"
                   >
                     {user ? (
                       <>
-                        <p className="font-semibold text-wrap">
-                          Halo, {user.displayName}
-                        </p>
+                        <p className="font-semibold text-wrap">{name}</p>
+                        <p className="text-xs">{role}</p>
                       </>
                     ) : (
-                      <p className="font-semibold">Halo, anda belum login</p>
+                      <>
+                        <p className="font-semibold">Mode Tamu</p>
+                        <p className="text-xs">Masuk untuk Gunakan Shavira</p>
+                      </>
                     )}
                   </DropdownItem>
                   {user ? (
-                    <DropdownItem
-                      onPress={handleLogout}
-                      key="keluar"
-                      color="danger"
-                      className="bg-red-500 text-white mt-1 font-semibold text-center"
-                    >
-                      Keluar
-                    </DropdownItem>
+                    <>
+                      <DropdownItem
+                        key="explore"
+                        textValue="explore"
+                        color="primary"
+                        className="bg-blue-500 text-white mt-1 font-semibold text-center"
+                      >
+                        <a href="https://undiksha.ac.id" target="_blank">
+                          Explore
+                        </a>
+                      </DropdownItem>
+                      <DropdownItem
+                        onPress={handleLogout}
+                        key="keluar"
+                        textValue="keluar"
+                        color="danger"
+                        className="bg-red-500 text-white mt-1 font-semibold text-center"
+                      >
+                        Keluar
+                      </DropdownItem>
+                    </>
                   ) : (
-                    <DropdownItem
-                      onPress={openForm}
-                      key="masuk"
-                      color="danger"
-                      className="bg-blue-500 text-white mt-1 font-semibold text-center"
-                    >
-                      Masuk
-                    </DropdownItem>
+                    <>
+                      <DropdownItem
+                        key="explore"
+                        textValue="explore"
+                        color="primary"
+                        className="bg-blue-500 text-white mt-1 font-semibold text-center"
+                      >
+                        <a href="https://undiksha.ac.id" target="_blank">
+                          Explore
+                        </a>
+                      </DropdownItem>
+                      <DropdownItem
+                        onPress={openForm}
+                        key="masuk"
+                        textValue="masuk"
+                        color="primary"
+                        className="bg-blue-500 text-white mt-1 font-semibold text-center"
+                      >
+                        Masuk
+                      </DropdownItem>
+                    </>
                   )}
                 </DropdownMenu>
               </Dropdown>
@@ -391,15 +473,21 @@ export default function Header() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
+                      disabled={!isSignInEnabled}
                       onClick={handleSignInManual}
-                      className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
+                      className={`bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold ${
+                        !isSignInEnabled ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       Masuk
                     </button>
                     <Divider className="text-xs">Atau</Divider>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-center w-full mx-auto">
-                        <button className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out">
+                        <button
+                          onClick={handleSignInGoogle}
+                          className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out"
+                        >
                           <Image
                             className="w-6 h-6"
                             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -408,7 +496,7 @@ export default function Header() {
                             width={24}
                             height={24}
                           />
-                          <p className="text-sm">Lanjutkan dengan Google</p>
+                          <p className="text-sm">Masuk dengan Google</p>
                         </button>
                       </div>
                       <div className="flex flex-row gap-1 justify-center">
@@ -503,8 +591,11 @@ export default function Header() {
 
                   <div className="flex flex-col gap-2">
                     <button
+                      disabled={!isSignUpEnabled}
                       onClick={handleSignUpManual}
-                      className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
+                      className={`bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold ${
+                        !isSignUpEnabled ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       Daftar
                     </button>
@@ -512,7 +603,10 @@ export default function Header() {
                     <Divider className="text-xs">Atau</Divider>
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center justify-center w-full mx-auto">
-                        <button className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out">
+                        <button
+                          onClick={handleSignUpGoogle}
+                          className="justify-center w-full mx-auto px-4 py-2 border flex gap-2 items-center border-slate-200 rounded-lg text-slate-700 hover:border-slate-300 hover:bg-slate-100 transition-all ease-in-out"
+                        >
                           <Image
                             className="w-6 h-6"
                             src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -521,7 +615,7 @@ export default function Header() {
                             width={24}
                             height={24}
                           />
-                          <p className="text-sm">Lanjutkan dengan Google</p>
+                          <p className="text-sm">Daftar dengan Google</p>
                         </button>
                       </div>
                       <div className="flex flex-row gap-1 justify-center">
