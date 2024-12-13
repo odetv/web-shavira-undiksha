@@ -25,6 +25,8 @@ import ShaviraButton from "@/components/HiddenKey";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 
 export default function Home() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -35,6 +37,71 @@ export default function Home() {
   >([]);
   const [welcomeVisible, setWelcomeVisible] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [questionCount, setQuestionCount] = useState<number>(0);
+
+  const maxQuestions = 2;
+
+  // Menyimpan kondisi isDisabled dalam variabel
+  const isDisabled =
+    loading ||
+    (questionCount >= maxQuestions && !user) ||
+    (role ? role !== "member" && role !== "admin" : false);
+
+  // Debug log untuk memeriksa nilai isDisabled
+  console.log("isDisabled:", isDisabled, "role:", role, "user:", user);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        const db = getFirestore();
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (
+            userData &&
+            (userData.role === "member" || userData.role === "admin")
+          ) {
+            setUser(currentUser);
+            setRole(userData.role); // Set role after fetching it from Firestore
+          } else {
+            alert("You must be a member to access this service.");
+            setUser(currentUser);
+            setRole(userData.role);
+          }
+        } else {
+          alert("User data not found.");
+          setUser(null);
+          setRole(null); // Reset role if user data doesn't exist
+        }
+      } else {
+        setUser(null);
+        setRole(null); // Reset role if no user is logged in
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      setQuestionCount(0);
+    } else {
+      const savedCount = localStorage.getItem("questionCount");
+      if (savedCount) {
+        setQuestionCount(Number(savedCount));
+      }
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (questionCount > 0) {
+      localStorage.setItem("questionCount", String(questionCount));
+    }
+  }, [questionCount]);
 
   useEffect(() => {
     const fetchApiStatus = async () => {
@@ -78,6 +145,11 @@ export default function Home() {
   const handleSend = async () => {
     if (!question.trim()) return;
 
+    if (questionCount >= maxQuestions && !user) {
+      alert("You have reached the maximum number of questions.");
+      return;
+    }
+
     const newUserMessage = { user: question, bot: "", timestamp: "" };
     setMessages((prev) => [...prev, newUserMessage]);
     setLoading(true);
@@ -96,6 +168,11 @@ export default function Home() {
     }
 
     setLoading(false);
+    setQuestionCount((prevCount) => {
+      const newCount = prevCount + 1;
+      localStorage.setItem("questionCount", String(newCount));
+      return newCount;
+    });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -122,6 +199,14 @@ export default function Home() {
   ];
 
   const handleSendDirect = async (questionText: string) => {
+    if (
+      (questionCount >= maxQuestions && !user) ||
+      (role ? role !== "member" && role !== "admin" : false)
+    ) {
+      alert("You have reached the maximum number of questions.");
+      return;
+    }
+
     setWelcomeVisible(false);
     if (!questionText.trim()) return;
 
@@ -141,6 +226,11 @@ export default function Home() {
     }
 
     setLoading(false);
+    setQuestionCount((prevCount) => {
+      const newCount = prevCount + 1;
+      localStorage.setItem("questionCount", String(newCount));
+      return newCount;
+    });
   };
 
   return (
@@ -360,7 +450,7 @@ export default function Home() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={handleKeyPress}
-            isDisabled={loading}
+            isDisabled={isDisabled}
           />
 
           <Button
@@ -369,7 +459,7 @@ export default function Home() {
             disableAnimation
             variant="solid"
             onClick={handleSend}
-            isDisabled={loading}
+            isDisabled={isDisabled}
           >
             <SendIcon color="primary" />
           </Button>

@@ -22,6 +22,10 @@ import {
   Checkbox,
   Tabs,
   Tab,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
 } from "@nextui-org/react";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -37,11 +41,9 @@ import { Divider } from "@mui/material";
 import {
   signUpManual,
   signInManual,
-  signUpGoogle,
-  signInGoogle,
+  signOutUser,
 } from "@/services/apiDatabase";
-import firebase from "firebase/app";
-import "firebase/auth";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
 const navItems = [
   {
@@ -66,92 +68,99 @@ export default function Header() {
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [emailLogin, setEmailLogin] = useState("");
-  const [passwordLogin, setPasswordLogin] = useState("");
-  const [nameRegister, setNameRegister] = useState("");
-  const [emailRegister, setEmailRegister] = useState("");
-  const [passwordRegister, setPasswordRegister] = useState("");
-  const [confirmPasswordRegister, setConfirmPasswordRegister] = useState("");
+  const [user, setUser] = useState<User | null>(null);
+  const [emailSignInManual, setEmailSignInManual] = useState("");
+  const [passwordSignInManual, setPasswordSignInManual] = useState("");
+  const [nameSignUpManual, setNameSignUpManual] = useState("");
+  const [emailSignUpManual, setEmailSignUpManual] = useState("");
+  const [passwordSignUpManual, setPasswordSignUpManual] = useState("");
+  const [confirmPasswordSignUpManual, setConfirmPasswordSignUpManual] =
+    useState("");
+  const [photoUrlSignUpManual, setPhotoUrlSignUpManual] = useState("");
 
-  // Fungsi untuk meng-handle login manual
-  const handleLoginManual = async () => {
-    try {
-      const result = await signInManual(emailLogin, passwordLogin);
-      console.log("Login berhasil", result);
-      // Lakukan sesuatu dengan data login, seperti redirect atau simpan session
-    } catch (error) {
-      console.error("Login gagal", error);
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!photoUrlSignUpManual) {
+      setPhotoUrlSignUpManual(
+        "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg"
+      );
     }
-  };
+  }, [photoUrlSignUpManual]);
 
-  // Fungsi untuk meng-handle register manual
-  const handleRegisterManual = async () => {
-    if (passwordRegister !== confirmPasswordRegister) {
-      alert("Password dan konfirmasi password tidak cocok");
+  const handleSignUpManual = async () => {
+    if (passwordSignUpManual !== confirmPasswordSignUpManual) {
+      alert("Password dan konfirmasi password tidak cocok.");
       return;
     }
+
     try {
-      const result = await signUpManual({
-        name: nameRegister,
-        email: emailRegister,
-        password: passwordRegister,
-        photo_url: "", // Atau bisa diambil dari input jika ada
-        role: "user", // Sesuaikan dengan role
-        status: "active",
-      });
-      console.log("Registrasi berhasil", result);
-      // Lakukan sesuatu setelah registrasi berhasil, misal login otomatis
-    } catch (error) {
-      console.error("Registrasi gagal", error);
+      const user = await signUpManual(
+        nameSignUpManual,
+        emailSignUpManual,
+        passwordSignUpManual,
+        photoUrlSignUpManual
+      );
+      alert("Signup berhasil, welcome " + user?.displayName);
+      setUser(user);
+      closeForm();
+    } catch (error: any) {
+      alert("Terjadi kesalahan: " + error.message);
     }
   };
 
-  // Tambahkan di dalam fungsi handleGoogleSignIn dan handleGoogleSignUp
-  const handleGoogleSignIn = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-    const idToken = await result.user.getIdToken();
-    await signInGoogle(idToken);
+  const handleSignInManual = async () => {
+    try {
+      const user = await signInManual(emailSignInManual, passwordSignInManual);
+      alert("Login berhasil, welcome " + user?.displayName);
+      setUser(user);
+      closeForm();
+    } catch (error: any) {
+      alert("Terjadi kesalahan: " + error.message);
+    }
   };
 
-  const handleGoogleSignUp = async () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-    const idToken = await result.user.getIdToken();
-    await signUpGoogle(idToken);
+  const handleLogout = async () => {
+    try {
+      await signOutUser();
+      setUser(null);
+    } catch (error: any) {
+      console.error("Logout failed: ", error);
+    }
   };
 
-  // Fungsi untuk menampilkan password login
   const toggleLoginPassword = () => setShowLoginPassword(!showLoginPassword);
 
-  // Fungsi untuk menampilkan password register
   const toggleRegisterPassword = () =>
     setShowRegisterPassword(!showRegisterPassword);
 
-  // Fungsi untuk menampilkan password confirm
   const toggleConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
 
-  // Fungsi untuk menyembunyikan semua password
   const hideAllPassword = () => {
     setShowLoginPassword(false);
     setShowRegisterPassword(false);
     setShowConfirmPassword(false);
   };
 
-  // Fungsi untuk membuka modal Form
   const openForm = () => setOpenForm(true);
   const closeForm = () => {
     setOpenForm(false);
     hideAllPassword();
   };
 
-  // Fungsi untuk beralih autentikasi
-  const getLoginForm = () => {
+  const getSignInForm = () => {
     setSelected("masuk");
     hideAllPassword();
   };
-  const getRegisterForm = () => {
+
+  const getSignUpForm = () => {
     setSelected("daftar");
     hideAllPassword();
   };
@@ -223,14 +232,62 @@ export default function Header() {
 
         <NavbarContent justify="end">
           <NavbarItem>
-            <Button
-              onPress={openForm}
-              color="primary"
-              variant="flat"
-              className="font-semibold"
-            >
-              Masuk
-            </Button>
+            <div className="flex items-center gap-4">
+              <Dropdown placement="bottom-end">
+                <DropdownTrigger>
+                  {user ? (
+                    <Avatar
+                      isBordered
+                      as="button"
+                      className="transition-transform"
+                      src={user.photoURL || ""}
+                    />
+                  ) : (
+                    <Avatar
+                      isBordered
+                      as="button"
+                      className="transition-transform"
+                      src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                    />
+                  )}
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Profile Actions" variant="flat">
+                  <DropdownItem
+                    key="profile"
+                    className="h-14 gap-2 bg-slate-200"
+                  >
+                    {user ? (
+                      <>
+                        <p className="font-semibold text-wrap">
+                          Halo, {user.displayName}
+                        </p>
+                      </>
+                    ) : (
+                      <p className="font-semibold">Halo, anda belum login</p>
+                    )}
+                  </DropdownItem>
+                  {user ? (
+                    <DropdownItem
+                      onPress={handleLogout}
+                      key="keluar"
+                      color="danger"
+                      className="bg-red-500 text-white mt-1 font-semibold text-center"
+                    >
+                      Keluar
+                    </DropdownItem>
+                  ) : (
+                    <DropdownItem
+                      onPress={openForm}
+                      key="masuk"
+                      color="danger"
+                      className="bg-blue-500 text-white mt-1 font-semibold text-center"
+                    >
+                      Masuk
+                    </DropdownItem>
+                  )}
+                </DropdownMenu>
+              </Dropdown>
+            </div>
           </NavbarItem>
         </NavbarContent>
 
@@ -287,8 +344,8 @@ export default function Header() {
                     label="Email"
                     placeholder="Email"
                     variant="bordered"
-                    value={emailLogin}
-                    onChange={(e) => setEmailLogin(e.target.value)}
+                    value={emailSignInManual}
+                    onChange={(e) => setEmailSignInManual(e.target.value)}
                   />
                   <Input
                     id="passwordMasuk"
@@ -310,8 +367,8 @@ export default function Header() {
                     }
                     type={showLoginPassword ? "text" : "password"}
                     variant="bordered"
-                    value={passwordLogin}
-                    onChange={(e) => setPasswordLogin(e.target.value)}
+                    value={passwordSignInManual}
+                    onChange={(e) => setPasswordSignInManual(e.target.value)}
                   />
                   <div className="flex py-2 px-1 justify-between">
                     <Checkbox
@@ -334,7 +391,7 @@ export default function Header() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
-                      onClick={handleLoginManual}
+                      onClick={handleSignInManual}
                       className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
                     >
                       Masuk
@@ -359,7 +416,7 @@ export default function Header() {
                         <Link
                           className="text-sm font-semibold text-blue-700 hover:text-blue-800 transition-all ease-in-out cursor-pointer"
                           size="sm"
-                          onPress={getRegisterForm}
+                          onPress={getSignUpForm}
                         >
                           Daftar
                         </Link>
@@ -382,8 +439,8 @@ export default function Header() {
                     label="Nama Lengkap"
                     placeholder="Nama Lengkap"
                     variant="bordered"
-                    value={nameRegister}
-                    onChange={(e) => setNameRegister(e.target.value)}
+                    value={nameSignUpManual}
+                    onChange={(e) => setNameSignUpManual(e.target.value)}
                   />
                   <Input
                     id="emailDaftar"
@@ -392,8 +449,8 @@ export default function Header() {
                     label="Email"
                     placeholder="Email"
                     variant="bordered"
-                    value={emailRegister}
-                    onChange={(e) => setEmailRegister(e.target.value)}
+                    value={emailSignUpManual}
+                    onChange={(e) => setEmailSignUpManual(e.target.value)}
                   />
                   <Input
                     id="passwordDaftar"
@@ -415,8 +472,8 @@ export default function Header() {
                     }
                     type={showRegisterPassword ? "text" : "password"}
                     variant="bordered"
-                    value={passwordRegister}
-                    onChange={(e) => setPasswordRegister(e.target.value)}
+                    value={passwordSignUpManual}
+                    onChange={(e) => setPasswordSignUpManual(e.target.value)}
                   />
                   <Input
                     id="passwordDaftarKonfirmasi"
@@ -438,13 +495,15 @@ export default function Header() {
                     }
                     type={showConfirmPassword ? "text" : "password"}
                     variant="bordered"
-                    value={confirmPasswordRegister}
-                    onChange={(e) => setConfirmPasswordRegister(e.target.value)}
+                    value={confirmPasswordSignUpManual}
+                    onChange={(e) =>
+                      setConfirmPasswordSignUpManual(e.target.value)
+                    }
                   />
 
                   <div className="flex flex-col gap-2">
                     <button
-                      onClick={handleRegisterManual}
+                      onClick={handleSignUpManual}
                       className="bg-blue-700 w-full mx-auto rounded-lg py-2 text-white hover:bg-blue-800 transition-all ease-in-out font-semibold"
                     >
                       Daftar
@@ -470,7 +529,7 @@ export default function Header() {
 
                         <Link
                           className="text-sm font-semibold text-blue-700 hover:text-blue-800 transition-all ease-in-out cursor-pointer"
-                          onPress={getLoginForm}
+                          onPress={getSignInForm}
                         >
                           Masuk
                         </Link>
