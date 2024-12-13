@@ -1,12 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Spinner } from "@nextui-org/react";
 import { getGraphImage } from "@/services/apiVirtualAssistant";
 import Image from "next/image";
-import { Spinner } from "@nextui-org/react";
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
-import { hashKey } from "@/components/HashKey";
-import AccessNotAllowed from "@/components/AccessNotAllowed";
 import AccessChecker from "@/components/AccessChecker";
 
 export default function VisualizeGraph() {

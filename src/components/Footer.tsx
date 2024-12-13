@@ -5,7 +5,7 @@ import CallIcon from "@mui/icons-material/Call";
 import ArticleIcon from "@mui/icons-material/Article";
 import EmailIcon from "@mui/icons-material/Email";
 import LanguageIcon from "@mui/icons-material/Language";
-import UndikshaLogo from "../assets/logo/eganesha.png";
+import UndikshaLogo from "@/assets/logo/eganesha.png";
 
 export default function Footer() {
   return (

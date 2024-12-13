@@ -1,8 +1,5 @@
 "use client";
-import React from "react";
-import Image from "next/image";
-import BotLogo from "../../assets/logo/bot.png";
-import UserLogo from "../../assets/logo/user.png";
+import React, { useRef, useState, useEffect } from "react";
 import {
   Textarea,
   Button,
@@ -13,18 +10,23 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
-import SendIcon from "@mui/icons-material/Send";
-import { useRef, useState, useEffect } from "react";
-import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
-import encodeComplexData from "@/services/encodeData";
-import decodeComplexData from "@/services/decodeData";
-import Cookies from "js-cookie";
-import PreProcessMarkdown from "@/components/PreProcessMarkdown";
-import PopUpAI from "@/components/PopUpAI";
-import ShaviraButton from "@/components/HiddenKey";
+import Image from "next/image";
+import BotLogo from "@/assets/logo/bot.png";
+import UserLogo from "@/assets/logo/user.png";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
+import SendIcon from "@mui/icons-material/Send";
+import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
+import encodeComplexData from "@/services/encodeData";
+import decodeComplexData from "@/services/decodeData";
+import PreProcessMarkdown from "@/components/PreProcessMarkdown";
+import PopUpAI from "@/components/PopUpAI";
+import ShaviraButton from "@/components/HiddenKey";
+import Cookies from "js-cookie";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/services/firebase";
 
 export default function Home() {
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -35,6 +37,42 @@ export default function Home() {
   >([]);
   const [welcomeVisible, setWelcomeVisible] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+
+  const isDisabledChat =
+    loading || !user || (role ? role !== "member" && role !== "admin" : false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        const userDocRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (
+            userData &&
+            (userData.role === "member" || userData.role === "admin")
+          ) {
+            setUser(currentUser);
+            setRole(userData.role); // Set role after fetching it from Firestore
+          } else {
+            alert("You must be a member to access this AI.");
+            setUser(currentUser);
+            setRole(userData.role);
+          }
+        } else {
+          setUser(null);
+          setRole(null); // Reset role if user data doesn't exist
+        }
+      } else {
+        setUser(null);
+        setRole(null); // Reset role if no user is logged in
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchApiStatus = async () => {
@@ -77,6 +115,11 @@ export default function Home() {
 
   const handleSend = async () => {
     if (!question.trim()) return;
+
+    if (!user || (role ? role !== "member" && role !== "admin" : false)) {
+      alert("Please login member account.");
+      return;
+    }
 
     const newUserMessage = { user: question, bot: "", timestamp: "" };
     setMessages((prev) => [...prev, newUserMessage]);
@@ -122,6 +165,11 @@ export default function Home() {
   ];
 
   const handleSendDirect = async (questionText: string) => {
+    if (!user || (role ? role !== "member" && role !== "admin" : false)) {
+      alert("Please login member account.");
+      return;
+    }
+
     setWelcomeVisible(false);
     if (!questionText.trim()) return;
 
@@ -223,10 +271,10 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="flex justify-start ml-2 sm:ml-10 mr-10 sm:mr-auto text-left sm:w-[700px]">
-                    <p className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
+                    <div className="bg-slate-200 rounded-xl p-3 text-sm sm:text-base">
                       {PreProcessMarkdown("**Salam Harmoni🙏**")}
                       Aku Shavira, ada yang bisa dibantu?
-                    </p>
+                    </div>
                   </div>
                 </div>
               )}
@@ -360,7 +408,7 @@ export default function Home() {
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             onKeyDown={handleKeyPress}
-            isDisabled={loading}
+            isDisabled={isDisabledChat}
           />
 
           <Button
@@ -369,7 +417,7 @@ export default function Home() {
             disableAnimation
             variant="solid"
             onClick={handleSend}
-            isDisabled={loading}
+            isDisabled={isDisabledChat}
           >
             <SendIcon color="primary" />
           </Button>
