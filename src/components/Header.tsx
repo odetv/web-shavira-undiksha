@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import {
-  Link,
   Navbar,
   NavbarBrand,
   NavbarMenuToggle,
@@ -23,8 +22,10 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Button,
 } from "@nextui-org/react";
 import Image from "next/image";
+import Link from "next/link";
 import { Url } from "next/dist/shared/lib/router/router";
 import { usePathname } from "next/navigation";
 import { Divider } from "@mui/material";
@@ -501,13 +502,12 @@ export default function Header() {
                       </div>
                       <div className="flex flex-row gap-1 justify-center">
                         <p className="text-sm">Belum punya akun?</p>
-                        <Link
+                        <button
                           className="text-sm font-semibold text-blue-700 hover:text-blue-800 transition-all ease-in-out cursor-pointer"
-                          size="sm"
-                          onPress={getSignUpForm}
+                          onClick={getSignUpForm}
                         >
                           Daftar
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -621,12 +621,12 @@ export default function Header() {
                       <div className="flex flex-row gap-1 justify-center">
                         <p className="text-sm">Sudah punya akun?</p>
 
-                        <Link
+                        <button
                           className="text-sm font-semibold text-blue-700 hover:text-blue-800 transition-all ease-in-out cursor-pointer"
-                          onPress={getSignInForm}
+                          onClick={getSignInForm}
                         >
                           Masuk
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </div>
