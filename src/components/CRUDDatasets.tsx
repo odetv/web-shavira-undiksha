@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   Table,
   TableHeader,
@@ -29,7 +29,6 @@ import {
   updateDataset,
   deleteDataset,
 } from "@/services/apiVirtualAssistant";
-import React from "react";
 
 export default function CRUDDatasets() {
   const [datasets, setDatasets] = useState<string[]>([]);

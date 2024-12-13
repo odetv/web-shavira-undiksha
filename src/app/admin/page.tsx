@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button, Chip, Divider } from "@nextui-org/react";
-import LogsActivity from "@/components/LogsActivity";
+import { Button, Chip } from "@nextui-org/react";
 import { checkApiStatus } from "@/services/apiVirtualAssistant";
+import Link from "next/link";
+import LogsActivity from "@/components/LogsActivity";
 import AccessChecker from "@/components/AccessChecker";
 
 export default function Admin() {
@@ -79,7 +79,6 @@ export default function Admin() {
             </p>
           </div>
           <LogsActivity />
-
         </div>
       </div>
     </main>

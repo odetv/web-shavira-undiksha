@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState } from "react";
+import { Spinner } from "@nextui-org/react";
+import Image from "next/image";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import remarkGfm from "remark-gfm";
-import Image from "next/image";
 import DownloadIcon from "@mui/icons-material/Download";
-import { useState } from "react";
-import { Spinner } from "@nextui-org/react";
 
 export default function preprocessMarkdown(text: any) {
   const lines = text.split("\n");

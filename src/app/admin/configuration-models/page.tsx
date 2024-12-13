@@ -1,7 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import GoBackHome from "@/components/GoBackHome";
-import GoBackAdmin from "@/components/GoBackAdmin";
 import {
   Table,
   TableHeader,
@@ -15,6 +13,8 @@ import {
   Button,
 } from "@nextui-org/react";
 import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
+import GoBackHome from "@/components/GoBackHome";
+import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
 
 export default function CheckModel() {
