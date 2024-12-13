@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -11,8 +11,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
-import { useEffect, useState } from "react";
-import { getLogsActivity } from "../services/apiVirtualAssistant";
+import { getLogsActivity } from "@/services/apiVirtualAssistant";
 
 export default function LogsActivity() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -112,7 +111,7 @@ export default function LogsActivity() {
       }}
     >
       <TableHeader>
-        <TableColumn key="id">NO</TableColumn>
+        <TableColumn key="no">NO</TableColumn>
         <TableColumn key="id">ID</TableColumn>
         <TableColumn key="timestamp">TIMESTAMP</TableColumn>
         <TableColumn key="method">METHOD</TableColumn>

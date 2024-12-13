@@ -1,9 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import { Button, Chip, Divider } from "@nextui-org/react";
-import LogsActivity from "@/components/LogsActivity";
+import { Button, Chip } from "@nextui-org/react";
 import { checkApiStatus } from "@/services/apiVirtualAssistant";
+import Link from "next/link";
+import LogsActivity from "@/components/LogsActivity";
 import AccessChecker from "@/components/AccessChecker";
 
 export default function Admin() {
@@ -37,6 +37,13 @@ export default function Admin() {
             variant="solid"
             radius="sm"
             className="bg-blue-500 text-white text-sm sm:text-base font-medium"
+          >
+            <Link href="/admin/management-users">Manajemen Pengguna</Link>
+          </Button>
+          <Button
+            variant="solid"
+            radius="sm"
+            className="bg-zinc-500 text-white text-sm sm:text-base font-medium"
           >
             <Link href="/admin/management-datasets">Manajemen Dataset</Link>
           </Button>

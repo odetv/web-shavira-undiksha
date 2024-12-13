@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import anime from "animejs";
 import Image from "next/image";
-import Logo from "../assets/logo/eganesha.png";
+import anime from "animejs";
+import Logo from "@/assets/logo/eganesha.png";
 
 const SplashScreen: React.FC<{ finishLoading: () => void }> = ({
   finishLoading,

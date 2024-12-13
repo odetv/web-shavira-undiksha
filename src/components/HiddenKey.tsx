@@ -7,7 +7,7 @@ import {
   ModalContent,
   ModalFooter,
 } from "@nextui-org/react";
-import { hashKey } from "../components/HashKey";
+import { hashKey } from "@/components/HashKey";
 import Link from "next/link";
 
 const ShaviraButton = () => {

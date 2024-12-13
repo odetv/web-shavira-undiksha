@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import {
   Table,
   TableHeader,
@@ -204,6 +204,10 @@ export default function CRUDDatasets() {
     setIsModalDeleteOpen(true);
   };
 
+  const onClear = React.useCallback(() => {
+    setSearchQuery("");
+  }, []);
+
   return (
     <main className="w-full">
       <Table
@@ -240,6 +244,7 @@ export default function CRUDDatasets() {
               className="w-full sm:max-w-[25%] max-w-[55%]"
               placeholder="Search"
               startContent={<SearchIcon color="disabled" />}
+              onClear={() => onClear()}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
