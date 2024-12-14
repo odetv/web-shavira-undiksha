@@ -6,15 +6,13 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import AccessChecker from "@/components/AccessChecker";
 import SearchIcon from "@mui/icons-material/Search";
-import PersonIcon from '@mui/icons-material/Person';
-import EmailIcon from '@mui/icons-material/Email';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-
-
+import { ToastContainer, toast, Bounce } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
-
+import AddUserModal from "@/components/modal/AddUserModal";
+import DeleteUserModal from "@/components/modal/DeleteUserModal";
+import EditUserModal from "@/components/modal/EditUserModal";
 
 type User = {
   nama: string;
@@ -80,7 +78,6 @@ export default function CheckModel() {
     setShowConfirmPassword(false);
   };
 
-
   const [page, setPage] = React.useState(1);
   const rowsPerPage = 10;
 
@@ -135,6 +132,30 @@ export default function CheckModel() {
     setEditUserActive(false)
   }
 
+  // Notifikasi Toast
+  const handleAddUser = () => {
+    // Tempat fungsi untuk menghapus pengguna
+    // 
+    // 
+    closeAddUserModal();
+    toast.success("Pengguna berhasil ditambahkan!");
+  } 
+
+  const handleDeleteUser = () => {
+    // Tempat fungsi untuk menghapus pengguna
+    // 
+    // 
+    closeDeleteUserModal();
+    toast.success("Pengguna berhasil dihapus");
+  }
+  const handleEditUser = () => {
+    // Tempat fungsi untuk mengperbarui pengguna
+    // 
+    // 
+    closeDeleteUserModal();
+    toast.success("Pengguna berhasil diperbarui!");
+  }
+
   const onClear = React.useCallback(() => {
     setSearchQuery("");
   }, []);
@@ -149,6 +170,7 @@ export default function CheckModel() {
 
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-xl 2xl:max-w-screen-2xl">
+      <ToastContainer position="top-center"/>
       <div className="text-center text-black tracking-wide">
         <h1 className="text-3xl sm:text-5xl font-bold pb-2">
           Manajemen User
@@ -271,233 +293,35 @@ export default function CheckModel() {
       </div>
 
       {/* Tampilan Modal untuk Add User */}
-      <Modal isOpen={isAddUserActive} onOpenChange={closeAddUserModal} className="mt-8">
-        <ModalContent className="p-2">
-          <ModalHeader>
-            <Alert color="primary">Tambah Akun Pengguna</Alert>
-          </ModalHeader>
-          <ModalBody>
-            <Form>
-              <Input
-                isRequired
-                label="Nama Lengkap"
-                className="mb-1"
-                labelPlacement="outside"
-                name="Username"
-                placeholder="Masukkan nama lengkap"
-                type="text"
-                endContent={<PersonIcon color="disabled" />}
-              />
-              <Input
-                isRequired
-                className="mb-1"
-                label="Email"
-                labelPlacement="outside"
-                name="email"
-                placeholder="Masukkan email"
-                type="email"
-                endContent={<EmailIcon color="disabled" />}
-              />
-              <Input
-                isRequired
-                className="mb-1"
-                label="Password"
-                labelPlacement="outside"
-                name="password"
-                placeholder="Masukkan password"
-                type={showPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowPassword}
-                  >
-                    {showPassword ? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-              />
-              <Input
-                isRequired
-                className="mb-1"
-                label="Konfirmasi Password"
-                labelPlacement="outside"
-                name="konfirmasi-password"
-                placeholder="Konfirmasi password"
-                type={showConfirmPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowConfirmPassword}
-                  >
-                    {showConfirmPassword? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-              />
-              <Select
-                isRequired
-                className="mb-1"
-                label="Role"
-                labelPlacement="outside"
-                name="role"
-                defaultSelectedKeys={["registered"]}
-              >
-                <SelectItem key="admin" value="admin">
-                  Admin
-                </SelectItem>
-                <SelectItem key="member" value="member">
-                  Member
-                </SelectItem>
-                <SelectItem key="registered" value="registered">
-                  Registered
-                </SelectItem>
-              </Select>
-              <Select
-                isRequired
-                className="mb-1"
-                label="Status"
-                labelPlacement="outside"
-                name="status"
-                defaultSelectedKeys={["active"]}
-              >
-                <SelectItem key="active" value="active">
-                  Active
-                </SelectItem>
-                <SelectItem key="suspend" value="suspend">
-                  Suspend
-                </SelectItem>
-              </Select>
-            </Form>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="danger" variant="light" onPress={closeAddUserModal}>
-              Batal
-            </Button>
-            <Button color="primary">
-              Tambah
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <AddUserModal 
+        isOpen={isAddUserActive} 
+        onSubmit={handleAddUser} 
+        onClose={closeAddUserModal} 
+        showPassword={showPassword} 
+        toggleShowPassword={toggleShowPassword} 
+        showConfirmPassword={showConfirmPassword} 
+        toggleShowConfirmPassword={toggleShowConfirmPassword} 
+      />
 
       {/* Modal Untuk Delete User */}
-      <Modal isOpen={isDeleteUserActive} onOpenChange={closeDeleteUserModal}>
-        <ModalContent className="p-8">
-          <ModalHeader>
-            <Alert color="danger">Konfirmasi Hapus Akun</Alert>
-          </ModalHeader>
-          <ModalBody className="flex text-center">Apakah kamu yakin ingin menghapus pengguna ini?<strong>{selectedUser?.nama}</strong> perubahan ini akan bersifat permanen </ModalBody>
-          <ModalFooter className="flex justify-center gap-5">
-            <Button color="default" size="lg" onPress={closeDeleteUserModal}>Batal</Button>
-            <Button color="danger" size="lg">Hapus</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <DeleteUserModal 
+        isOpen={isDeleteUserActive} 
+        onClose={closeDeleteUserModal} 
+        onDelete={handleDeleteUser} 
+        selectedUser={selectedUser} 
+      />
       
       {/* Modal untuk Edit User */}
-      <Modal isOpen={isEditUserActive} onOpenChange={closeEditUserModal}>
-        <ModalContent className="p-4">
-          <ModalHeader className="flex justify-center">
-            <Alert color="warning" title="">Perbarui Data Pengguna</Alert>
-          </ModalHeader>
-          <ModalBody>
-            <Form>
-              <Input
-                className="mb-4"
-                label="Nama"
-                isRequired
-                labelPlacement="outside"
-                value={selectedUser?.nama || ''}
-                endContent={<PersonIcon color="disabled" />}
-                onChange={(e) => setSelectedUser({ ...selectedUser!, nama: e.target.value })}
-              />
-              <Input
-                label="Password"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                placeholder="Masukkan password baru"
-                type={showPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowPassword}
-                  >
-                    {showPassword ? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-              />
-              <Input
-                label="Konfirmasi Password"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                placeholder="Ketik ulang password baru"
-                type={showConfirmPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowConfirmPassword}
-                  >
-                    {showConfirmPassword? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-              />
-              <Select
-                label="Role"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                defaultSelectedKeys={[selectedUser?.role || '']}
-                value={selectedUser?.role || ''}
-                onChange={(e) => setSelectedUser({ ...selectedUser!, role: e.target.value })}
-              >
-                <SelectItem key="admin" value="admin">Admin</SelectItem>
-                <SelectItem key="member" value="member">Member</SelectItem>
-                <SelectItem key="registered" value="registered">Registered</SelectItem>
-              </Select>
-              <Select
-                label="Status"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                defaultSelectedKeys={[selectedUser?.status || '']}
-                value={selectedUser?.status || ''}
-                onChange={(e) => setSelectedUser({ ...selectedUser!, status: e.target.value })}
-              >
-                <SelectItem key="active" value="active">Aktif</SelectItem>
-                <SelectItem key="suspend" value="suspend">Suspend</SelectItem>
-              </Select>
-            </Form>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="danger" variant="light" onPress={closeEditUserModal}>
-              Batal
-            </Button>
-            <Button color="primary" onPress={() => console.log('Save changes')}>
-              Simpan
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <EditUserModal 
+        isOpen={isEditUserActive} 
+        onClose={closeEditUserModal} 
+        onSubmit={handleEditUser} 
+        showPassword={showPassword} 
+        toggleShowPassword={toggleShowPassword} 
+        showConfirmPassword={showConfirmPassword} 
+        toggleShowConfirmPassword={toggleShowConfirmPassword} 
+        selectedUser={selectedUser} 
+      />
     </main>
   );
 }
