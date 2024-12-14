@@ -440,24 +440,25 @@ export default function Home() {
       </div>
 
       <Modal
+        backdrop="blur"
         isOpen={isOpenDeniedAccessAI}
         placement="center"
         hideCloseButton
         size="sm"
-        className="m-4"
+        className="m-8"
       >
         <ModalContent>
           <>
-            <ModalHeader className="flex flex-col gap-1">
+            <ModalHeader className="flex justify-center">
               Info Akses Shavira
             </ModalHeader>
             <ModalBody>
-              <p>
+              <p className="text-sm text-center">
                 Maaf, anda belum memiliki akses ke Shavira. Silahkan tunggu
                 administrator untuk memberikan akses.
               </p>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="flex justify-center">
               <Button onPress={closeUserDeniedAccessAI} color="primary">
                 OK
               </Button>
@@ -467,24 +468,25 @@ export default function Home() {
       </Modal>
 
       <Modal
+        backdrop="blur"
         isOpen={isOpenDeniedAccessAIUserNotLogged}
         placement="center"
         hideCloseButton
         size="sm"
-        className="m-4"
+        className="m-8"
       >
         <ModalContent>
           <>
-            <ModalHeader className="flex flex-col gap-1">
+            <ModalHeader className="flex justify-center">
               Info Akses Shavira
             </ModalHeader>
             <ModalBody>
-              <p>
+              <p className="text-sm text-center">
                 Maaf, anda belum memiliki akses ke Shavira. Silahkan masuk atau
                 daftar akun terlebih dahulu.
               </p>
             </ModalBody>
-            <ModalFooter>
+            <ModalFooter className="flex justify-center">
               <Button
                 onPress={closeUserDeniedAccessAIUserNotLogged}
                 color="primary"

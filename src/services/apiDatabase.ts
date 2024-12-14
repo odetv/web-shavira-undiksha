@@ -7,6 +7,7 @@ import {
   signInWithPopup,
   sendPasswordResetEmail,
   signOut,
+  deleteUser,
 } from "firebase/auth";
 import {
   doc,
@@ -17,8 +18,128 @@ import {
   query,
   where,
   getDocs,
+  updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import bcrypt from "bcryptjs";
+
+const formatTimestamp = (timestamp: Timestamp) => {
+  const date = timestamp.toDate();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+export const createUser = async (
+  name: string,
+  email: string,
+  password: string,
+  photoUrl: string,
+  role: string,
+  status: string
+) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      name,
+      email,
+      photo_url: photoUrl,
+      password: hashedPassword,
+      role: role,
+      status: status,
+      type_user: "manual",
+      created_at: Timestamp.fromDate(new Date()),
+      updated_at: Timestamp.fromDate(new Date()),
+    });
+
+    return user;
+  } catch (error: any) {
+    console.error("Error creating user: ", error);
+    throw new Error(error.message);
+  }
+};
+
+export const readUsers = async () => {
+  try {
+    const usersRef = collection(db, "users");
+    const snapshot = await getDocs(usersRef);
+
+    const userList = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      const createdAt =
+        data.created_at instanceof Timestamp
+          ? formatTimestamp(data.created_at)
+          : "";
+      const updatedAt =
+        data.updated_at instanceof Timestamp
+          ? formatTimestamp(data.updated_at)
+          : "";
+
+      return {
+        uid: data.uid,
+        photo_url: data.photo_url || "",
+        name: data.name || "",
+        email: data.email || "",
+        type_user: data.type_user || "",
+        role: data.role || "",
+        status: data.status || "",
+        created_at: createdAt,
+        updated_at: updatedAt,
+      };
+    });
+
+    return userList;
+  } catch (error) {
+    console.error("Error reading users:", error);
+    // throw new Error("Gagal mengambil data pengguna");
+  }
+};
+
+export const quickUpdateUserRole = async (userId: string, newRole: string) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      role: newRole,
+      updated_at: Timestamp.fromDate(new Date()),
+    });
+  } catch (error: any) {
+    console.error("Error updating user role:", error);
+    throw new Error("Gagal memperbarui role pengguna");
+  }
+};
+
+export const updateUser = async (
+  userId: string,
+  name: string,
+  role: string,
+  status: string
+) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {
+      name: name,
+      role: role,
+      status: status,
+      updated_at: Timestamp.fromDate(new Date()),
+    });
+    return { message: "User updated successfully" };
+  } catch (error: any) {
+    console.error("Error updating user: ", error);
+    throw new Error("Failed to update user");
+  }
+};
 
 export const signUpManual = async (
   name: string,
@@ -161,3 +282,6 @@ export const signOutUser = async () => {
     throw new Error(error.message);
   }
 };
+function deleteFirebaseUser(user: any) {
+  throw new Error("Function not implemented.");
+}

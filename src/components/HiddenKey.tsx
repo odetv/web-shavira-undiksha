@@ -129,7 +129,7 @@ const ShaviraButton = () => {
             clearInterval(intervalRef.current);
           }
         }}
-        placement="auto"
+        placement="center"
         size="xl"
         classNames={{
           backdrop:
@@ -146,21 +146,15 @@ const ShaviraButton = () => {
                     admin panel dalam {countdown} detik.
                   </p>
                   <div className="flex flex-row gap-2 justify-center items-center -mb-5">
-                    <Button
-                      variant="solid"
-                      color="danger"
-                      className="font-semibold"
+                    <button
+                      className="font-semibold bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600 cursor-pointer transition-all ease-in-out"
                       onClick={handleLoginAgain}
                     >
                       Reset Session
-                    </Button>
-                    <Button
-                      variant="solid"
-                      color="primary"
-                      className="font-semibold"
-                    >
+                    </button>
+                    <button className="font-semibold bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 cursor-pointer transition-all ease-in-out">
                       <Link href={urlAdmin}>Admin Panel</Link>
-                    </Button>
+                    </button>
                   </div>
                 </div>
               ) : (
@@ -183,9 +177,7 @@ const ShaviraButton = () => {
             </ModalBody>
             <ModalFooter>
               {!showCountdown && (
-                <Button
-                  variant="solid"
-                  color="primary"
+                <button
                   className={`text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer transition-all ease-in-out font-semibold ${
                     errorMessage || !inputKey
                       ? "opacity-50 pointer-events-none"
@@ -194,7 +186,7 @@ const ShaviraButton = () => {
                   onClick={validateAndRedirect}
                 >
                   Submit
-                </Button>
+                </button>
               )}
             </ModalFooter>
           </div>
