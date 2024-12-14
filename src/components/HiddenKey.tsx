@@ -183,9 +183,7 @@ const ShaviraButton = () => {
             </ModalBody>
             <ModalFooter>
               {!showCountdown && (
-                <Button
-                  variant="solid"
-                  color="primary"
+                <button
                   className={`text-sm bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 cursor-pointer transition-all ease-in-out font-semibold ${
                     errorMessage || !inputKey
                       ? "opacity-50 pointer-events-none"
@@ -194,7 +192,7 @@ const ShaviraButton = () => {
                   onClick={validateAndRedirect}
                 >
                   Submit
-                </Button>
+                </button>
               )}
             </ModalFooter>
           </div>
