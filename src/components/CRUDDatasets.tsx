@@ -213,10 +213,10 @@ export default function CRUDDatasets() {
       <Table
         aria-label="CRUDDatasets"
         topContent={
-          <div className="flex flex-wrap w-full justify-center sm:justify-end gap-2">
+          <div className="flex flex-wrap w-full justify-start sm:justify-end gap-2">
             <button
               onClick={() => setIsModalAddOpen(true)}
-              className="bg-primary-500 px-2 py-2 rounded-lg text-white"
+              className="bg-primary-500 px-3 py-2 rounded-lg text-white  hover:bg-primary-400 transition-all ease-in-out"
             >
               <NoteAddIcon />
             </button>

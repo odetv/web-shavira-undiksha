@@ -185,12 +185,11 @@ export default function CheckModel() {
               </div>
             }
             topContent={
-              <div className="flex flex-wrap w-full justify-end gap-2 py-3">
+              <div className="flex flex-wrap w-full justify-start sm:justify-end gap-2">
                 {/* Tombol Open Add User Modal */}
-                <Button
-                  onPress={openAddUserModal}
-                  color="primary"
-                  className="flex items-center"
+                <button
+                  onClick={openAddUserModal}
+                  className="flex items-center bg-primary-500 text-white px-3 py-2 rounded-lg hover:bg-primary-400 transition-all ease-in-out"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -203,8 +202,7 @@ export default function CheckModel() {
                     <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
                     <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
                   </svg>
-                  Tambah Akun
-                </Button>
+                </button>
                 <Input
                   isClearable
                   className="w-full sm:max-w-[25%] max-w-[55%]"
