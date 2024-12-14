@@ -5,9 +5,19 @@ import {
   updateProfile,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
-import { doc, setDoc, Timestamp, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  Timestamp,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import bcrypt from "bcryptjs";
 
 export const signUpManual = async (
@@ -122,6 +132,23 @@ export const signUpGoogle = async () => {
     return user;
   } catch (error: any) {
     console.error("Error signing up with Google: ", error);
+    throw new Error(error.message);
+  }
+};
+
+export const resetPassword = async (email: string) => {
+  try {
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      throw new Error("Email tidak terdaftar di sistem.");
+    }
+
+    await sendPasswordResetEmail(auth, email);
+    return "Email reset password telah dikirim! Silakan periksa inbox Anda.";
+  } catch (error: any) {
     throw new Error(error.message);
   }
 };

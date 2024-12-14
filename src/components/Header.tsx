@@ -23,6 +23,7 @@ import {
   DropdownMenu,
   DropdownTrigger,
   Button,
+  ModalFooter,
 } from "@nextui-org/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,6 +42,7 @@ import {
   signInGoogle,
   signUpGoogle,
   signOutUser,
+  resetPassword,
 } from "@/services/apiDatabase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -65,6 +67,8 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [selected, setSelected] = React.useState<string | number>("masuk");
   const [isOpenForm, setOpenForm] = useState(false);
+  const [isOpenForgotPassword, setOpenForgotPassword] = useState(false);
+  const [isEmailForgotPassword, setEmailForgotPassword] = useState("");
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showRegisterPassword, setShowRegisterPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -83,6 +87,8 @@ export default function Header() {
   const [photoUrl, setPhotoUrl] = useState<string>("");
   const [role, setRole] = useState<string>("");
 
+  const isEmailForgotPasswordEnabled =
+    isEmailForgotPassword !== "" && isEmailForgotPassword !== "";
   const isSignInEnabled =
     emailSignInManual !== "" && passwordSignInManual !== "";
   const isSignUpEnabled =
@@ -178,6 +184,22 @@ export default function Header() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!isEmailForgotPassword) {
+      alert("Email tidak boleh kosong.");
+      return;
+    }
+
+    try {
+      const message = await resetPassword(isEmailForgotPassword);
+      alert(message);
+      closeForgotPassword(); // Menutup modal setelah berhasil
+    } catch (error: any) {
+      console.error("Error: ", error);
+      alert(error.message); // Menampilkan pesan error jika ada
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await signOutUser();
@@ -203,6 +225,10 @@ export default function Header() {
   };
 
   const openForm = () => setOpenForm(true);
+
+  const openForgotPassword = () => setOpenForgotPassword(true);
+  const closeForgotPassword = () => setOpenForgotPassword(false);
+
   const closeForm = () => {
     setOpenForm(false);
     hideAllPassword();
@@ -454,23 +480,28 @@ export default function Header() {
                     onChange={(e) => setPasswordSignInManual(e.target.value)}
                   />
                   <div className="flex py-2 px-1 justify-between">
-                    <Checkbox
-                      classNames={{
-                        label: "text-small",
-                      }}
-                    >
-                      Ingat Saya
-                    </Checkbox>
                     <Tooltip
                       showArrow={true}
                       size="sm"
                       content="Maaf, Fitur belum tersedia."
                       color="danger"
                     >
-                      <Link color="primary" href="#" className="text-sm">
-                        Lupa Password?
-                      </Link>
+                      <Checkbox
+                        classNames={{
+                          label: "text-small",
+                        }}
+                      >
+                        Ingat Saya
+                      </Checkbox>
                     </Tooltip>
+                    <Link
+                      onClick={openForgotPassword}
+                      color="primary"
+                      href="#"
+                      className="text-sm hover:text-blue-500 cursor-pointer transition-all ease-in-out"
+                    >
+                      Lupa Password?
+                    </Link>
                   </div>
                   <div className="flex flex-col gap-2">
                     <button
@@ -634,6 +665,48 @@ export default function Header() {
               </Tab>
             </Tabs>
           </div>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isOpenForgotPassword}
+        placement="center"
+        hideCloseButton
+        size="sm"
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Lupa Password
+            </ModalHeader>
+            <ModalBody>
+              <Input
+                id="emailForgotPassword"
+                endContent={<EmailIcon color="disabled" />}
+                isRequired
+                label="Email"
+                placeholder="Masukkan email terdaftar"
+                variant="bordered"
+                onChange={(e) => setEmailForgotPassword(e.target.value)}
+              />
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                color="danger"
+                variant="flat"
+                onPress={closeForgotPassword}
+              >
+                Batal
+              </Button>
+              <Button
+                isDisabled={!isEmailForgotPasswordEnabled}
+                color="primary"
+                onPress={handleForgotPassword}
+              >
+                Kirim
+              </Button>
+            </ModalFooter>
+          </>
         </ModalContent>
       </Modal>
     </>
