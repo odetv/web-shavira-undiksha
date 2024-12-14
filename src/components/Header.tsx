@@ -340,7 +340,7 @@ export default function Header() {
                     {user ? (
                       <>
                         <p className="font-semibold text-wrap">{name}</p>
-                        <p className="text-xs">{role}</p>
+                        <p className="text-xs capitalize">{role}</p>
                       </>
                     ) : (
                       <>
