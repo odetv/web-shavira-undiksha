@@ -673,6 +673,7 @@ export default function Header() {
         placement="center"
         hideCloseButton
         size="sm"
+        className="m-4"
       >
         <ModalContent>
           <>
