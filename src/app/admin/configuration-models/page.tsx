@@ -17,7 +17,7 @@ import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
 
-export default function CheckModel() {
+export default function ConfigurationModels() {
   const [lastConfig, setLastConfig] = useState<any>(null);
   const [llm, setLLM] = useState("");
   const [modelLLM, setModelLLM] = useState("");

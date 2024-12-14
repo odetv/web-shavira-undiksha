@@ -5,7 +5,7 @@ import GoBackHome from "@/components/GoBackHome";
 import CRUDDatasets from "@/components/CRUDDatasets";
 import AccessChecker from "@/components/AccessChecker";
 
-export default function ManajemenDatasets() {
+export default function ManagementDatasets() {
   const [isValidKey, setIsValidKey] = useState<boolean>(false);
   const handleAccessChecked = (valid: boolean) => {
     setIsValidKey(valid);
