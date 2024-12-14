@@ -114,14 +114,6 @@ export default function Header() {
           setPhotoUrl(newPhotoUrl);
           setRole(userData?.role || "registered");
           setName(userData?.name || null);
-
-          // Ambil ID Token pengguna
-          const idToken = await currentUser.getIdToken();
-
-          // Simpan ID Token ke cookie (misalnya)
-          document.cookie = `firebase_token=${idToken}; path=/; secure`;
-
-          console.log("ID Token:", idToken);
         }
       } else {
         setUser(null);
