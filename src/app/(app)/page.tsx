@@ -9,6 +9,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
 } from "@nextui-org/react";
 import Image from "next/image";
 import BotLogo from "@/assets/logo/bot.png";
@@ -37,6 +42,11 @@ export default function Home() {
   >([]);
   const [welcomeVisible, setWelcomeVisible] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [isOpenDeniedAccessAI, setOpenDeniedAccessAI] = useState(false);
+  const [
+    isOpenDeniedAccessAIUserNotLogged,
+    setOpenDeniedAccessAIUserNotLogged,
+  ] = useState(false);
 
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string | null>(null);
@@ -58,7 +68,7 @@ export default function Home() {
             setUser(currentUser);
             setRole(userData.role); // Set role after fetching it from Firestore
           } else {
-            alert("You must be a member to access this AI.");
+            setOpenDeniedAccessAI(true);
             setUser(currentUser);
             setRole(userData.role);
           }
@@ -67,12 +77,17 @@ export default function Home() {
           setRole(null); // Reset role if user data doesn't exist
         }
       } else {
+        setOpenDeniedAccessAIUserNotLogged(true);
         setUser(null);
         setRole(null); // Reset role if no user is logged in
       }
     });
     return () => unsubscribe();
   }, []);
+
+  const closeUserDeniedAccessAI = () => setOpenDeniedAccessAI(false);
+  const closeUserDeniedAccessAIUserNotLogged = () =>
+    setOpenDeniedAccessAIUserNotLogged(false);
 
   useEffect(() => {
     const fetchApiStatus = async () => {
@@ -423,6 +438,63 @@ export default function Home() {
           </Button>
         </div>
       </div>
+
+      <Modal
+        isOpen={isOpenDeniedAccessAI}
+        placement="center"
+        hideCloseButton
+        size="sm"
+        className="m-4"
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Info Akses Shavira
+            </ModalHeader>
+            <ModalBody>
+              <p>
+                Maaf, anda belum memiliki akses ke Shavira. Silahkan tunggu
+                administrator untuk memberikan akses.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button onPress={closeUserDeniedAccessAI} color="primary">
+                OK
+              </Button>
+            </ModalFooter>
+          </>
+        </ModalContent>
+      </Modal>
+
+      <Modal
+        isOpen={isOpenDeniedAccessAIUserNotLogged}
+        placement="center"
+        hideCloseButton
+        size="sm"
+        className="m-4"
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex flex-col gap-1">
+              Info Akses Shavira
+            </ModalHeader>
+            <ModalBody>
+              <p>
+                Maaf, anda belum memiliki akses ke Shavira. Silahkan masuk atau
+                daftar akun terlebih dahulu.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onPress={closeUserDeniedAccessAIUserNotLogged}
+                color="primary"
+              >
+                OK
+              </Button>
+            </ModalFooter>
+          </>
+        </ModalContent>
+      </Modal>
     </main>
   );
 }
