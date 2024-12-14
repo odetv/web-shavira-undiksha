@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableHeader,
@@ -19,6 +19,7 @@ import {
   Input,
   Select,
   SelectItem,
+  Avatar,
 } from "@nextui-org/react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -30,104 +31,249 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
+import LockResetIcon from "@mui/icons-material/LockReset";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import GoogleIcon from "@mui/icons-material/Google";
+import {
+  createUser,
+  readUsers,
+  quickUpdateUserRole,
+  resetPassword,
+  updateUser,
+} from "@/services/apiDatabase";
+import { auth } from "@/services/firebase";
+import Image from "next/image";
 
 type User = {
-  nama: string;
+  uid: string;
+  name: string;
   email: string;
-  tipe_login: string;
+  type_user: string;
   role: string;
   status: string;
   created_at: string;
   updated_at: string;
 };
 
-// Contoh data dummy
-const users = [
-  {
-    id: 1,
-    nama: "gelgel",
-    email: "gelgel@example.com",
-    tipe_login: "Manual",
-    role: "admin",
-    status: "active",
-    created_at: "2023-12-12 00:00:00",
-    updated_at: "2024-12-12 00:00:00",
-  },
-  {
-    id: 2,
-    nama: "Diar",
-    email: "sudiar@example.com",
-    tipe_login: "Google",
-    role: "admin",
-    status: "active",
-    created_at: "2023-12-12 00:00:00",
-    updated_at: "2024-12-12 00:00:00",
-  },
-  {
-    id: 3,
-    nama: "Alya",
-    email: "alyad@example.com",
-    tipe_login: "Google",
-    role: "member",
-    status: "suspend",
-    created_at: "2023-12-12 00:00:00",
-    updated_at: "2024-12-12 00:00:00",
-  },
-];
-
-export default function CheckModel() {
-  const [isLoading, setIsLoading] = useState(false);
+export default function ManagementUsers() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loadingSync, setLoadingSync] = useState<boolean>(false);
   const [isAddUserActive, setAddUserActive] = useState(false);
   const [isDeleteUserActive, setDeleteUserActive] = useState(false);
+  const [isResetUserActive, setResetUserActive] = useState(false);
   const [isEditUserActive, setEditUserActive] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [page, setPage] = React.useState(1);
 
-  // Fungsi untuk menampilkan password
+  const [nameCreateUserManual, setNameCreateUserManual] = useState("");
+  const [emailCreateUserManual, setEmailCreateUserManual] = useState("");
+  const [passwordCreateUserManual, setPasswordCreateUserManual] = useState("");
+  const [confirmPasswordCreateUserManual, setConfirmPasswordCreateUserManual] =
+    useState("");
+  const [photoUrlCreateUserManual, setPhotoUrlCreateUserManual] = useState("");
+  const [roleCreateUserManual, setRoleCreateUserManual] = useState<string>("");
+  const [statusCreateUserManual, setStatusCreateUserManual] =
+    useState<string>("");
+
+  const isCreateUserEnabled =
+    nameCreateUserManual !== "" &&
+    emailCreateUserManual !== "" &&
+    passwordCreateUserManual !== "" &&
+    confirmPasswordCreateUserManual !== "" &&
+    passwordCreateUserManual === confirmPasswordCreateUserManual &&
+    photoUrlCreateUserManual !== "" &&
+    roleCreateUserManual !== "" &&
+    statusCreateUserManual !== "";
+
+  useEffect(() => {
+    if (!photoUrlCreateUserManual) {
+      setPhotoUrlCreateUserManual(
+        "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg"
+      );
+    }
+  }, [photoUrlCreateUserManual]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersData = await readUsers();
+        setUsers(usersData || []);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
+    fetchUsers();
+  }, []);
+
+  const handleSync = async () => {
+    setLoadingSync(true);
+    const usersData = await readUsers();
+    setUsers(usersData || []);
+    setLoadingSync(false);
+  };
+
+  const handleCreateUserManual = async () => {
+    if (passwordCreateUserManual !== confirmPasswordCreateUserManual) {
+      alert("Password dan konfirmasi password tidak cocok.");
+      return;
+    }
+    try {
+      const user = await createUser(
+        nameCreateUserManual,
+        emailCreateUserManual,
+        passwordCreateUserManual,
+        photoUrlCreateUserManual,
+        roleCreateUserManual,
+        statusCreateUserManual
+      );
+      setUsers((prevUsers) => [...prevUsers, user]);
+      setAddUserActive(false);
+      window.location.reload();
+    } catch (error: any) {
+      alert("Terjadi kesalahan: " + error.message);
+    }
+  };
+
+  const handleResetAccount = async () => {
+    if (!selectedUser) {
+      alert("Pengguna tidak ditemukan");
+      return;
+    }
+    try {
+      const message = await resetPassword(selectedUser.email);
+      alert(message);
+      closeResetUserModal();
+    } catch (error: any) {
+      console.error("Error: ", error);
+      alert(error.message);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) {
+      alert("Pengguna tidak ditemukan");
+      return;
+    }
+    try {
+      const response = await fetch("/api/db/delete-user", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ uid: selectedUser.uid }),
+      });
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message);
+        setDeleteUserActive(false);
+        setUsers((prevUsers) =>
+          prevUsers.filter((user) => user.uid !== selectedUser.uid)
+        );
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Terjadi kesalahan saat menghapus pengguna.");
+      setDeleteUserActive(false);
+    }
+  };
+
+  const handleQuickRoleChange = async (userId: string, newRole: string) => {
+    try {
+      await quickUpdateUserRole(userId, newRole);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.uid === userId ? { ...user, role: newRole } : user
+        )
+      );
+      alert("Role berhasil diubah menjadi " + newRole);
+    } catch (error) {
+      alert("Terjadi kesalahan saat mengupdate role pengguna.");
+    }
+  };
+
+  const handleEditUser = async () => {
+    if (!selectedUser) {
+      alert("Pengguna tidak ditemukan");
+      return;
+    }
+
+    try {
+      const response = await updateUser(
+        selectedUser.uid,
+        selectedUser.name,
+        selectedUser.role,
+        selectedUser.status
+      );
+      alert(response.message);
+      setEditUserActive(false);
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.uid === selectedUser.uid
+            ? {
+                ...user,
+                name: selectedUser.name,
+                role: selectedUser.role,
+                status: selectedUser.status,
+              }
+            : user
+        )
+      );
+    } catch (error) {
+      alert("Terjadi kesalahan saat memperbarui pengguna");
+    }
+  };
+
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
 
-  // Fungsi menyembunyikan semua password
   const hideAllPassword = () => {
     setShowPassword(false);
     setShowConfirmPassword(false);
   };
 
-  const [page, setPage] = React.useState(1);
-  const rowsPerPage = 10;
-
+  const rowsPerPage = 5;
   const filteredUsers = React.useMemo(() => {
+    if (!users) return [];
     if (!searchQuery) return users;
     return users.filter(
-      (user) =>
-        user.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (user: any) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.tipe_login.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.type_user.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
         user.status.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [searchQuery]);
-
-  const pages = Math.ceil(filteredUsers.length / rowsPerPage); // Menggunakan filteredUsers untuk menghitung jumlah halaman
-
+  }, [searchQuery, users]);
+  const pages = Math.ceil(filteredUsers.length / rowsPerPage);
   const items = React.useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
-    return filteredUsers.slice(start, end); // Menampilkan data yang sudah difilter
-  }, [page, filteredUsers, rowsPerPage]);
+    return filteredUsers.slice(start, end);
+  }, [page, filteredUsers]);
 
-  // Fungsi untuk mengelola Modal
-  // 1. Modal Add User
   const openAddUserModal = () => setAddUserActive(true);
   const closeAddUserModal = () => {
-    hideAllPassword();
+    setSelectedUser(null);
     setAddUserActive(false);
   };
 
-  // 2. Modal Delete User
+  const openResetUserModal = (user: User) => {
+    setSelectedUser(user);
+    setResetUserActive(true);
+  };
+  const closeResetUserModal = () => {
+    setSelectedUser(null);
+    setResetUserActive(false);
+  };
+
   const openDeleteUserModal = (user: User) => {
     setSelectedUser(user);
     setDeleteUserActive(true);
@@ -137,10 +283,9 @@ export default function CheckModel() {
     setDeleteUserActive(false);
   };
 
-  // 3. Modal Edit User
   const openEditUserModal = (user: User) => {
-    setSelectedUser(user); // Menyimpan pengguna yang dipilih ke dalam state
-    setEditUserActive(true); // Membuka modal edit
+    setSelectedUser(user);
+    setEditUserActive(true);
   };
   const closeEditUserModal = () => {
     hideAllPassword();
@@ -170,7 +315,7 @@ export default function CheckModel() {
           <div className="pb-4 flex justify-end"></div>
           <Table
             className="w-full"
-            aria-label="Configuration Model"
+            aria-label="Manajement Users"
             bottomContent={
               <div className="flex w-full justify-center">
                 <Pagination
@@ -191,18 +336,17 @@ export default function CheckModel() {
                   onClick={openAddUserModal}
                   className="flex items-center bg-primary-500 text-white px-3 py-2 rounded-lg hover:bg-primary-400 transition-all ease-in-out"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    className="bi bi-person-fill-add"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
-                    <path d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
-                  </svg>
+                  <PersonAddAlt1Icon />
                 </button>
+                <Button
+                  isLoading={loadingSync}
+                  variant="solid"
+                  color="success"
+                  className="text-white font-semibold"
+                  onPress={handleSync}
+                >
+                  Sync
+                </Button>
                 <Input
                   isClearable
                   className="w-full sm:max-w-[25%] max-w-[55%]"
@@ -216,44 +360,68 @@ export default function CheckModel() {
             }
           >
             <TableHeader>
-              <TableColumn>No</TableColumn>
-              <TableColumn>Nama</TableColumn>
-              <TableColumn>Email</TableColumn>
-              <TableColumn>Tipe Login</TableColumn>
-              <TableColumn>Role</TableColumn>
-              <TableColumn>Status</TableColumn>
-              <TableColumn>Waktu Dibuat</TableColumn>
-              <TableColumn>Waktu Diperbarui</TableColumn>
-              <TableColumn>Aksi</TableColumn>
+              <TableColumn className="uppercase">No</TableColumn>
+              <TableColumn className="uppercase">Nama</TableColumn>
+              <TableColumn className="uppercase">Email</TableColumn>
+              <TableColumn className="uppercase">Tipe Akun</TableColumn>
+              <TableColumn className="uppercase">Role</TableColumn>
+              <TableColumn className="uppercase">Status</TableColumn>
+              <TableColumn className="uppercase">Waktu Dibuat</TableColumn>
+              <TableColumn className="uppercase">Waktu Diperbarui</TableColumn>
+              <TableColumn className="uppercase">Aksi</TableColumn>
             </TableHeader>
-            <TableBody emptyContent={"Konfigurasi tidak ditemukan."}>
+            <TableBody emptyContent={"Pengguna tidak ditemukan."}>
               {items.map((user, index) => (
-                <TableRow key={user.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{user.nama}</TableCell>
+                <TableRow key={user.uid}>
+                  <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
+                  <TableCell className="flex flex-row justify-start items-center gap-3 pr-12 sm:pr-0">
+                    <Image
+                      className="rounded-full p-0.5 outline-slate-300 outline-2 outline"
+                      width={40}
+                      height={40}
+                      alt={user.name}
+                      src={user.photo_url}
+                    />
+                    <p>{user.name}</p>
+                  </TableCell>
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.tipe_login}</TableCell>
-                  <TableCell>
-                    <Form className="w-32">
-                      <Select
-                        isRequired
-                        labelPlacement="outside"
-                        aria-label="role"
-                        defaultSelectedKeys={[user.role]}
-                      >
-                        <SelectItem key="admin" value="admin">
-                          Admin
-                        </SelectItem>
-                        <SelectItem key="member" value="member">
-                          Member
-                        </SelectItem>
-                        <SelectItem key="registered" value="registered">
-                          Registered
-                        </SelectItem>
-                      </Select>
-                    </Form>
+                  <TableCell className="capitalize text-center text-slate-500">
+                    {user.type_user === "google" ? (
+                      <GoogleIcon />
+                    ) : (
+                      <EmailIcon />
+                    )}
                   </TableCell>
                   <TableCell>
+                    {user.uid === auth.currentUser?.uid ? (
+                      <p className="capitalize pl-3">{user.role}</p>
+                    ) : (
+                      <Form className="w-32">
+                        <Select
+                          isRequired
+                          labelPlacement="outside"
+                          aria-label="role"
+                          defaultSelectedKeys={[user.role]}
+                          value={user.role}
+                          onChange={(e) =>
+                            handleQuickRoleChange(user.uid, e.target.value)
+                          }
+                        >
+                          <SelectItem key="admin" value="admin">
+                            Admin
+                          </SelectItem>
+                          <SelectItem key="member" value="member">
+                            Member
+                          </SelectItem>
+                          <SelectItem key="registered" value="registered">
+                            Registered
+                          </SelectItem>
+                        </Select>
+                      </Form>
+                    )}
+                  </TableCell>
+
+                  <TableCell className="text-center">
                     {user.status == "active" ? (
                       <CheckCircleIcon color="success" />
                     ) : (
@@ -263,41 +431,48 @@ export default function CheckModel() {
                   <TableCell>{user.created_at}</TableCell>
                   <TableCell>{user.updated_at}</TableCell>
                   <TableCell className="flex gap-2">
-                    {/* Tombol Delete User */}
-                    <Button
-                      isIconOnly
-                      color="danger"
-                      onPress={() => openDeleteUserModal(user)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="#FFFFFF"
-                        className="bi bi-trash3-fill"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
-                      </svg>
-                    </Button>
-
-                    {/* Tombol Edit User */}
-                    <Button
-                      isIconOnly
-                      color="warning"
-                      onPress={() => openEditUserModal(user)}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="#FFFFFF"
-                        className="bi bi-pencil-fill"
-                        viewBox="0 0 16 16"
-                      >
-                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
-                      </svg>
-                    </Button>
+                    {user.uid !== auth.currentUser?.uid ? (
+                      <>
+                        <Button
+                          isIconOnly
+                          color="success"
+                          onPress={() => openEditUserModal(user)}
+                        >
+                          <EditIcon className="text-white" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          color="warning"
+                          onPress={() => openResetUserModal(user)}
+                        >
+                          <LockResetIcon className="text-white" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          color="danger"
+                          onPress={() => openDeleteUserModal(user)}
+                        >
+                          <DeleteIcon className="text-white" />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          isIconOnly
+                          color="success"
+                          onPress={() => openEditUserModal(user)}
+                        >
+                          <EditIcon className="text-white" />
+                        </Button>
+                        <Button
+                          isIconOnly
+                          color="warning"
+                          onPress={() => openResetUserModal(user)}
+                        >
+                          <LockResetIcon className="text-white" />
+                        </Button>
+                      </>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -312,6 +487,8 @@ export default function CheckModel() {
 
       {/* Tampilan Modal untuk Add User */}
       <Modal
+        placement="center"
+        backdrop="opaque"
         isOpen={isAddUserActive}
         onOpenChange={closeAddUserModal}
         className="mt-8"
@@ -327,10 +504,12 @@ export default function CheckModel() {
                 label="Nama Lengkap"
                 className="mb-1"
                 labelPlacement="outside"
-                name="Username"
+                name="name"
                 placeholder="Masukkan nama lengkap"
                 type="text"
                 endContent={<PersonIcon color="disabled" />}
+                value={nameCreateUserManual}
+                onChange={(e) => setNameCreateUserManual(e.target.value)}
               />
               <Input
                 isRequired
@@ -341,6 +520,8 @@ export default function CheckModel() {
                 placeholder="Masukkan email"
                 type="email"
                 endContent={<EmailIcon color="disabled" />}
+                value={emailCreateUserManual}
+                onChange={(e) => setEmailCreateUserManual(e.target.value)}
               />
               <Input
                 isRequired
@@ -363,13 +544,15 @@ export default function CheckModel() {
                     )}
                   </button>
                 }
+                value={passwordCreateUserManual}
+                onChange={(e) => setPasswordCreateUserManual(e.target.value)}
               />
               <Input
                 isRequired
                 className="mb-1"
                 label="Konfirmasi Password"
                 labelPlacement="outside"
-                name="konfirmasi-password"
+                name="confirmPassword"
                 placeholder="Konfirmasi password"
                 type={showConfirmPassword ? "text" : "password"}
                 endContent={
@@ -385,6 +568,10 @@ export default function CheckModel() {
                     )}
                   </button>
                 }
+                value={confirmPasswordCreateUserManual}
+                onChange={(e) =>
+                  setConfirmPasswordCreateUserManual(e.target.value)
+                }
               />
               <Select
                 isRequired
@@ -392,7 +579,8 @@ export default function CheckModel() {
                 label="Role"
                 labelPlacement="outside"
                 name="role"
-                defaultSelectedKeys={["registered"]}
+                value={roleCreateUserManual}
+                onChange={(e) => setRoleCreateUserManual(e.target.value)}
               >
                 <SelectItem key="admin" value="admin">
                   Admin
@@ -410,13 +598,14 @@ export default function CheckModel() {
                 label="Status"
                 labelPlacement="outside"
                 name="status"
-                defaultSelectedKeys={["active"]}
+                value={statusCreateUserManual}
+                onChange={(e) => setStatusCreateUserManual(e.target.value)}
               >
                 <SelectItem key="active" value="active">
-                  Active
+                  Aktif
                 </SelectItem>
                 <SelectItem key="suspend" value="suspend">
-                  Suspend
+                  Blokir
                 </SelectItem>
               </Select>
             </Form>
@@ -425,27 +614,66 @@ export default function CheckModel() {
             <Button color="danger" variant="light" onPress={closeAddUserModal}>
               Batal
             </Button>
-            <Button color="primary">Tambah</Button>
+            <Button
+              onClick={handleCreateUserManual}
+              isDisabled={!isCreateUserEnabled}
+              color="primary"
+            >
+              Tambah
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Modal Untuk Reset User */}
+      <Modal
+        placement="center"
+        backdrop="opaque"
+        isOpen={isResetUserActive}
+        onOpenChange={closeResetUserModal}
+      >
+        <ModalContent className="p-8">
+          <ModalHeader>
+            <Alert color="danger">Konfirmasi Reset Akun</Alert>
+          </ModalHeader>
+          <ModalBody className="flex text-center">
+            Apakah kamu yakin ingin mereset akun pengguna ini?
+            <strong>{selectedUser?.name}</strong>
+            Link reset password akan dikirimkan ke email ini{" "}
+            <strong>{selectedUser?.email}</strong>
+          </ModalBody>
+          <ModalFooter className="flex justify-center gap-5">
+            <Button color="default" size="lg" onPress={closeResetUserModal}>
+              Batal
+            </Button>
+            <Button color="warning" size="lg" onPress={handleResetAccount}>
+              Reset
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
 
       {/* Modal Untuk Delete User */}
-      <Modal isOpen={isDeleteUserActive} onOpenChange={closeDeleteUserModal}>
+      <Modal
+        placement="center"
+        backdrop="opaque"
+        isOpen={isDeleteUserActive}
+        onOpenChange={closeDeleteUserModal}
+      >
         <ModalContent className="p-8">
           <ModalHeader>
             <Alert color="danger">Konfirmasi Hapus Akun</Alert>
           </ModalHeader>
           <ModalBody className="flex text-center">
             Apakah kamu yakin ingin menghapus pengguna ini?
-            <strong>{selectedUser?.nama}</strong> perubahan ini akan bersifat
+            <strong>{selectedUser?.name}</strong> perubahan ini akan bersifat
             permanen{" "}
           </ModalBody>
           <ModalFooter className="flex justify-center gap-5">
             <Button color="default" size="lg" onPress={closeDeleteUserModal}>
               Batal
             </Button>
-            <Button color="danger" size="lg">
+            <Button color="danger" size="lg" onPress={handleDeleteUser}>
               Hapus
             </Button>
           </ModalFooter>
@@ -453,7 +681,12 @@ export default function CheckModel() {
       </Modal>
 
       {/* Modal untuk Edit User */}
-      <Modal isOpen={isEditUserActive} onOpenChange={closeEditUserModal}>
+      <Modal
+        placement="center"
+        backdrop="opaque"
+        isOpen={isEditUserActive}
+        onOpenChange={closeEditUserModal}
+      >
         <ModalContent className="p-4">
           <ModalHeader className="flex justify-center">
             <Alert color="warning" title="">
@@ -467,52 +700,10 @@ export default function CheckModel() {
                 label="Nama"
                 isRequired
                 labelPlacement="outside"
-                value={selectedUser?.nama || ""}
+                value={selectedUser?.name || ""}
                 endContent={<PersonIcon color="disabled" />}
                 onChange={(e) =>
-                  setSelectedUser({ ...selectedUser!, nama: e.target.value })
-                }
-              />
-              <Input
-                label="Password"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                placeholder="Masukkan password baru"
-                type={showPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowPassword}
-                  >
-                    {showPassword ? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
-                }
-              />
-              <Input
-                label="Konfirmasi Password"
-                className="mb-4"
-                isRequired
-                labelPlacement="outside"
-                placeholder="Ketik ulang password baru"
-                type={showConfirmPassword ? "text" : "password"}
-                endContent={
-                  <button
-                    className="focus:outline-none"
-                    type="button"
-                    onClick={toggleShowConfirmPassword}
-                  >
-                    {showConfirmPassword ? (
-                      <RemoveRedEyeIcon className="text-2xl text-default-400 pointer-events-none" />
-                    ) : (
-                      <VisibilityOffIcon className="text-2xl text-default-400 pointer-events-none" />
-                    )}
-                  </button>
+                  setSelectedUser({ ...selectedUser!, name: e.target.value })
                 }
               />
               <Select
@@ -551,7 +742,7 @@ export default function CheckModel() {
                   Aktif
                 </SelectItem>
                 <SelectItem key="suspend" value="suspend">
-                  Suspend
+                  Blokir
                 </SelectItem>
               </Select>
             </Form>
@@ -560,7 +751,11 @@ export default function CheckModel() {
             <Button color="danger" variant="light" onPress={closeEditUserModal}>
               Batal
             </Button>
-            <Button color="primary" onPress={() => console.log("Save changes")}>
+            <Button
+              color="primary"
+              onClick={handleEditUser}
+              onPress={() => console.log("Save changes")}
+            >
               Simpan
             </Button>
           </ModalFooter>
