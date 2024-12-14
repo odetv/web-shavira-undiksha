@@ -114,6 +114,14 @@ export default function Header() {
           setPhotoUrl(newPhotoUrl);
           setRole(userData?.role || "registered");
           setName(userData?.name || null);
+
+          // Ambil ID Token pengguna
+          const idToken = await currentUser.getIdToken();
+
+          // Simpan ID Token ke cookie (misalnya)
+          document.cookie = `firebase_token=${idToken}; path=/; secure`;
+
+          console.log("ID Token:", idToken);
         }
       } else {
         setUser(null);
@@ -307,6 +315,20 @@ export default function Header() {
               </Link>
             </NavbarItem>
           ))}
+          {role === "admin" && (
+            <NavbarItem key="admin">
+              <Link
+                href="/admin"
+                className={`${
+                  isActive("/admin")
+                    ? "text-blue-500"
+                    : "text-black hover:text-blue-500"
+                }`}
+              >
+                Administrator
+              </Link>
+            </NavbarItem>
+          )}
         </NavbarContent>
 
         <NavbarContent justify="end">
@@ -315,18 +337,19 @@ export default function Header() {
               <Dropdown placement="bottom-end">
                 <DropdownTrigger>
                   {user ? (
-                    <Avatar
-                      isBordered
-                      as="button"
-                      className="transition-transform"
+                    <Image
+                      className="rounded-full p-0.5 outline-slate-300 outline-2 outline cursor-pointer transition-all ease-in-out"
+                      width={42}
+                      height={42}
+                      alt={photoUrl}
                       src={photoUrl || GuestIcon.src}
-                      key={photoUrl}
                     />
                   ) : (
-                    <Avatar
-                      isBordered
-                      as="button"
-                      className="transition-transform"
+                    <Image
+                      className="rounded-full p-0.5 outline-slate-300 outline-2 outline cursor-pointer transition-all ease-in-out"
+                      width={42}
+                      height={42}
+                      alt={photoUrl}
                       src={GuestIcon.src}
                     />
                   )}
@@ -418,6 +441,20 @@ export default function Header() {
               </Link>
             </NavbarMenuItem>
           ))}
+          {role === "admin" && (
+            <NavbarMenuItem key="admin">
+              <Link
+                href="/admin"
+                className={`${
+                  isActive("/admin")
+                    ? "text-blue-500"
+                    : "text-black hover:text-blue-500"
+                }`}
+              >
+                Administrator
+              </Link>
+            </NavbarMenuItem>
+          )}
         </NavbarMenu>
       </Navbar>
       <Modal
