@@ -20,7 +20,7 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
+import NoteAddIcon from "@mui/icons-material/NoteAdd";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   getDatasets,
@@ -216,9 +216,9 @@ export default function CRUDDatasets() {
           <div className="flex flex-wrap w-full justify-center sm:justify-end gap-2">
             <button
               onClick={() => setIsModalAddOpen(true)}
-              className="bg-cyan-500 px-2 py-2 rounded-lg text-white"
+              className="bg-primary-500 px-2 py-2 rounded-lg text-white"
             >
-              <AddIcon />
+              <NoteAddIcon />
             </button>
 
             {selectedKeys.size > 0 && (
@@ -242,7 +242,7 @@ export default function CRUDDatasets() {
             <Input
               isClearable
               className="w-full sm:max-w-[25%] max-w-[55%]"
-              placeholder="Search"
+              placeholder="Cari Dataset"
               startContent={<SearchIcon color="disabled" />}
               onClear={() => onClear()}
               value={searchQuery}

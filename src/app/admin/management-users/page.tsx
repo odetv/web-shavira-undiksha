@@ -208,7 +208,7 @@ export default function CheckModel() {
                 <Input
                   isClearable
                   className="w-full sm:max-w-[25%] max-w-[55%]"
-                  placeholder="Search"
+                  placeholder="Cari Pengguna"
                   startContent={<SearchIcon color="disabled" />}
                   onClear={() => onClear()}
                   value={searchQuery}
