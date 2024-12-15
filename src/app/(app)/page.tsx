@@ -27,7 +27,6 @@ import encodeComplexData from "@/services/encodeData";
 import decodeComplexData from "@/services/decodeData";
 import PreProcessMarkdown from "@/components/PreProcessMarkdown";
 import PopUpAI from "@/components/PopUpAI";
-import ShaviraButton from "@/components/HiddenKey";
 import Cookies from "js-cookie";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -212,7 +211,6 @@ export default function Home() {
         ${welcomeVisible ? "justify-center" : ""}`}
     >
       <PopUpAI />
-      <ShaviraButton />
 
       <div
         id="info-bot"
