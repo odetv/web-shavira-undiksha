@@ -36,7 +36,7 @@ export default function PopUpAI() {
           "bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20",
       }}
     >
-      <ModalContent className="m-4">
+      <ModalContent className="m-2">
         <div className="flex flex-row gap-2 justify-center items-center p-1">
           <ModalBody>
             <p className="text-sm">

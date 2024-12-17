@@ -204,7 +204,7 @@ export default function Header() {
     try {
       await signOutUser();
       setUser(null);
-      window.location.reload();
+      window.location.href = "/";
     } catch (error: any) {
       console.error("Logout failed: ", error);
     }
@@ -434,7 +434,7 @@ export default function Header() {
             </NavbarMenuItem>
           ))}
           {role === "admin" && (
-            <NavbarMenuItem key="admin">
+            <NavbarMenuItem onClick={() => setIsMenuOpen(false)} key="admin">
               <Link
                 href="/admin"
                 className={`${
