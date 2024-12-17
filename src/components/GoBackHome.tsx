@@ -3,8 +3,6 @@ import Link from "next/link";
 
 export default function GoBackHome() {
   return (
-    <Button color="primary" variant="bordered">
-      <Link href="/">Kembali ke Beranda</Link>
-    </Button>
+    <Link href="/" className="text-sm font-semibold border-2 border-blue-500  text-blue-500 px-4 py-2 rounded-lg cursor-pointer transition-all ease-in-out">Kembali ke Beranda</Link>
   );
 }

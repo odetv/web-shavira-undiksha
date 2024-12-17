@@ -209,8 +209,9 @@ export default function CRUDDatasets() {
   }, []);
 
   return (
-    <main className="w-full">
+    <main className="m-4">
       <Table
+      className=""
         aria-label="CRUDDatasets"
         topContent={
           <div className="flex flex-wrap w-full justify-start sm:justify-end gap-2">
