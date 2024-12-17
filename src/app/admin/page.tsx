@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Button, Chip } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 import { checkApiStatus } from "@/services/apiVirtualAssistant";
 import Link from "next/link";
 import LogsActivity from "@/components/LogsActivity";

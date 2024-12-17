@@ -1,9 +1,9 @@
 "use client";
-import React, { useEffect, useState, useMemo, useRef } from "react"
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import GoBackHome from "@/components/GoBackHome";
 import SearchIcon from "@mui/icons-material/Search";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -22,15 +22,10 @@ import {
   Modal,
   ModalContent,
   ModalBody,
-  Alert,
   ModalHeader,
   ModalFooter,
-  Form,
   Input,
-  Select,
-  SelectItem,
-  Avatar,
-  Image
+  Image,
 } from "@nextui-org/react";
 import {
   getDatasets,
@@ -39,7 +34,6 @@ import {
   updateDataset,
   deleteDataset,
 } from "@/services/apiVirtualAssistant";
-import CRUDDatasets from "@/components/CRUDDatasets";
 import AccessChecker from "@/components/AccessChecker";
 
 export default function ManagementDatasets() {
@@ -220,16 +214,26 @@ export default function ManagementDatasets() {
     setSearchQuery("");
   }, []);
 
+  const [isValidKey, setIsValidKey] = useState<boolean>(false);
+  const handleAccessChecked = (valid: boolean) => {
+    setIsValidKey(valid);
+  };
+  if (!isValidKey) {
+    return <AccessChecker onAccessChecked={handleAccessChecked} />;
+  }
+
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-xl 2xl:max-w-screen-2xl">
       <div className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Manajemen Dataset</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">
+          Manajemen Dataset
+        </h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
         <div className="">
           <div className="pb-4 flex justify-end"></div>
           <Table
-            className="w-full overflow-auto border border-gray-400 rounded-2xl shadow-md"
+            className="w-full overflow-auto rounded-2xl shadow-md"
             aria-label="Manajement Users"
             bottomContent={
               <div className="flex w-full justify-center">
@@ -265,16 +269,23 @@ export default function ManagementDatasets() {
                 )}
 
                 <button
-                  className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${loadingSync ? "bg-green-400" : "bg-green-500"}`}
+                  className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
+                    loadingSync ? "bg-green-400" : "bg-green-500"
+                  }`}
                   onClick={handleSync}
                   disabled={loadingSync}
                 >
                   {loadingSync ? (
-                    <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
-                    ) : (
-                      ""
-                    )}
-                    Sync
+                    <Image
+                      width={20}
+                      height={20}
+                      src={LoadingIcon.src}
+                      alt={"Loading"}
+                    />
+                  ) : (
+                    ""
+                  )}
+                  Sync
                 </button>
                 <Input
                   isClearable
@@ -294,11 +305,16 @@ export default function ManagementDatasets() {
                 {/* CHECKBOX UNTUK MENGAMBIL MENYELEKSI SEMUA FILE */}
                 <input
                   type="checkbox"
-                  checked={filteredDatasets.length > 0 && selectedKeys.size === filteredDatasets.length}
+                  checked={
+                    filteredDatasets.length > 0 &&
+                    selectedKeys.size === filteredDatasets.length
+                  }
                   ref={(input) => {
                     if (input) {
                       input.indeterminate =
-                        filteredDatasets.length > 0 && selectedKeys.size > 0 && selectedKeys.size < filteredDatasets.length;
+                        filteredDatasets.length > 0 &&
+                        selectedKeys.size > 0 &&
+                        selectedKeys.size < filteredDatasets.length;
                     }
                   }}
                   onClick={handleSelectAll}
@@ -309,9 +325,9 @@ export default function ManagementDatasets() {
               <TableColumn className="uppercase">Nama File</TableColumn>
               <TableColumn className="uppercase">Aksi</TableColumn>
             </TableHeader>
-            <TableBody emptyContent={"Dataset tidak ditemukan."}>
-            {items.map((filename, index) => (
-              <TableRow key={filename} className="cursor-context-menu">
+            <TableBody emptyContent={"Dataset tidak ditemukan"}>
+              {items.map((filename, index) => (
+                <TableRow key={filename} className="cursor-context-menu">
                   <TableCell>
                     <input
                       type="checkbox"
@@ -357,7 +373,7 @@ export default function ManagementDatasets() {
               ))}
             </TableBody>
           </Table>
-          
+
           {/* MODAL UNTUK MENGHAPUS FILE */}
           <Modal
             id="delete-files"
@@ -365,8 +381,9 @@ export default function ManagementDatasets() {
             isOpen={isModalDeleteOpen}
             onClose={() => setIsModalDeleteOpen(false)}
             placement="center"
+            className="m-2"
           >
-            <ModalContent className="m-4 p-1">
+            <ModalContent className="p-1">
               <ModalHeader>
                 <h4>Konfirmasi Penghapusan</h4>
               </ModalHeader>
@@ -417,8 +434,9 @@ export default function ManagementDatasets() {
             id="add-files"
             backdrop="opaque"
             placement="center"
+            className="m-2"
           >
-            <ModalContent className="m-4 p-1">
+            <ModalContent className="p-1">
               <ModalHeader>
                 <h4>Tambahkan Dataset</h4>
               </ModalHeader>
@@ -479,8 +497,9 @@ export default function ManagementDatasets() {
             id="update-file"
             backdrop="opaque"
             placement="center"
+            className="m-2"
           >
-            <ModalContent className="m-4 p-1">
+            <ModalContent className="p-1">
               <ModalHeader>
                 <h4>Perbarui Dataset</h4>
               </ModalHeader>
@@ -505,7 +524,10 @@ export default function ManagementDatasets() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" onPress={() => setIsModalUpdateOpen(false)}>
+                <Button
+                  color="danger"
+                  onPress={() => setIsModalUpdateOpen(false)}
+                >
                   Batal
                 </Button>
                 <Button
@@ -522,8 +544,8 @@ export default function ManagementDatasets() {
         </div>
       </div>
       <div className="flex flex-col gap-2 mt-3">
-        <GoBackAdmin/>
-        <GoBackHome/>
+        <GoBackAdmin />
+        <GoBackHome />
       </div>
     </main>
   );

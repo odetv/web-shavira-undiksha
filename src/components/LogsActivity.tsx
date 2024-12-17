@@ -124,7 +124,7 @@ export default function LogsActivity() {
         <TableColumn key="success">SUCCESS</TableColumn>
         <TableColumn key="description">DESCTIPTION</TableColumn>
       </TableHeader>
-      <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan."}>
+      <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan"}>
         {(item) => (
           <TableRow key={item.ID}>
             <TableCell>
