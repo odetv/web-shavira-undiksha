@@ -35,6 +35,7 @@ import {
   deleteDataset,
 } from "@/services/apiVirtualAssistant";
 import AccessChecker from "@/components/AccessChecker";
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function ManagementDatasets() {
   const [datasets, setDatasets] = useState<string[]>([]);
@@ -301,8 +302,7 @@ export default function ManagementDatasets() {
           >
             {/* HEADER UNTUK TABEL */}
             <TableHeader>
-              <TableColumn className="uppercase">
-                {/* CHECKBOX UNTUK MENGAMBIL MENYELEKSI SEMUA FILE */}
+              {/* <TableColumn className="uppercase">
                 <input
                   type="checkbox"
                   checked={
@@ -320,7 +320,7 @@ export default function ManagementDatasets() {
                   onClick={handleSelectAll}
                   className="form-checkbox h-5 w-5 text-blue-500"
                 />
-              </TableColumn>
+              </TableColumn> */}
               <TableColumn className="uppercase">NO</TableColumn>
               <TableColumn className="uppercase">Nama File</TableColumn>
               <TableColumn className="uppercase">Aksi</TableColumn>
@@ -328,45 +328,42 @@ export default function ManagementDatasets() {
             <TableBody emptyContent={"Dataset tidak ditemukan"}>
               {items.map((filename, index) => (
                 <TableRow key={filename} className="cursor-context-menu">
-                  <TableCell>
+                  {/* <TableCell>
                     <input
                       type="checkbox"
                       checked={selectedKeys.has(filename)}
                       onClick={() => handleSelectionChange(filename)}
                       className="h-5 w-5 text-blue-500"
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
                   <TableCell>{filename}</TableCell>
                   <TableCell>
                     <div className="relative flex items-center gap-2">
-                      <Tooltip content="Lihat File">
-                        <span
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                          onClick={() => handleViewFile(filename)}
-                        >
-                          <VisibilityOutlinedIcon />
-                        </span>
-                      </Tooltip>
-                      <Tooltip content="Perbarui File">
-                        <span
-                          className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                          onClick={() => {
-                            setFileToUpdate(filename);
-                            setIsModalUpdateOpen(true);
-                          }}
-                        >
-                          <EditOutlinedIcon />
-                        </span>
-                      </Tooltip>
-                      <Tooltip color="danger" content="Hapus File">
-                        <span
-                          className="text-lg text-danger cursor-pointer active:opacity-50"
-                          onClick={() => handleDeleteSingle(filename)}
-                        >
-                          <DeleteForeverOutlinedIcon />
-                        </span>
-                      </Tooltip>
+                      <Button
+                        isIconOnly
+                        color="warning"
+                        onPress={() => handleViewFile(filename)}
+                      >
+                        <VisibilityOutlinedIcon className="text-white" />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        color="success"
+                        onPress={() => {
+                          setFileToUpdate(filename);
+                          setIsModalUpdateOpen(true);
+                        }}
+                      >
+                        <EditIcon className="text-white" />
+                      </Button>
+                      <Button
+                        isIconOnly
+                        color="danger"
+                        onPress={() => handleDeleteSingle(filename)}
+                      >
+                        <DeleteIcon className="text-white" />
+                      </Button>
                     </div>
                   </TableCell>
                 </TableRow>
