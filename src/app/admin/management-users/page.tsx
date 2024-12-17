@@ -44,6 +44,7 @@ import {
   updateUser,
 } from "@/services/apiDatabase";
 import { auth } from "@/services/firebase";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
 import Image from "next/image";
 
 type User = {
@@ -308,13 +309,13 @@ export default function ManagementUsers() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-xl 2xl:max-w-screen-2xl">
       <div className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Manajemen User</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Manajemen Pengguna</h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
         <div>
           <div className="pb-4 flex justify-end"></div>
           <Table
-            className="w-full"
+            className="w-full overflow-auto"
             aria-label="Manajement Users"
             bottomContent={
               <div className="flex w-full justify-center">
@@ -338,15 +339,18 @@ export default function ManagementUsers() {
                 >
                   <PersonAddAlt1Icon />
                 </button>
-                <Button
-                  isLoading={loadingSync}
-                  variant="solid"
-                  color="success"
-                  className="text-white font-semibold"
-                  onPress={handleSync}
+                <button
+                  className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${loadingSync ? "bg-green-400" : "bg-green-500"}`}
+                  onClick={handleSync}
+                  disabled={loadingSync}
                 >
-                  Sync
-                </Button>
+                  {loadingSync ? (
+                    <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
+                    ) : (
+                      ""
+                    )}
+                    Sync
+                </button>
                 <Input
                   isClearable
                   className="w-full sm:max-w-[25%] max-w-[55%]"
@@ -614,13 +618,14 @@ export default function ManagementUsers() {
             <Button color="danger" variant="light" onPress={closeAddUserModal}>
               Batal
             </Button>
-            <Button
+            <button
+            className={`rounded-md px-4 py-2 text-white 
+              ${isCreateUserEnabled ? 'bg-blue-500 hover:bg-blue-400' : 'bg-blue-300 cursor-not-allowed'}`}
               onClick={handleCreateUserManual}
-              isDisabled={!isCreateUserEnabled}
-              color="primary"
+              disabled={!isCreateUserEnabled}
             >
-              Tambah
-            </Button>
+            Tambah
+          </button>
           </ModalFooter>
         </ModalContent>
       </Modal>

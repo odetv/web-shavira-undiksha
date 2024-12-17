@@ -26,6 +26,7 @@ import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
 import encodeComplexData from "@/services/encodeData";
 import decodeComplexData from "@/services/decodeData";
 import PreProcessMarkdown from "@/components/PreProcessMarkdown";
+import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 import PopUpAI from "@/components/PopUpAI";
 import Cookies from "js-cookie";
 import { onAuthStateChanged, User } from "firebase/auth";
@@ -49,6 +50,29 @@ export default function Home() {
 
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      // Memastikan dropdownRef ada dan event tidak terjadi di dalamnya
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    // Menambahkan event listener untuk mouse dan touch
+    document.addEventListener('mousedown', handleClickOutside); // Untuk perangkat mouse
+    document.addEventListener('touchstart', handleClickOutside); // Untuk perangkat touchscreen
+
+    // Membersihkan event listener ketika komponen di-unmount
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, []);
 
   const isDisabledChat =
     loading || !user || (role ? role !== "member" && role !== "admin" : false);
@@ -102,6 +126,8 @@ export default function Home() {
         chatContainerRef.current.scrollHeight;
     }
   };
+
+  
 
   useEffect(() => {
     const encodedBotUser = Cookies.get("botUser");
@@ -165,6 +191,7 @@ export default function Home() {
   };
 
   const handleReset = () => {
+    setIsDropdownOpen(false);
     setMessages([]);
     Cookies.remove("botUser");
     setWelcomeVisible(true);
@@ -207,14 +234,15 @@ export default function Home() {
 
   return (
     <main
-      className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8
+      className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8 
         ${welcomeVisible ? "justify-center" : ""}`}
     >
+      
       <PopUpAI />
 
       <div
         id="info-bot"
-        className={`text-center text-white tracking-wide text-3xl sm:text-5xl
+        className={`text-center text-white tracking-wide text-3xl sm:text-5xl 
           ${welcomeVisible ? "sm:-mt-20 -mt-32" : ""}`}
       >
         <h1 className="text-3xl sm:text-5xl font-bold pb-2">Shavira</h1>
@@ -363,54 +391,47 @@ export default function Home() {
           }`}
       >
         <div className="flex flex-row justify-between items-center gap-2">
-          <Dropdown backdrop="opaque" isDisabled={loading} placement="top">
-            <DropdownTrigger>
-              <button>
-                <MoreVertIcon
-                  color="primary"
-                  className="cursor-pointer hover:text-blue-400"
-                />
-              </button>
-            </DropdownTrigger>
-            <DropdownMenu aria-label="opsi-input">
-              <DropdownItem
-                key="ticket"
-                className="bg-slate-200 mb-1"
-                textValue="ticket"
-              >
-                <Button
-                  color="secondary"
-                  startContent={<ConfirmationNumberIcon />}
-                  variant="light"
-                  fullWidth
-                  className="font-semibold"
+          {/* Tombol Tiga Titik Dropdown */}
+          
+          <div className="relative inline-block text-left " ref={dropdownRef}>
+            <button 
+              onClick={toggleDropdown} 
+              disabled={loading} 
+              className="cursor-pointer hover:text-blue-400"
+            >
+              <MoreVertIcon color="primary" />
+            </button>
+
+            {isDropdownOpen && (
+              <>
+                <div className="absolute bottom-10 left-0 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-lg z-40 transform transition-all duration-300 ease-out opacity-0 scale-70"
+                  style={{
+                    transform: isDropdownOpen ? 'scale(1)' : 'scale(0.95)',
+                    opacity: isDropdownOpen ? 1 : 0,
+                  }}  
                 >
-                  <a
-                    href="https://missu.undiksha.ac.id/"
-                    className="flex flex-col text-wrap text-center"
-                  >
-                    Buat Ticket
-                  </a>
-                </Button>
-              </DropdownItem>
-              <DropdownItem
-                key="reset"
-                className="bg-slate-200"
-                textValue="reset"
-              >
-                <Button
-                  color="secondary"
-                  startContent={<RestartAltIcon />}
-                  onClick={handleReset}
-                  variant="light"
-                  fullWidth
-                  className="font-semibold"
-                >
-                  Reset Chat
-                </Button>
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+                  <div className="p-4">
+                    <a href="https://missu.undiksha.ac.id/" className="block" onClick={() => toggleDropdown()}>
+                      <div className="flex justify-center rounded-lg items-center gap-2 py-2 text-blue-500 font-semibold hover:bg-blue-50">
+                        <ConfirmationNumberIcon />
+                        Buat Tiket
+                      </div>
+                    </a>
+                    <button 
+                      onClick={handleReset} 
+                      className="w-full flex justify-center items-center"
+                    >
+                      <div  className="w-full flex justify-center rounded-lg items-center gap-2 py-2 px-4 text-blue-500 font-semibold hover:bg-blue-50">
+                        <RestartAltIcon />
+                        Reset Chat
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
           <Textarea
             minRows={1}
             placeholder="Kirim pesan ke Shavira"
@@ -424,16 +445,13 @@ export default function Home() {
             isDisabled={isDisabledChat}
           />
 
-          <Button
-            isIconOnly
-            disableRipple
-            disableAnimation
-            variant="solid"
+          <button
+            className={`text-white font-semibold p-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${isDisabledChat ? "bg-gray-100" : "bg-gray-300"}`}
             onClick={handleSend}
-            isDisabled={isDisabledChat}
+            disabled={isDisabledChat}
           >
-            <SendIcon color="primary" />
-          </Button>
+            <SendIcon className={isDisabledChat ? "text-blue-300" : "text-blue-500"} />
+          </button>
         </div>
       </div>
 
