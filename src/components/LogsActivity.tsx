@@ -8,10 +8,12 @@ import {
   TableCell,
   Pagination,
   Input,
-  Button,
+  Button
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
 import { getLogsActivity } from "@/services/apiVirtualAssistant";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
+import Image from "next/image";
 
 export default function LogsActivity() {
   const [logs, setLogs] = useState<any[]>([]);
@@ -73,15 +75,18 @@ export default function LogsActivity() {
       aria-label="Logs"
       topContent={
         <div className="flex w-full justify-start sm:justify-end gap-2">
-          <Button
-            variant="solid"
-            color="success"
-            className="text-white font-semibold"
+          <button
+            className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${loading ? "bg-green-400" : "bg-green-500"}`}
             onClick={handleSync}
-            isLoading={loading}
+            disabled={loading}
           >
-            Sync
-          </Button>
+             {loading ? (
+              <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
+              ) : (
+                ""
+              )}
+              Sync
+          </button>
           <Input
             isClearable
             value={searchQuery}
@@ -119,7 +124,7 @@ export default function LogsActivity() {
         <TableColumn key="success">SUCCESS</TableColumn>
         <TableColumn key="description">DESCTIPTION</TableColumn>
       </TableHeader>
-      <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan."}>
+      <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan"}>
         {(item) => (
           <TableRow key={item.ID}>
             <TableCell>

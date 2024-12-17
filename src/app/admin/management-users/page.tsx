@@ -19,7 +19,6 @@ import {
   Input,
   Select,
   SelectItem,
-  Avatar,
 } from "@nextui-org/react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -44,6 +43,7 @@ import {
   updateUser,
 } from "@/services/apiDatabase";
 import { auth } from "@/services/firebase";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
 import Image from "next/image";
 
 type User = {
@@ -308,13 +308,15 @@ export default function ManagementUsers() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-6 mx-auto max-w-screen-xl 2xl:max-w-screen-2xl">
       <div className="text-center text-black tracking-wide">
-        <h1 className="text-3xl sm:text-5xl font-bold pb-2">Manajemen User</h1>
+        <h1 className="text-3xl sm:text-5xl font-bold pb-2">
+          Manajemen Pengguna
+        </h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
         <div>
           <div className="pb-4 flex justify-end"></div>
           <Table
-            className="w-full"
+            className="w-full overflow-auto"
             aria-label="Manajement Users"
             bottomContent={
               <div className="flex w-full justify-center">
@@ -338,15 +340,25 @@ export default function ManagementUsers() {
                 >
                   <PersonAddAlt1Icon />
                 </button>
-                <Button
-                  isLoading={loadingSync}
-                  variant="solid"
-                  color="success"
-                  className="text-white font-semibold"
-                  onPress={handleSync}
+                <button
+                  className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
+                    loadingSync ? "bg-green-400" : "bg-green-500"
+                  }`}
+                  onClick={handleSync}
+                  disabled={loadingSync}
                 >
+                  {loadingSync ? (
+                    <Image
+                      width={20}
+                      height={20}
+                      src={LoadingIcon.src}
+                      alt={"Loading"}
+                    />
+                  ) : (
+                    ""
+                  )}
                   Sync
-                </Button>
+                </button>
                 <Input
                   isClearable
                   className="w-full sm:max-w-[25%] max-w-[55%]"
@@ -370,7 +382,7 @@ export default function ManagementUsers() {
               <TableColumn className="uppercase">Waktu Diperbarui</TableColumn>
               <TableColumn className="uppercase">Aksi</TableColumn>
             </TableHeader>
-            <TableBody emptyContent={"Pengguna tidak ditemukan."}>
+            <TableBody emptyContent={"Pengguna tidak ditemukan"}>
               {items.map((user, index) => (
                 <TableRow key={user.uid}>
                   <TableCell>{(page - 1) * rowsPerPage + index + 1}</TableCell>
@@ -491,7 +503,7 @@ export default function ManagementUsers() {
         backdrop="opaque"
         isOpen={isAddUserActive}
         onOpenChange={closeAddUserModal}
-        className="mt-8"
+        className="mt-8 m-2"
       >
         <ModalContent className="p-2">
           <ModalHeader>
@@ -611,16 +623,26 @@ export default function ManagementUsers() {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="danger" variant="light" onPress={closeAddUserModal}>
+            <Button
+              color="danger"
+              variant="light"
+              size="lg"
+              onPress={closeAddUserModal}
+            >
               Batal
             </Button>
-            <Button
+            <button
+              className={`rounded-2xl px-6 py-2 text-white 
+              ${
+                isCreateUserEnabled
+                  ? "bg-blue-500 hover:bg-blue-400"
+                  : "bg-blue-300 cursor-not-allowed"
+              }`}
               onClick={handleCreateUserManual}
-              isDisabled={!isCreateUserEnabled}
-              color="primary"
+              disabled={!isCreateUserEnabled}
             >
               Tambah
-            </Button>
+            </button>
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -631,6 +653,7 @@ export default function ManagementUsers() {
         backdrop="opaque"
         isOpen={isResetUserActive}
         onOpenChange={closeResetUserModal}
+        className="m-2"
       >
         <ModalContent className="p-8">
           <ModalHeader>
@@ -643,10 +666,20 @@ export default function ManagementUsers() {
             <strong>{selectedUser?.email}</strong>
           </ModalBody>
           <ModalFooter className="flex justify-center gap-5">
-            <Button color="default" size="lg" onPress={closeResetUserModal}>
+            <Button
+              color="default"
+              size="lg"
+              className="font-semibold"
+              onPress={closeResetUserModal}
+            >
               Batal
             </Button>
-            <Button color="warning" size="lg" onPress={handleResetAccount}>
+            <Button
+              color="warning"
+              size="lg"
+              className="font-semibold"
+              onPress={handleResetAccount}
+            >
               Reset
             </Button>
           </ModalFooter>
@@ -659,6 +692,7 @@ export default function ManagementUsers() {
         backdrop="opaque"
         isOpen={isDeleteUserActive}
         onOpenChange={closeDeleteUserModal}
+        className="m-2"
       >
         <ModalContent className="p-8">
           <ModalHeader>
@@ -670,10 +704,20 @@ export default function ManagementUsers() {
             permanen{" "}
           </ModalBody>
           <ModalFooter className="flex justify-center gap-5">
-            <Button color="default" size="lg" onPress={closeDeleteUserModal}>
+            <Button
+              color="default"
+              size="lg"
+              className="font-semibold"
+              onPress={closeDeleteUserModal}
+            >
               Batal
             </Button>
-            <Button color="danger" size="lg" onPress={handleDeleteUser}>
+            <Button
+              color="danger"
+              size="lg"
+              className="font-semibold"
+              onPress={handleDeleteUser}
+            >
               Hapus
             </Button>
           </ModalFooter>
@@ -686,6 +730,7 @@ export default function ManagementUsers() {
         backdrop="opaque"
         isOpen={isEditUserActive}
         onOpenChange={closeEditUserModal}
+        className="m-2"
       >
         <ModalContent className="p-4">
           <ModalHeader className="flex justify-center">
@@ -748,13 +793,20 @@ export default function ManagementUsers() {
             </Form>
           </ModalBody>
           <ModalFooter>
-            <Button color="danger" variant="light" onPress={closeEditUserModal}>
+            <Button
+              color="danger"
+              variant="light"
+              size="lg"
+              className="font-semibold"
+              onPress={closeEditUserModal}
+            >
               Batal
             </Button>
             <Button
               color="primary"
-              onClick={handleEditUser}
-              onPress={() => console.log("Save changes")}
+              size="lg"
+              className="font-semibold"
+              onPress={handleEditUser}
             >
               Simpan
             </Button>
