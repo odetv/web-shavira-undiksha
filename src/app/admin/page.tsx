@@ -33,34 +33,13 @@ export default function Admin() {
       </div>
       <div className="flex flex-col gap-4 w-full pt-4 justify-center items-center">
         <div className="flex flex-wrap justify-center items-center gap-2">
-          <Button
-            variant="solid"
-            radius="sm"
-            className="bg-blue-500 text-white text-sm sm:text-base font-medium"
-          >
-            <Link href="/admin/management-users">Manajemen Pengguna</Link>
-          </Button>
-          <Button
-            variant="solid"
-            radius="sm"
-            className="bg-zinc-500 text-white text-sm sm:text-base font-medium"
-          >
-            <Link href="/admin/management-datasets">Manajemen Dataset</Link>
-          </Button>
-          <Button
-            variant="solid"
-            radius="sm"
-            className="bg-orange-500 text-white text-sm sm:text-base font-medium"
-          >
-            <Link href="/admin/configuration-models">Konfigurasi Model</Link>
-          </Button>
-          <Button
-            variant="solid"
-            radius="sm"
-            className="bg-emerald-500 text-white text-sm sm:text-base font-medium"
-          >
-            <Link href="/admin/visualize-graph">Visualisasi Graph</Link>
-          </Button>
+          <Link className="bg-blue-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/management-users">Manajemen Pengguna</Link>
+          
+          <Link className="bg-zinc-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/management-datasets">Manajemen Dataset</Link>
+          
+          <Link className="bg-orange-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/configuration-models">Konfigurasi Model</Link>
+          
+          <Link className="bg-emerald-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/visualize-graph">Visualisasi Graph</Link>
         </div>
         <div className="w-full">
           <div className="flex flex-row justify-center items-center pt-8 pb-4">
