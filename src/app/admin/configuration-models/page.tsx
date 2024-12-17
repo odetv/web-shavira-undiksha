@@ -11,11 +11,13 @@ import {
   Select,
   SelectItem,
   Button,
+  Image
 } from "@nextui-org/react";
 import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
 
 export default function ConfigurationModels() {
   const [lastConfig, setLastConfig] = useState<any>(null);
@@ -166,21 +168,33 @@ export default function ConfigurationModels() {
             />
           </div>
           <div className="pt-4">
-            <Button
-              color="primary"
+            <button className={`text-white font-semibold px-5 py-3 rounded-xl text-base flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out 
+            ${ llm === "" ||
+              modelLLM === "" ||
+              embedder === "" ||
+              modelEmbedder === "" ||
+              chunkSize === 0 ||
+              chunkOverlap === 0 ||
+              isLoading
+             ? "bg-blue-300" : "bg-blue-500"}`} 
               onClick={handleSetupConfig}
-              isLoading={isLoading}
-              isDisabled={
+              disabled={
                 llm === "" ||
                 modelLLM === "" ||
                 embedder === "" ||
                 modelEmbedder === "" ||
                 chunkSize === 0 ||
-                chunkOverlap === 0
+                chunkOverlap === 0 ||
+                isLoading
               }
             >
+              {isLoading ? (
+                <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
+                ) : (
+                  ""
+                )}
               Perbarui
-            </Button>
+            </button>
           </div>
         </div>
 
@@ -188,9 +202,9 @@ export default function ConfigurationModels() {
           <Table
             aria-label="Configuration Model"
             topContent={
-              <p className="text-center font-semibold sm:text-base">
+              <div className="text-center font-semibold sm:text-base w-full ">
                 Konfigurasi model yang sedang digunakan pada Virtual Assistant
-              </p>
+              </div>
             }
           >
             <TableHeader>
