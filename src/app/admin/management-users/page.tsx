@@ -471,13 +471,6 @@ export default function ManagementUsers() {
                       <>
                         <Button
                           isIconOnly
-                          color="success"
-                          onPress={() => openEditUserModal(user)}
-                        >
-                          <EditIcon className="text-white" />
-                        </Button>
-                        <Button
-                          isIconOnly
                           color="warning"
                           onPress={() => openResetUserModal(user)}
                         >
