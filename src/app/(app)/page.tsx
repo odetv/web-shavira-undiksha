@@ -51,26 +51,29 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       // Memastikan dropdownRef ada dan event tidak terjadi di dalamnya
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
 
     // Menambahkan event listener untuk mouse dan touch
-    document.addEventListener('mousedown', handleClickOutside); // Untuk perangkat mouse
-    document.addEventListener('touchstart', handleClickOutside); // Untuk perangkat touchscreen
+    document.addEventListener("mousedown", handleClickOutside); // Untuk perangkat mouse
+    document.addEventListener("touchstart", handleClickOutside); // Untuk perangkat touchscreen
 
     // Membersihkan event listener ketika komponen di-unmount
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, []);
 
@@ -126,8 +129,6 @@ export default function Home() {
         chatContainerRef.current.scrollHeight;
     }
   };
-
-  
 
   useEffect(() => {
     const encodedBotUser = Cookies.get("botUser");
@@ -237,7 +238,6 @@ export default function Home() {
       className={`flex flex-col items-center p-4 smooth-gradient min-h-screen pt-8 
         ${welcomeVisible ? "justify-center" : ""}`}
     >
-      
       <PopUpAI />
 
       <div
@@ -392,11 +392,11 @@ export default function Home() {
       >
         <div className="flex flex-row justify-between items-center gap-2">
           {/* Tombol Tiga Titik Dropdown */}
-          
+
           <div className="relative inline-block text-left " ref={dropdownRef}>
-            <button 
-              onClick={toggleDropdown} 
-              disabled={loading} 
+            <button
+              onClick={toggleDropdown}
+              disabled={loading}
               className="cursor-pointer hover:text-blue-400"
             >
               <MoreVertIcon color="primary" />
@@ -404,24 +404,29 @@ export default function Home() {
 
             {isDropdownOpen && (
               <>
-                <div className="absolute bottom-10 left-0 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-lg z-40 transform transition-all duration-300 ease-out opacity-0 scale-70"
+                <div
+                  className="absolute bottom-10 left-0 mt-2 w-48 bg-white border border-gray-200 rounded-2xl shadow-2xl z-10 transform transition-all duration-300 ease-out opacity-0 scale-70"
                   style={{
-                    transform: isDropdownOpen ? 'scale(1)' : 'scale(0.95)',
+                    transform: isDropdownOpen ? "scale(1)" : "scale(0.95)",
                     opacity: isDropdownOpen ? 1 : 0,
-                  }}  
+                  }}
                 >
-                  <div className="p-4">
-                    <a href="https://missu.undiksha.ac.id/" className="block" onClick={() => toggleDropdown()}>
-                      <div className="flex justify-center rounded-lg items-center gap-2 py-2 text-blue-500 font-semibold hover:bg-blue-50">
+                  <div className="p-2 flex flex-col gap-1">
+                    <a
+                      href="https://missu.undiksha.ac.id/"
+                      className="block"
+                      onClick={() => toggleDropdown()}
+                    >
+                      <div className="flex justify-center rounded-lg items-center gap-2 py-2 text-blue-500 font-semibold hover:bg-blue-50 bg-blue-100 transition-all ease-in-out">
                         <ConfirmationNumberIcon />
                         Buat Tiket
                       </div>
                     </a>
-                    <button 
-                      onClick={handleReset} 
+                    <button
+                      onClick={handleReset}
                       className="w-full flex justify-center items-center"
                     >
-                      <div  className="w-full flex justify-center rounded-lg items-center gap-2 py-2 px-4 text-blue-500 font-semibold hover:bg-blue-50">
+                      <div className="w-full flex justify-center rounded-lg items-center gap-2 py-2 px-4 text-blue-500 font-semibold hover:bg-blue-50 bg-blue-100 transition-all ease-in-out">
                         <RestartAltIcon />
                         Reset Chat
                       </div>
@@ -446,11 +451,15 @@ export default function Home() {
           />
 
           <button
-            className={`text-white font-semibold p-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${isDisabledChat ? "bg-gray-100" : "bg-gray-300"}`}
+            className={`text-white font-semibold p-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
+              isDisabledChat ? "bg-gray-100" : "bg-gray-300"
+            }`}
             onClick={handleSend}
             disabled={isDisabledChat}
           >
-            <SendIcon className={isDisabledChat ? "text-blue-300" : "text-blue-500"} />
+            <SendIcon
+              className={isDisabledChat ? "text-blue-300" : "text-blue-500"}
+            />
           </button>
         </div>
       </div>

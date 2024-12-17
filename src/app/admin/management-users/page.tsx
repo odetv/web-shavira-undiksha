@@ -510,7 +510,7 @@ export default function ManagementUsers() {
                 className="mb-1"
                 labelPlacement="outside"
                 name="name"
-                placeholder="Masukkan nama lengkap"
+                placeholder="Masukkan Nama Lengkap"
                 type="text"
                 endContent={<PersonIcon color="disabled" />}
                 value={nameCreateUserManual}
@@ -522,7 +522,7 @@ export default function ManagementUsers() {
                 label="Email"
                 labelPlacement="outside"
                 name="email"
-                placeholder="Masukkan email"
+                placeholder="Masukkan Email"
                 type="email"
                 endContent={<EmailIcon color="disabled" />}
                 value={emailCreateUserManual}
@@ -534,7 +534,7 @@ export default function ManagementUsers() {
                 label="Password"
                 labelPlacement="outside"
                 name="password"
-                placeholder="Masukkan password"
+                placeholder="Masukkan Password"
                 type={showPassword ? "text" : "password"}
                 endContent={
                   <button
@@ -558,7 +558,7 @@ export default function ManagementUsers() {
                 label="Konfirmasi Password"
                 labelPlacement="outside"
                 name="confirmPassword"
-                placeholder="Konfirmasi password"
+                placeholder="Konfirmasi Password"
                 type={showConfirmPassword ? "text" : "password"}
                 endContent={
                   <button
@@ -582,6 +582,7 @@ export default function ManagementUsers() {
                 isRequired
                 className="mb-1"
                 label="Role"
+                placeholder="Pilih Role"
                 labelPlacement="outside"
                 name="role"
                 value={roleCreateUserManual}
@@ -601,6 +602,7 @@ export default function ManagementUsers() {
                 isRequired
                 className="mb-1"
                 label="Status"
+                placeholder="Pilih Status"
                 labelPlacement="outside"
                 name="status"
                 value={statusCreateUserManual}
@@ -738,6 +740,7 @@ export default function ManagementUsers() {
                 label="Nama"
                 isRequired
                 labelPlacement="outside"
+                placeholder="Masukkan Nama Lengkap"
                 value={selectedUser?.name || ""}
                 endContent={<PersonIcon color="disabled" />}
                 onChange={(e) =>
@@ -749,6 +752,7 @@ export default function ManagementUsers() {
                 className="mb-4"
                 isRequired
                 labelPlacement="outside"
+                placeholder="Pilih Role"
                 defaultSelectedKeys={[selectedUser?.role || ""]}
                 value={selectedUser?.role || ""}
                 onChange={(e) =>
@@ -770,6 +774,7 @@ export default function ManagementUsers() {
                 className="mb-4"
                 isRequired
                 labelPlacement="outside"
+                placeholder="Pilih Status"
                 defaultSelectedKeys={[selectedUser?.status || ""]}
                 value={selectedUser?.status || ""}
                 onChange={(e) =>
