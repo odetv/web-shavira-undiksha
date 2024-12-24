@@ -103,7 +103,7 @@ export default function Home() {
           setRole(null); // Reset role if user data doesn't exist
         }
       } else {
-        setOpenDeniedAccessAIUserNotLogged(true);
+        // setOpenDeniedAccessAIUserNotLogged(true);
         setUser(null);
         setRole(null); // Reset role if no user is logged in
       }
