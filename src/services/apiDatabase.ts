@@ -156,13 +156,19 @@ export const signUpManual = async (
     const user = userCredential.user;
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const role =
+      email.includes("undiksha.ac.id") ||
+      email.includes("student.undiksha.ac.id")
+        ? "member"
+        : "registered";
+
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       name,
       email,
       photo_url: photoUrl,
       password: hashedPassword,
-      role: "registered",
+      role: role,
       status: "active",
       type_user: "manual",
       created_at: Timestamp.fromDate(new Date()),
@@ -203,6 +209,14 @@ export const signInGoogle = async () => {
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
+      const email = user.email || "";
+
+      const role =
+        email.includes("undiksha.ac.id") ||
+        email.includes("student.undiksha.ac.id")
+          ? "member"
+          : "registered";
+
       const userData = {
         uid: user.uid,
         name: user.displayName || "Nama Tidak Tersedia",
@@ -210,7 +224,7 @@ export const signInGoogle = async () => {
         photo_url:
           user.photoURL ||
           "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg",
-        role: "registered",
+        role: role,
         status: "active",
         type_user: "google",
         created_at: Timestamp.fromDate(new Date()),
@@ -235,6 +249,14 @@ export const signUpGoogle = async () => {
     const userDocSnap = await getDoc(userDocRef);
 
     if (!userDocSnap.exists()) {
+      const email = user.email || "";
+
+      const role =
+        email.includes("undiksha.ac.id") ||
+        email.includes("student.undiksha.ac.id")
+          ? "member"
+          : "registered";
+
       const userData = {
         uid: user.uid,
         name: user.displayName || "Nama Tidak Tersedia",
@@ -242,7 +264,7 @@ export const signUpGoogle = async () => {
         photo_url:
           user.photoURL ||
           "https://static.vecteezy.com/system/resources/thumbnails/003/337/584/small/default-avatar-photo-placeholder-profile-icon-vector.jpg",
-        role: "registered",
+        role: role,
         status: "active",
         type_user: "google",
         created_at: Timestamp.fromDate(new Date()),
