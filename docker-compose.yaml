@@ -1,6 +1,6 @@
 services:
-  web:
-    container_name: web-shavira-nextjs
+  nextjs:
+    container_name: web-shavira-undiksha
     build: .
     command: sh -c "npm run build && npm run start"
     env_file:
