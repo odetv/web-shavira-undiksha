@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import GoBackHome from "@/components/GoBackHome";
 import SearchIcon from "@mui/icons-material/Search";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -540,7 +540,7 @@ export default function ManagementDatasets() {
           </Modal>
         </div>
       </div>
-      <div className="flex flex-col gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
         <GoBackAdmin />
         <GoBackHome />
       </div>

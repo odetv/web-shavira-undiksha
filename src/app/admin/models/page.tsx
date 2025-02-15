@@ -16,7 +16,7 @@ import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 
 export default function ConfigurationModels() {
   const [lastConfig, setLastConfig] = useState<any>(null);
@@ -79,94 +79,103 @@ export default function ConfigurationModels() {
       <div className="pt-6 w-full flex flex-col gap-6">
         <div
           id="update-config"
-          className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-wrap justify-center items-center"
+          className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4"
         >
-          <p className="text-center font-semibold sm:text-base pb-4">
-            Perbarui Konfigurasi
-          </p>
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
-            <Select
-              isRequired
-              label="LLM"
-              placeholder="Pilih platform LLM"
-              value={llm}
-              onChange={(e) => setLLM(e.target.value)}
-            >
-              <SelectItem key={"openai"} value={"openai"}>
-                OpenAI
-              </SelectItem>
-              <SelectItem key={"ollama"} value={"ollama"}>
-                Ollama
-              </SelectItem>
-            </Select>
-            <Select
-              isRequired
-              label="Model LLM"
-              placeholder="Pilih Model LLM"
-              value={modelLLM}
-              onChange={(e) => setModelLLM(e.target.value)}
-            >
-              {(llm === "openai"
-                ? ["gpt-4o-mini", "gpt-4o"]
-                : llm === "ollama"
-                ? ["gemma2", "llama3.1"]
-                : []
-              ).map((model) => (
-                <SelectItem key={model} value={model}>
-                  {model}
-                </SelectItem>
-              ))}
-            </Select>
-            <Select
-              isRequired
-              label="Embedder"
-              placeholder="Pilih Platform Embedder"
-              value={embedder}
-              onChange={(e) => setEmbedder(e.target.value)}
-            >
-              <SelectItem key={"openai"} value={"openai"}>
-                OpenAI
-              </SelectItem>
-              <SelectItem key={"ollama"} value={"ollama"}>
-                Ollama
-              </SelectItem>
-            </Select>
-            <Select
-              isRequired
-              label="Model Embedder"
-              placeholder="Pilih Model Embedder"
-              value={modelEmbedder}
-              onChange={(e) => setModelEmbedder(e.target.value)}
-            >
-              {(embedder === "openai"
-                ? ["text-embedding-3-large", "text-embedding-3-small"]
-                : embedder === "ollama"
-                ? ["mxbai-embed-large", "bge-m3"]
-                : []
-              ).map((model) => (
-                <SelectItem key={model} value={model}>
-                  {model}
-                </SelectItem>
-              ))}
-            </Select>
-            <Input
-              min={0}
-              type="number"
-              label="Chunk Size"
-              placeholder="Cth: 1000"
-              value={chunkSize ? String(chunkSize) : undefined}
-              onChange={(e) => setChunkSize(Number(e.target.value))}
-            />
-            <Input
-              min={0}
-              type="number"
-              label="Chunk Overlap"
-              placeholder="Cth: 200"
-              value={chunkOverlap ? String(chunkOverlap) : undefined}
-              onChange={(e) => setChunkOverlap(Number(e.target.value))}
-            />
+          <div className="flex flex-wrap items-center pb-8">
+            <p className="font-semibold sm:text-base pb-4">
+              Direktori Penyimpanan
+            </p>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
+              <Input type="text" label="Jalur Vector Database" />
+              <Input type="text" label="Jalur Dataset" />
+            </div>
           </div>
-          <div className="pt-4">
+          <div className="flex flex-wrap items-center pb-8">
+            <p className="font-semibold sm:text-base pb-4">Parameter Model</p>
+            <div className="flex w-full flex-wrap sm:grid sm:grid-cols-3 sm:grid-rows-2 gap-4 justify-center items-center">
+              <Select
+                isRequired
+                label="LLM"
+                placeholder="Pilih platform LLM"
+                value={llm}
+                onChange={(e) => setLLM(e.target.value)}
+              >
+                <SelectItem key={"openai"} value={"openai"}>
+                  OpenAI
+                </SelectItem>
+                <SelectItem key={"ollama"} value={"ollama"}>
+                  Ollama
+                </SelectItem>
+              </Select>
+              <Select
+                isRequired
+                label="Model LLM"
+                placeholder="Pilih Model LLM"
+                value={modelLLM}
+                onChange={(e) => setModelLLM(e.target.value)}
+              >
+                {(llm === "openai"
+                  ? ["gpt-4o-mini", "gpt-4o"]
+                  : llm === "ollama"
+                  ? ["gemma2", "llama3.1"]
+                  : []
+                ).map((model) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                ))}
+              </Select>
+              <Select
+                isRequired
+                label="Embedder"
+                placeholder="Pilih Platform Embedder"
+                value={embedder}
+                onChange={(e) => setEmbedder(e.target.value)}
+              >
+                <SelectItem key={"openai"} value={"openai"}>
+                  OpenAI
+                </SelectItem>
+                <SelectItem key={"ollama"} value={"ollama"}>
+                  Ollama
+                </SelectItem>
+              </Select>
+              <Select
+                isRequired
+                label="Model Embedder"
+                placeholder="Pilih Model Embedder"
+                value={modelEmbedder}
+                onChange={(e) => setModelEmbedder(e.target.value)}
+              >
+                {(embedder === "openai"
+                  ? ["text-embedding-3-large", "text-embedding-3-small"]
+                  : embedder === "ollama"
+                  ? ["mxbai-embed-large", "bge-m3"]
+                  : []
+                ).map((model) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                ))}
+              </Select>
+              <Input
+                min={0}
+                type="number"
+                label="Chunk Size"
+                placeholder="Cth: 1000"
+                value={chunkSize ? String(chunkSize) : undefined}
+                onChange={(e) => setChunkSize(Number(e.target.value))}
+              />
+              <Input
+                min={0}
+                type="number"
+                label="Chunk Overlap"
+                placeholder="Cth: 200"
+                value={chunkOverlap ? String(chunkOverlap) : undefined}
+                onChange={(e) => setChunkOverlap(Number(e.target.value))}
+              />
+            </div>
+          </div>
+          <div className="pt-2">
             <button
               className={`text-white font-semibold px-4 py-3 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out 
             ${
@@ -201,8 +210,9 @@ export default function ConfigurationModels() {
               ) : (
                 ""
               )}
-              Perbarui
+              Simpan
             </button>
+            <p className="text-xs italic pb-2 pt-2">Terakhir diubah: -</p>
           </div>
         </div>
 
@@ -243,8 +253,8 @@ export default function ConfigurationModels() {
         </div>
       </div>
       <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
-        <GoBackHome />
         <GoBackAdmin />
+        <GoBackHome />
       </div>
     </main>
   );

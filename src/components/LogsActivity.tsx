@@ -8,11 +8,11 @@ import {
   TableCell,
   Pagination,
   Input,
-  Button
+  Button,
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
 import { getLogsActivity } from "@/services/apiVirtualAssistant";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import Image from "next/image";
 
 export default function LogsActivity() {
@@ -76,16 +76,23 @@ export default function LogsActivity() {
       topContent={
         <div className="flex w-full justify-start sm:justify-end gap-2">
           <button
-            className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${loading ? "bg-green-400" : "bg-green-500"}`}
+            className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
+              loading ? "bg-green-400" : "bg-green-500"
+            }`}
             onClick={handleSync}
             disabled={loading}
           >
-             {loading ? (
-              <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
-              ) : (
-                ""
-              )}
-              Sync
+            {loading ? (
+              <Image
+                width={20}
+                height={20}
+                src={LoadingIcon.src}
+                alt={"Loading"}
+              />
+            ) : (
+              ""
+            )}
+            Sync
           </button>
           <Input
             isClearable
@@ -93,7 +100,7 @@ export default function LogsActivity() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => onClear()}
             className="w-full sm:max-w-[25%] max-w-[55%]"
-            placeholder="Search"
+            placeholder="Cari Riwayat"
             startContent={<SearchIcon color="disabled" />}
           />
         </div>
@@ -118,11 +125,11 @@ export default function LogsActivity() {
       <TableHeader>
         <TableColumn key="no">NO</TableColumn>
         <TableColumn key="id">ID</TableColumn>
-        <TableColumn key="timestamp">TIMESTAMP</TableColumn>
-        <TableColumn key="method">METHOD</TableColumn>
-        <TableColumn key="status">STATUS</TableColumn>
-        <TableColumn key="success">SUCCESS</TableColumn>
-        <TableColumn key="description">DESCTIPTION</TableColumn>
+        <TableColumn key="timestamp">WAKTU</TableColumn>
+        <TableColumn key="method">METODE</TableColumn>
+        <TableColumn key="status">KODE</TableColumn>
+        <TableColumn key="success">STATUS</TableColumn>
+        <TableColumn key="description">PESAN</TableColumn>
       </TableHeader>
       <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan"}>
         {(item) => (

@@ -43,7 +43,7 @@ import {
   updateUser,
 } from "@/services/apiDatabase";
 import { auth } from "@/services/firebase";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import Image from "next/image";
 
 type User = {
@@ -239,7 +239,7 @@ export default function ManagementUsers() {
     setShowConfirmPassword(false);
   };
 
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
   const filteredUsers = React.useMemo(() => {
     if (!users) return [];
     if (!searchQuery) return users;
@@ -486,8 +486,8 @@ export default function ManagementUsers() {
         </div>
       </div>
       <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
-        <GoBackHome />
         <GoBackAdmin />
+        <GoBackHome />
       </div>
 
       {/* Tampilan Modal untuk Add User */}
@@ -806,7 +806,7 @@ export default function ManagementUsers() {
               className="font-semibold"
               onPress={handleEditUser}
             >
-              Simpan
+              Perbarui
             </Button>
           </ModalFooter>
         </ModalContent>
