@@ -124,29 +124,29 @@ export default function LogsActivity() {
     >
       <TableHeader>
         <TableColumn key="no">NO</TableColumn>
-        <TableColumn key="id">ID</TableColumn>
-        <TableColumn key="timestamp">WAKTU</TableColumn>
+        {/* <TableColumn key="id">ID</TableColumn> */}
+        <TableColumn key="timestamp">WAKTU (WITA)</TableColumn>
         <TableColumn key="method">METODE</TableColumn>
         <TableColumn key="status">KODE</TableColumn>
         <TableColumn key="success">STATUS</TableColumn>
-        <TableColumn key="description">PESAN</TableColumn>
+        <TableColumn key="description">DESKRIPSI</TableColumn>
       </TableHeader>
       <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan"}>
         {(item) => (
-          <TableRow key={item.ID}>
+          <TableRow key={item.id}>
             <TableCell>
               <div>
                 {(page - 1) * rowsPerPage + currentItems.indexOf(item) + 1}
               </div>
             </TableCell>
-            <TableCell>
-              <div>{item.ID.toString()}</div>
-            </TableCell>
-            <TableCell>{item.Timestamp.toString()}</TableCell>
-            <TableCell>{item.Method.toString()}</TableCell>
-            <TableCell>{item["Status Code"].toString()}</TableCell>
-            <TableCell>{item.Success ? "true" : "false"}</TableCell>
-            <TableCell>{item.Description.toString()}</TableCell>
+            {/* <TableCell>
+              <div>{item.id}</div>
+            </TableCell> */}
+            <TableCell>{item.timestamp}</TableCell>
+            <TableCell>{item.method}</TableCell>
+            <TableCell>{item.status_code}</TableCell>
+            <TableCell>{item.success ? "True" : "False"}</TableCell>
+            <TableCell>{item.description}</TableCell>
           </TableRow>
         )}
       </TableBody>
