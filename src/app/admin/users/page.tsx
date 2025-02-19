@@ -378,8 +378,12 @@ export default function ManagementUsers() {
               <TableColumn className="uppercase">Tipe Akun</TableColumn>
               <TableColumn className="uppercase">Role</TableColumn>
               <TableColumn className="uppercase">Status</TableColumn>
-              <TableColumn className="uppercase">Waktu Dibuat</TableColumn>
-              <TableColumn className="uppercase">Waktu Diperbarui</TableColumn>
+              <TableColumn className="uppercase">
+                Waktu Dibuat (WITA)
+              </TableColumn>
+              <TableColumn className="uppercase">
+                Waktu Diperbarui (WITA)
+              </TableColumn>
               <TableColumn className="uppercase">Aksi</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"Pengguna tidak ditemukan"}>
