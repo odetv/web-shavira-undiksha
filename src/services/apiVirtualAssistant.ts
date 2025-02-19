@@ -1,15 +1,38 @@
-const API_URL = `${process.env.NEXT_PUBLIC_VA_API_URL}`;
+import { db, doc, onSnapshot } from "@/services/firebase";
 
-const headers = () => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
-});
+let API_URL: string = "";
+let API_KEY: string = "";
+
+const generalConfigFirestore = async (): Promise<void> => {
+  return new Promise<void>((resolve, reject) => {
+    const docRef = doc(db, "settings", "general");
+    onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const config = docSnap.data();
+        API_URL = config?.api_baseurl || "";
+        API_KEY = config?.api_key || "";
+        resolve();
+      } else {
+        reject("Config not found in Firestore");
+      }
+    });
+  });
+};
+
+const headers = async () => {
+  await generalConfigFirestore();
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${API_KEY}`,
+  };
+};
 
 const checkApiStatus = async (): Promise<boolean> => {
+  await generalConfigFirestore();
   try {
     const response = await fetch(API_URL, {
       method: "GET",
-      headers: headers(),
+      headers: await headers(),
     });
     if (response.ok) {
       const data = await response.json();
@@ -25,10 +48,11 @@ const checkApiStatus = async (): Promise<boolean> => {
 const chatResponse = async (
   question: string
 ): Promise<{ success: boolean; data: any[] }> => {
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/chat`, {
       method: "POST",
-      headers: headers(),
+      headers: await headers(),
       body: JSON.stringify({ question }),
     });
 
@@ -78,10 +102,11 @@ const getLogsActivity = async (): Promise<{
   data: any[];
   message?: string;
 }> => {
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/logs`, {
       method: "GET",
-      headers: headers(),
+      headers: await headers(),
     });
 
     if (!response.ok) {
@@ -109,25 +134,6 @@ const getLogsActivity = async (): Promise<{
   }
 };
 
-const getGraphImage = async (): Promise<Blob | null> => {
-  try {
-    const response = await fetch(`${API_URL}/graph`, {
-      method: "GET",
-      headers: headers(),
-    });
-
-    if (response.ok) {
-      return await response.blob();
-    } else {
-      console.error("Failed to fetch graph image:", response.status);
-      return null;
-    }
-  } catch (error) {
-    console.error("Error fetching graph image:", error);
-    return null;
-  }
-};
-
 const setupConfig = async (configData: {
   llm: string;
   model_llm: string;
@@ -136,10 +142,11 @@ const setupConfig = async (configData: {
   chunk_size: number;
   chunk_overlap: number;
 }): Promise<boolean> => {
+  await generalConfigFirestore();
   try {
-    const response = await fetch(`${API_URL}/setup`, {
+    const response = await fetch(`${API_URL}/setup-config`, {
       method: "POST",
-      headers: headers(),
+      headers: await headers(),
       body: JSON.stringify(configData),
     });
 
@@ -157,10 +164,11 @@ const setupConfig = async (configData: {
 };
 
 const checkConfig = async (): Promise<any> => {
+  await generalConfigFirestore();
   try {
-    const response = await fetch(`${API_URL}/checkmodel`, {
+    const response = await fetch(`${API_URL}/check-config`, {
       method: "GET",
-      headers: headers(),
+      headers: await headers(),
     });
 
     if (response.ok) {
@@ -177,10 +185,11 @@ const checkConfig = async (): Promise<any> => {
 };
 
 const getDatasets = async () => {
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/datasets/list`, {
       method: "GET",
-      headers: headers(),
+      headers: await headers(),
     });
     const data = await response.json();
     if (data.success) {
@@ -194,6 +203,7 @@ const getDatasets = async () => {
 };
 
 const readDataset = async (filename: string): Promise<string | null> => {
+  await generalConfigFirestore();
   try {
     const fileUrl = `${API_URL}/datasets/read/${encodeURIComponent(filename)}`;
     return fileUrl;
@@ -204,10 +214,11 @@ const readDataset = async (filename: string): Promise<string | null> => {
 };
 
 const deleteDataset = async (filenames: string[]): Promise<any> => {
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/datasets/delete`, {
       method: "DELETE",
-      headers: headers(),
+      headers: await headers(),
       body: JSON.stringify({ filenames }),
     });
     return await response.json();
@@ -220,13 +231,11 @@ const deleteDataset = async (filenames: string[]): Promise<any> => {
 const uploadDataset = async (files: File[]): Promise<any> => {
   const formData = new FormData();
   files.forEach((file) => formData.append("files", file));
-
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/datasets/upload`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
-      },
+      headers: await headers(),
       body: formData,
     });
 
@@ -241,13 +250,11 @@ const updateDataset = async (target: string, file: File): Promise<any> => {
   const formData = new FormData();
   formData.append("target", target);
   formData.append("file", file);
-
+  await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/datasets/update`, {
       method: "PUT",
-      headers: {
-        Authorization: `Bearer ${process.env.NEXT_PUBLIC_VA_API_KEY}`,
-      },
+      headers: await headers(),
       body: formData,
     });
     return await response.json();
@@ -261,7 +268,6 @@ export {
   checkApiStatus,
   chatResponse,
   getLogsActivity,
-  getGraphImage,
   setupConfig,
   checkConfig,
   getDatasets,
