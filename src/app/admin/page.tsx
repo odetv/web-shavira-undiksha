@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Chip } from "@nextui-org/react";
-import { checkApiStatus } from "@/services/apiVirtualAssistant";
+import { apiShaviraStatus } from "@/services/apiVirtualAssistant";
 import Link from "next/link";
 import LogsActivity from "@/components/LogsActivity";
 import AccessChecker from "@/components/AccessChecker";
@@ -11,7 +11,7 @@ export default function Admin() {
 
   useEffect(() => {
     const fetchApiStatus = async () => {
-      const isReady = await checkApiStatus();
+      const isReady = await apiShaviraStatus();
       setChatBotReady(isReady);
     };
     fetchApiStatus();

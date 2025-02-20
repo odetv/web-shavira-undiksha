@@ -11,7 +11,7 @@ import {
   Button,
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
-import { getLogsActivity } from "@/services/apiVirtualAssistant";
+import { logsActivity } from "@/services/apiVirtualAssistant";
 import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import Image from "next/image";
 
@@ -26,7 +26,7 @@ export default function LogsActivity() {
   const fetchLogs = async () => {
     setLoading(true);
     setError(null);
-    const response = await getLogsActivity();
+    const response = await logsActivity();
     setLogs(response.data);
     setLoading(false);
   };

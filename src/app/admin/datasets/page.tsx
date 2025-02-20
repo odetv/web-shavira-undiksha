@@ -28,7 +28,7 @@ import {
   Image,
 } from "@nextui-org/react";
 import {
-  getDatasets,
+  listDataset,
   uploadDataset,
   readDataset,
   updateDataset,
@@ -64,7 +64,7 @@ export default function ManagementDatasets() {
   useEffect(() => {
     const fetchDatasets = async () => {
       setLoadingSync(true);
-      const data = await getDatasets();
+      const data = await listDataset();
       setDatasets(data);
       setLoadingSync(false);
     };
@@ -73,7 +73,7 @@ export default function ManagementDatasets() {
 
   const handleSync = async () => {
     setLoadingSync(true);
-    const data = await getDatasets();
+    const data = await listDataset();
     setDatasets(data);
     setLoadingSync(false);
   };

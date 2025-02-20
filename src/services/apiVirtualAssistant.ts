@@ -27,7 +27,7 @@ const headers = async () => {
   };
 };
 
-const checkApiStatus = async (): Promise<boolean> => {
+const apiShaviraStatus = async (): Promise<boolean> => {
   await generalConfigFirestore();
   try {
     const response = await fetch(API_URL, {
@@ -42,95 +42,6 @@ const checkApiStatus = async (): Promise<boolean> => {
   } catch (error) {
     console.error("Error checking API status:", error);
     return false;
-  }
-};
-
-const chatResponse = async (
-  question: string
-): Promise<{ success: boolean; data: any[] }> => {
-  await generalConfigFirestore();
-  try {
-    const response = await fetch(`${API_URL}/chat`, {
-      method: "POST",
-      headers: await headers(),
-      body: JSON.stringify({ question }),
-    });
-
-    if (response.status === 500) {
-      console.error("Error 500: Internal Server Error");
-      return {
-        success: true,
-        data: [
-          {
-            timestamp: new Date().toISOString(),
-            question,
-            answer:
-              "Maaf, terjadi kesalahan pada server. Silakan coba lagi nanti.",
-          },
-        ],
-      };
-    }
-
-    if (!response.ok) {
-      console.error(`API response error: ${response.status}`);
-      return {
-        success: false,
-        data: [],
-      };
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching chat response:", error);
-    return {
-      success: true,
-      data: [
-        {
-          timestamp: new Date().toISOString(),
-          question,
-          answer:
-            "Maaf, terjadi kesalahan pada server. Silakan coba lagi nanti.",
-        },
-      ],
-    };
-  }
-};
-
-const getLogsActivity = async (): Promise<{
-  success: boolean;
-  data: any[];
-  message?: string;
-}> => {
-  await generalConfigFirestore();
-  try {
-    const response = await fetch(`${API_URL}/logs`, {
-      method: "GET",
-      headers: await headers(),
-    });
-
-    if (!response.ok) {
-      console.error(`Error fetching logs: ${response.status}`);
-      return {
-        success: false,
-        data: [],
-        message: "Gagal mengambil data log dari server.",
-      };
-    }
-
-    const data = await response.json();
-    return {
-      success: true,
-      data: data.data,
-      message: "Logs fetched successfully.",
-    };
-  } catch (error) {
-    console.error("Error fetching logs:", error);
-    return {
-      success: false,
-      data: [],
-      message: "Terjadi kesalahan saat mengambil data log.",
-    };
   }
 };
 
@@ -184,7 +95,7 @@ const checkConfig = async (): Promise<any> => {
   }
 };
 
-const getDatasets = async () => {
+const listDataset = async () => {
   await generalConfigFirestore();
   try {
     const response = await fetch(`${API_URL}/datasets/list`, {
@@ -210,21 +121,6 @@ const readDataset = async (filename: string): Promise<string | null> => {
   } catch (error) {
     console.error("Error generating file URL:", error);
     return null;
-  }
-};
-
-const deleteDataset = async (filenames: string[]): Promise<any> => {
-  await generalConfigFirestore();
-  try {
-    const response = await fetch(`${API_URL}/datasets/delete`, {
-      method: "DELETE",
-      headers: await headers(),
-      body: JSON.stringify({ filenames }),
-    });
-    return await response.json();
-  } catch (error) {
-    console.error("Error deleting dataset:", error);
-    return { success: false, message: "Failed to delete dataset" };
   }
 };
 
@@ -264,15 +160,119 @@ const updateDataset = async (target: string, file: File): Promise<any> => {
   }
 };
 
+const deleteDataset = async (filenames: string[]): Promise<any> => {
+  await generalConfigFirestore();
+  try {
+    const response = await fetch(`${API_URL}/datasets/delete`, {
+      method: "DELETE",
+      headers: await headers(),
+      body: JSON.stringify({ filenames }),
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Error deleting dataset:", error);
+    return { success: false, message: "Failed to delete dataset" };
+  }
+};
+
+const logsActivity = async (): Promise<{
+  success: boolean;
+  data: any[];
+  message?: string;
+}> => {
+  await generalConfigFirestore();
+  try {
+    const response = await fetch(`${API_URL}/logs`, {
+      method: "GET",
+      headers: await headers(),
+    });
+
+    if (!response.ok) {
+      console.error(`Error fetching logs: ${response.status}`);
+      return {
+        success: false,
+        data: [],
+        message: "Gagal mengambil data log dari server.",
+      };
+    }
+
+    const data = await response.json();
+    return {
+      success: true,
+      data: data.data,
+      message: "Logs fetched successfully.",
+    };
+  } catch (error) {
+    console.error("Error fetching logs:", error);
+    return {
+      success: false,
+      data: [],
+      message: "Terjadi kesalahan saat mengambil data log.",
+    };
+  }
+};
+
+const chatConversation = async (
+  question: string
+): Promise<{ success: boolean; data: any[] }> => {
+  await generalConfigFirestore();
+  try {
+    const response = await fetch(`${API_URL}/chat`, {
+      method: "POST",
+      headers: await headers(),
+      body: JSON.stringify({ question }),
+    });
+
+    if (response.status === 500) {
+      console.error("Error 500: Internal Server Error");
+      return {
+        success: true,
+        data: [
+          {
+            timestamp: new Date().toISOString(),
+            question,
+            answer:
+              "Maaf, terjadi kesalahan pada server. Silakan coba lagi nanti.",
+          },
+        ],
+      };
+    }
+
+    if (!response.ok) {
+      console.error(`API response error: ${response.status}`);
+      return {
+        success: false,
+        data: [],
+      };
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching chat response:", error);
+    return {
+      success: true,
+      data: [
+        {
+          timestamp: new Date().toISOString(),
+          question,
+          answer:
+            "Maaf, terjadi kesalahan pada server. Silakan coba lagi nanti.",
+        },
+      ],
+    };
+  }
+};
+
 export {
-  checkApiStatus,
-  chatResponse,
-  getLogsActivity,
+  apiShaviraStatus,
   setupConfig,
   checkConfig,
-  getDatasets,
+  listDataset,
   readDataset,
-  deleteDataset,
   uploadDataset,
   updateDataset,
+  deleteDataset,
+  logsActivity,
+  chatConversation,
 };

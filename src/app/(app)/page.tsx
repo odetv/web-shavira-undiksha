@@ -22,7 +22,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import SendIcon from "@mui/icons-material/Send";
-import { checkApiStatus, chatResponse } from "@/services/apiVirtualAssistant";
+import {
+  apiShaviraStatus,
+  chatConversation,
+} from "@/services/apiVirtualAssistant";
 import encodeComplexData from "@/services/encodeData";
 import decodeComplexData from "@/services/decodeData";
 import PreProcessMarkdown from "@/components/PreProcessMarkdown";
@@ -117,7 +120,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchApiStatus = async () => {
-      const isReady = await checkApiStatus();
+      const isReady = await apiShaviraStatus();
       setChatBotReady(isReady);
     };
     fetchApiStatus();
@@ -168,7 +171,7 @@ export default function Home() {
     setWelcomeVisible(false);
     setQuestion("");
 
-    const response = await chatResponse(question);
+    const response = await chatConversation(question);
     if (response && response.success && response.data.length > 0) {
       const { timestamp, question: q, answer } = response.data[0];
       const newBotMessage = { user: q, bot: answer, timestamp };
@@ -219,7 +222,7 @@ export default function Home() {
     setMessages((prev) => [...prev, newUserMessage]);
     setLoading(true);
 
-    const response = await chatResponse(questionText);
+    const response = await chatConversation(questionText);
     if (response && response.success && response.data.length > 0) {
       const { timestamp, question: q, answer } = response.data[0];
       const newBotMessage = { user: q, bot: answer, timestamp };
