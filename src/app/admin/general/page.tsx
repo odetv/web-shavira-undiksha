@@ -134,7 +134,7 @@ export default function ConfigurationGeneral() {
               ) : (
                 ""
               )}
-              {isLoading ? "Menyimpan" : "Simpan"}
+              {isLoading ? "Memproses" : "Simpan"}
             </button>
             <p className="text-xs italic pb-2 pt-2">
               Terakhir diubah: {updatedAt + " WITA" || "-"}
