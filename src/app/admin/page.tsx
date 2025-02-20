@@ -34,35 +34,35 @@ export default function Admin() {
       <div className="flex flex-col gap-4 w-full pt-4 justify-center items-center">
         <div className="flex flex-wrap justify-center items-center gap-2">
           <Link
-            className="bg-cyan-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            className="bg-cyan-500 hover:bg-cyan-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
             href="/admin/general"
           >
             Umum
           </Link>
 
           <Link
-            className="bg-emerald-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            className="bg-emerald-500 hover:bg-emerald-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
             href="/admin/connections"
           >
             Konfigurasi Koneksi
           </Link>
 
           <Link
-            className="bg-orange-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            className="bg-orange-500 hover:bg-orange-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
             href="/admin/models"
           >
             Konfigurasi Model
           </Link>
 
           <Link
-            className="bg-rose-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            className="bg-rose-500 hover:bg-rose-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
             href="/admin/users"
           >
             Manajemen Pengguna
           </Link>
 
           <Link
-            className="bg-zinc-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            className="bg-zinc-500 hover:bg-zinc-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
             href="/admin/datasets"
           >
             Manajemen Dataset

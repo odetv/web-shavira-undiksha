@@ -134,7 +134,7 @@ export default function ConfigurationGeneral() {
               ) : (
                 ""
               )}
-              Simpan
+              {isLoading ? "Menyimpan" : "Simpan"}
             </button>
             <p className="text-xs italic pb-2 pt-2">
               Terakhir diubah: {updatedAt + " WITA" || "-"}

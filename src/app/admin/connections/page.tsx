@@ -190,7 +190,7 @@ export default function ConfigurationConnections() {
               ) : (
                 ""
               )}
-              Simpan
+              {isLoadingOpenai ? "Menyimpan" : "Simpan"}
             </button>
             <p className="text-xs italic pb-2 pt-2">
               Terakhir diubah: {updatedAtOpenai + " WITA" || "-"}
@@ -235,7 +235,7 @@ export default function ConfigurationConnections() {
               ) : (
                 ""
               )}
-              Simpan
+              {isLoadingOllama ? "Menyimpan" : "Simpan"}
             </button>
             <p className="text-xs italic pb-2 pt-2">
               Terakhir diubah: {updatedAtOllama + " WITA" || "-"}

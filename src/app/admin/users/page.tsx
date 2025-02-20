@@ -342,7 +342,9 @@ export default function ManagementUsers() {
                 </button>
                 <button
                   className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
-                    loadingSync ? "bg-green-400" : "bg-green-500"
+                    loadingSync
+                      ? "bg-green-400"
+                      : "bg-green-500 hover:bg-green-400"
                   }`}
                   onClick={handleSync}
                   disabled={loadingSync}

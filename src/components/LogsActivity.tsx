@@ -77,7 +77,7 @@ export default function LogsActivity() {
         <div className="flex w-full justify-start sm:justify-end gap-2">
           <button
             className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
-              loading ? "bg-green-400" : "bg-green-500"
+              loading ? "bg-green-400" : "bg-green-500 hover:bg-green-400"
             }`}
             onClick={handleSync}
             disabled={loading}
