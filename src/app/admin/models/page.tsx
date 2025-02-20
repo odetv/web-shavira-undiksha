@@ -1,65 +1,152 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Input, Select, SelectItem, Image } from "@nextui-org/react";
 import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Input,
-  Select,
-  SelectItem,
-  Image,
-} from "@nextui-org/react";
-import { setupConfig, checkConfig } from "@/services/apiVirtualAssistant";
+  setupConfig,
+  checkConfig,
+  checkOpenAIModels,
+  checkOllamaModels,
+} from "@/services/apiVirtualAssistant";
 import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
 import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 
 export default function ConfigurationModels() {
-  const [lastConfig, setLastConfig] = useState<any>(null);
   const [llm, setLLM] = useState("");
   const [modelLLM, setModelLLM] = useState("");
-  const [embedder, setEmbedder] = useState("");
-  const [modelEmbedder, setModelEmbedder] = useState("");
+  const [embedding, setEmbedding] = useState("");
+  const [modelEmbedding, setModelEmbedding] = useState("");
   const [chunkSize, setChunkSize] = useState(0);
   const [chunkOverlap, setChunkOverlap] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [totalChunks, setTotalChunks] = useState<number | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [modelsLLM, setModelsLLM] = useState<any[]>([]);
+  const [modelsEmbedding, setModelsEmbedding] = useState<any[]>([]);
+  const [initialConfig, setInitialConfig] = useState({
+    llm: "",
+    modelLLM: "",
+    embedding: "",
+    modelEmbedding: "",
+    chunkSize: 0,
+    chunkOverlap: 0,
+    totalChunks: null,
+    updatedAt: null,
+  });
 
   useEffect(() => {
-    const fetchCheckConfig = async () => {
-      const config = await checkConfig();
-      if (config) {
-        setLastConfig(config);
+    const fetchModels = async () => {
+      if (!llm) {
+        setModelLLM("");
+        setModelsLLM([]);
+        return;
+      }
+      if (llm === "openai") {
+        const models = await checkOpenAIModels();
+        setModelsLLM(models);
+      } else if (llm === "ollama") {
+        const models = await checkOllamaModels();
+        setModelsLLM(models);
       }
     };
-    fetchCheckConfig();
-  }, []);
+    fetchModels();
+  }, [llm]);
 
-  const handleSetupConfig = async () => {
+  useEffect(() => {
+    const fetchEmbeddings = async () => {
+      if (!embedding) {
+        setModelEmbedding("");
+        setModelsEmbedding([]);
+        return;
+      }
+      if (embedding === "openai") {
+        const models = await checkOpenAIModels();
+        setModelsEmbedding(models);
+      } else if (embedding === "ollama") {
+        const models = await checkOllamaModels();
+        setModelsEmbedding(models);
+      }
+    };
+    fetchEmbeddings();
+  }, [embedding]);
+
+  const handleSave = async () => {
     setIsLoading(true);
-    const configData = {
-      llm: llm,
+
+    const data = {
+      llm,
       model_llm: modelLLM,
-      embedder: embedder,
-      model_embedder: modelEmbedder,
+      embedding,
+      model_embedding: modelEmbedding,
       chunk_size: chunkSize,
       chunk_overlap: chunkOverlap,
     };
-
-    const success = await setupConfig(configData);
-    setIsLoading(false);
+    const success = await setupConfig(data);
 
     if (success) {
-      console.log("Configuration updated successfully!");
       const updatedConfig = await checkConfig();
-      setLastConfig(updatedConfig);
-    } else {
-      console.error("Failed to update configuration.");
+      setLLM(updatedConfig.llm_platform);
+      setModelLLM(updatedConfig.llm_model);
+      setEmbedding(updatedConfig.embedding_platform);
+      setModelEmbedding(updatedConfig.embedding_model);
+      setChunkSize(updatedConfig.chunk_size);
+      setChunkOverlap(updatedConfig.chunk_overlap);
+      setTotalChunks(updatedConfig.total_chunks);
+      setUpdatedAt(updatedConfig.updated_at);
     }
+
+    setIsLoading(false);
   };
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      setIsLoading(true);
+      try {
+        const config = await checkConfig();
+        const initialData = {
+          llm: config.llm_platform || "",
+          modelLLM: config.llm_model || "",
+          embedding: config.embedding_platform || "",
+          modelEmbedding: config.embedding_model || "",
+          chunkSize: config.chunk_size || 0,
+          chunkOverlap: config.chunk_overlap || 0,
+          totalChunks: config.total_chunks || null,
+          updatedAt: config.updated_at || null,
+        };
+
+        setLLM(initialData.llm);
+        setModelLLM(initialData.modelLLM);
+        setEmbedding(initialData.embedding);
+        setModelEmbedding(initialData.modelEmbedding);
+        setChunkSize(initialData.chunkSize);
+        setChunkOverlap(initialData.chunkOverlap);
+        setTotalChunks(initialData.totalChunks);
+        setUpdatedAt(initialData.updatedAt);
+
+        setInitialConfig(initialData);
+      } catch (error) {
+        console.error("Error fetching config:", error);
+      }
+      setIsLoading(false);
+    };
+
+    fetchConfig();
+  }, []);
+
+  const isSaveDisabled =
+    (llm === initialConfig.llm &&
+      modelLLM === initialConfig.modelLLM &&
+      embedding === initialConfig.embedding &&
+      modelEmbedding === initialConfig.modelEmbedding &&
+      chunkSize === initialConfig.chunkSize &&
+      chunkOverlap === initialConfig.chunkOverlap) ||
+    !llm ||
+    !modelLLM ||
+    !embedding ||
+    !modelEmbedding ||
+    chunkSize <= 0 ||
+    chunkOverlap <= 0;
 
   const [isValidKey, setIsValidKey] = useState<boolean>(false);
   const handleAccessChecked = (valid: boolean) => {
@@ -82,22 +169,14 @@ export default function ConfigurationModels() {
           className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4"
         >
           <div className="flex flex-wrap items-center pb-8">
-            <p className="font-semibold sm:text-base pb-4">
-              Direktori Penyimpanan
-            </p>
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
-              <Input type="text" label="Jalur Vector Database" />
-              <Input type="text" label="Jalur Dataset" />
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center pb-8">
             <p className="font-semibold sm:text-base pb-4">Parameter Model</p>
             <div className="flex w-full flex-wrap sm:grid sm:grid-cols-3 sm:grid-rows-2 gap-4 justify-center items-center">
               <Select
                 isRequired
                 label="LLM"
-                placeholder="Pilih platform LLM"
+                placeholder="Pilih Platform LLM"
                 value={llm}
+                selectedKeys={new Set([llm])}
                 onChange={(e) => setLLM(e.target.value)}
               >
                 <SelectItem key={"openai"} value={"openai"}>
@@ -111,15 +190,13 @@ export default function ConfigurationModels() {
                 isRequired
                 label="Model LLM"
                 placeholder="Pilih Model LLM"
-                value={modelLLM}
+                value={modelsLLM.includes(modelLLM) ? modelLLM : ""}
+                selectedKeys={
+                  modelsLLM.includes(modelLLM) ? new Set([modelLLM]) : new Set()
+                }
                 onChange={(e) => setModelLLM(e.target.value)}
               >
-                {(llm === "openai"
-                  ? ["gpt-4o-mini", "gpt-4o"]
-                  : llm === "ollama"
-                  ? ["gemma2", "llama3.1"]
-                  : []
-                ).map((model) => (
+                {modelsLLM.map((model, index) => (
                   <SelectItem key={model} value={model}>
                     {model}
                   </SelectItem>
@@ -127,10 +204,11 @@ export default function ConfigurationModels() {
               </Select>
               <Select
                 isRequired
-                label="Embedder"
-                placeholder="Pilih Platform Embedder"
-                value={embedder}
-                onChange={(e) => setEmbedder(e.target.value)}
+                label="Embedding"
+                placeholder="Pilih Platform Embedding"
+                value={embedding}
+                selectedKeys={new Set([embedding])}
+                onChange={(e) => setEmbedding(e.target.value)}
               >
                 <SelectItem key={"openai"} value={"openai"}>
                   OpenAI
@@ -141,17 +219,19 @@ export default function ConfigurationModels() {
               </Select>
               <Select
                 isRequired
-                label="Model Embedder"
-                placeholder="Pilih Model Embedder"
-                value={modelEmbedder}
-                onChange={(e) => setModelEmbedder(e.target.value)}
+                label="Model Embedding"
+                placeholder="Pilih Model Embedding"
+                value={
+                  modelsEmbedding.includes(modelEmbedding) ? modelEmbedding : ""
+                }
+                selectedKeys={
+                  modelsEmbedding.includes(modelEmbedding)
+                    ? new Set([modelEmbedding])
+                    : new Set()
+                }
+                onChange={(e) => setModelEmbedding(e.target.value)}
               >
-                {(embedder === "openai"
-                  ? ["text-embedding-3-large", "text-embedding-3-small"]
-                  : embedder === "ollama"
-                  ? ["mxbai-embed-large", "bge-m3"]
-                  : []
-                ).map((model) => (
+                {modelsEmbedding.map((model) => (
                   <SelectItem key={model} value={model}>
                     {model}
                   </SelectItem>
@@ -174,31 +254,20 @@ export default function ConfigurationModels() {
                 onChange={(e) => setChunkOverlap(Number(e.target.value))}
               />
             </div>
+            <p className="text-xs italic pt-4">
+              Total Chunk: {totalChunks !== null ? totalChunks : "-"}
+            </p>
           </div>
           <div className="pt-2">
             <button
-              className={`text-white font-semibold px-4 py-3 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out 
-            ${
-              llm === "" ||
-              modelLLM === "" ||
-              embedder === "" ||
-              modelEmbedder === "" ||
-              chunkSize === 0 ||
-              chunkOverlap === 0 ||
-              isLoading
-                ? "bg-blue-300"
-                : "bg-blue-500"
-            }`}
-              onClick={handleSetupConfig}
-              disabled={
-                llm === "" ||
-                modelLLM === "" ||
-                embedder === "" ||
-                modelEmbedder === "" ||
-                chunkSize === 0 ||
-                chunkOverlap === 0 ||
-                isLoading
-              }
+              onClick={handleSave}
+              disabled={isSaveDisabled || isLoading}
+              className={`text-white font-semibold px-4 py-3 rounded-xl text-sm flex justify-center items-center gap-1 transition-all ease-in-out 
+    ${
+      isSaveDisabled || isLoading
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-500 hover:bg-blue-400"
+    }`}
             >
               {isLoading ? (
                 <Image
@@ -210,46 +279,12 @@ export default function ConfigurationModels() {
               ) : (
                 ""
               )}
-              Simpan
+              {isLoading ? "Memproses" : "Simpan"}
             </button>
-            <p className="text-xs italic pb-2 pt-2">Terakhir diubah: -</p>
+            <p className="text-xs italic pt-2">
+              Terakhir diubah: {updatedAt + " WITA" || "-"}
+            </p>
           </div>
-        </div>
-
-        <div id="last-config">
-          <Table
-            aria-label="Configuration Model"
-            topContent={
-              <div className="text-center font-semibold sm:text-base w-full ">
-                Konfigurasi model yang sedang digunakan pada Virtual Assistant
-              </div>
-            }
-          >
-            <TableHeader>
-              <TableColumn>LAST UPDATE</TableColumn>
-              <TableColumn>LLM</TableColumn>
-              <TableColumn>MODEL LLM</TableColumn>
-              <TableColumn>EMBEDDER</TableColumn>
-              <TableColumn>MODEL EMBEDDER</TableColumn>
-              <TableColumn>CHUNK SIZE</TableColumn>
-              <TableColumn>CHUNK OVERLAP</TableColumn>
-              <TableColumn>TOTAL CHUNK</TableColumn>
-            </TableHeader>
-            <TableBody emptyContent={"Konfigurasi tidak ditemukan"}>
-              {lastConfig && (
-                <TableRow key="x">
-                  <TableCell>{lastConfig.last_update || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.llm || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.model_llm || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.embedder || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.model_embedder || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.chunk_size || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.chunk_overlap || "N/A"}</TableCell>
-                  <TableCell>{lastConfig.total_chunks || "N/A"}</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
         </div>
       </div>
       <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">

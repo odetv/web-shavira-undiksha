@@ -40,58 +40,75 @@ const apiShaviraStatus = async (): Promise<boolean> => {
     }
     return false;
   } catch (error) {
-    console.error("Error checking API status:", error);
     return false;
   }
 };
 
-const setupConfig = async (configData: {
-  llm: string;
-  model_llm: string;
-  embedder: string;
-  model_embedder: string;
-  chunk_size: number;
-  chunk_overlap: number;
-}): Promise<boolean> => {
-  await generalConfigFirestore();
+const setupConfig = async (data: any) => {
   try {
-    const response = await fetch(`${API_URL}/setup-config`, {
+    const response = await fetch(`${API_URL}/setup/config`, {
       method: "POST",
       headers: await headers(),
-      body: JSON.stringify(configData),
+      body: JSON.stringify(data),
     });
-
     if (response.ok) {
       const data = await response.json();
-      return data.success;
-    } else {
-      console.error("Failed to update config:", response.status);
-      return false;
+      return data.statusCode === 200;
     }
   } catch (error) {
-    console.error("Error updating config:", error);
-    return false;
+    return null;
   }
 };
 
 const checkConfig = async (): Promise<any> => {
   await generalConfigFirestore();
   try {
-    const response = await fetch(`${API_URL}/check-config`, {
+    const response = await fetch(`${API_URL}/check/config`, {
       method: "GET",
       headers: await headers(),
     });
-
     if (response.ok) {
       const data = await response.json();
       return data.data;
-    } else {
-      console.error("Failed to fetch last config:", response.status);
-      return null;
     }
   } catch (error) {
-    console.error("Error fetching last config:", error);
     return null;
+  }
+};
+
+const checkOpenAIModels = async (): Promise<any[]> => {
+  await generalConfigFirestore();
+  try {
+    const response = await fetch(`${API_URL}/check/openai-models`, {
+      method: "GET",
+      headers: await headers(),
+    });
+    if (!response.ok) {
+      console.error("Failed to fetch OpenAI models:", response.status);
+      return [];
+    }
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    return [];
+  }
+};
+
+const checkOllamaModels = async (): Promise<any[]> => {
+  await generalConfigFirestore();
+  try {
+    const response = await fetch(`${API_URL}/check/ollama-models`, {
+      method: "GET",
+      headers: await headers(),
+    });
+    if (!response.ok) {
+      console.error("Failed to fetch Ollama models:", response.status);
+      return [];
+    }
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    return [];
   }
 };
 
@@ -268,6 +285,8 @@ export {
   apiShaviraStatus,
   setupConfig,
   checkConfig,
+  checkOpenAIModels,
+  checkOllamaModels,
   listDataset,
   readDataset,
   uploadDataset,
