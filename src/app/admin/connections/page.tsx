@@ -154,7 +154,13 @@ export default function ConfigurationConnections() {
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
         <div className="flex flex-wrap items-center bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-          <p className="font-semibold sm:text-base pb-4">OpenAI API</p>
+          <div className="flex flex-col pt-1 pb-1">
+            <p className="font-semibold text-base sm:text-lg">OpenAI API</p>
+            <p className="font-normal text-xs sm:text-sm pb-4">
+              Menyetel koneksi API berikut diperlukan untuk dapat memuat dan
+              menggunakan model dari platform OpenAI.
+            </p>
+          </div>
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
             <Input
               type="text"
@@ -198,7 +204,13 @@ export default function ConfigurationConnections() {
           </div>
         </div>
         <div className="flex flex-wrap items-center bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
-          <p className="font-semibold sm:text-base pb-4">Ollama API</p>
+          <div className="flex flex-col pt-1 pb-1">
+            <p className="font-semibold text-base sm:text-lg">Ollama API</p>
+            <p className="font-normal text-xs sm:text-sm pb-4">
+              Menyetel koneksi API berikut diperlukan untuk dapat memuat dan
+              menggunakan model dari platform Ollama.
+            </p>
+          </div>
           <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
             <Input
               type="text"

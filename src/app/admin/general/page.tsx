@@ -97,7 +97,13 @@ export default function ConfigurationGeneral() {
       <div className="pt-6 w-full flex flex-col gap-6">
         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <div className="flex flex-wrap items-center pb-4">
-            <p className="font-semibold sm:text-base pb-4">API Shavira</p>
+            <div className="flex flex-col pt-1 pb-1">
+              <p className="font-semibold text-base sm:text-lg">API Shavira</p>
+              <p className="font-normal text-xs sm:text-sm pb-4">
+                Menyetel koneksi API berikut diperlukan untuk dapat terhubung ke
+                Shavira.
+              </p>
+            </div>
             <div className="flex w-full flex-wrap md:flex-nowrap gap-4 justify-center items-center">
               <Input
                 type="text"
