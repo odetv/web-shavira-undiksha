@@ -60,6 +60,22 @@ const setupConfig = async (data: any) => {
   }
 };
 
+const setupQuickConfig = async (data: any) => {
+  try {
+    const response = await fetch(`${API_URL}/setup/quick-config`, {
+      method: "POST",
+      headers: await headers(),
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      const data = await response.json();
+      return data.statusCode === 200;
+    }
+  } catch (error) {
+    return null;
+  }
+};
+
 const checkConfig = async (): Promise<any> => {
   await generalConfigFirestore();
   try {
@@ -284,6 +300,7 @@ const chatConversation = async (
 export {
   apiShaviraStatus,
   setupConfig,
+  setupQuickConfig,
   checkConfig,
   checkOpenAIModels,
   checkOllamaModels,

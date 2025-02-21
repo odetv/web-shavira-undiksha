@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Input, Select, SelectItem, Image } from "@nextui-org/react";
 import {
   setupConfig,
+  setupQuickConfig,
   checkConfig,
   checkOpenAIModels,
   checkOllamaModels,
@@ -15,14 +16,19 @@ import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 export default function ConfigurationModels() {
   const [llm, setLLM] = useState("");
   const [modelLLM, setModelLLM] = useState("");
+  const [llmQuick, setLLMQuick] = useState("");
+  const [modelLLMQuick, setModelLLMQuick] = useState("");
   const [embedding, setEmbedding] = useState("");
   const [modelEmbedding, setModelEmbedding] = useState("");
   const [chunkSize, setChunkSize] = useState(0);
   const [chunkOverlap, setChunkOverlap] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isQuickLoading, setIsQuickLoading] = useState(false);
   const [totalChunks, setTotalChunks] = useState<number | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
+  const [updatedAtQuick, setUpdatedAtQuick] = useState<string | null>(null);
   const [modelsLLM, setModelsLLM] = useState<any[]>([]);
+  const [modelsLLMQuick, setModelsLLMQuick] = useState<any[]>([]);
   const [modelsEmbedding, setModelsEmbedding] = useState<any[]>([]);
   const [initialConfig, setInitialConfig] = useState({
     llm: "",
@@ -33,6 +39,10 @@ export default function ConfigurationModels() {
     chunkOverlap: 0,
     totalChunks: null,
     updatedAt: null,
+  });
+  const [initialConfigQuick, setInitialConfigQuick] = useState({
+    llmQuick: "",
+    modelLLMQuick: "",
   });
 
   useEffect(() => {
@@ -52,6 +62,24 @@ export default function ConfigurationModels() {
     };
     fetchModels();
   }, [llm]);
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      if (!llmQuick) {
+        setModelLLMQuick("");
+        setModelsLLMQuick([]);
+        return;
+      }
+      if (llmQuick === "openai") {
+        const models = await checkOpenAIModels();
+        setModelsLLMQuick(models);
+      } else if (llmQuick === "ollama") {
+        const models = await checkOllamaModels();
+        setModelsLLMQuick(models);
+      }
+    };
+    fetchModels();
+  }, [llmQuick]);
 
   useEffect(() => {
     const fetchEmbeddings = async () => {
@@ -99,6 +127,25 @@ export default function ConfigurationModels() {
     setIsLoading(false);
   };
 
+  const handleQuickSave = async () => {
+    setIsQuickLoading(true);
+
+    const data = {
+      llm: llmQuick,
+      model_llm: modelLLMQuick,
+    };
+    const success = await setupQuickConfig(data);
+
+    if (success) {
+      const updatedConfig = await checkConfig();
+      setLLMQuick(updatedConfig.llm_platform);
+      setModelLLMQuick(updatedConfig.llm_model);
+      setUpdatedAtQuick(updatedConfig.updated_at);
+    }
+
+    setIsQuickLoading(false);
+  };
+
   useEffect(() => {
     const fetchConfig = async () => {
       setIsLoading(true);
@@ -134,6 +181,31 @@ export default function ConfigurationModels() {
     fetchConfig();
   }, []);
 
+  useEffect(() => {
+    const fetchConfig = async () => {
+      setIsQuickLoading(true);
+      try {
+        const config = await checkConfig();
+        const initialData = {
+          llmQuick: config.llm_platform || "",
+          modelLLMQuick: config.llm_model || "",
+          updatedAtQuick: config.updated_at || null,
+        };
+
+        setLLMQuick(initialData.llmQuick);
+        setModelLLMQuick(initialData.modelLLMQuick);
+        setUpdatedAtQuick(initialData.updatedAtQuick);
+
+        setInitialConfigQuick(initialData);
+      } catch (error) {
+        console.error("Error fetching config:", error);
+      }
+      setIsQuickLoading(false);
+    };
+
+    fetchConfig();
+  }, []);
+
   const isSaveDisabled =
     (llm === initialConfig.llm &&
       modelLLM === initialConfig.modelLLM &&
@@ -147,6 +219,12 @@ export default function ConfigurationModels() {
     !modelEmbedding ||
     chunkSize <= 0 ||
     chunkOverlap <= 0;
+
+  const isSaveQuickDisabled =
+    (llmQuick === initialConfigQuick.llmQuick &&
+      modelLLMQuick === initialConfigQuick.modelLLMQuick) ||
+    !llmQuick ||
+    !modelLLMQuick;
 
   const [isValidKey, setIsValidKey] = useState<boolean>(false);
   const handleAccessChecked = (valid: boolean) => {
@@ -164,12 +242,97 @@ export default function ConfigurationModels() {
         </h1>
       </div>
       <div className="pt-6 w-full flex flex-col gap-6">
-        <div
-          id="update-config"
-          className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4"
-        >
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
           <div className="flex flex-wrap items-center pb-8">
-            <p className="font-semibold sm:text-base pb-4">Parameter Model</p>
+            <div className="flex flex-col pt-1 pb-1">
+              <p className="font-semibold text-base sm:text-lg">
+                Konfigurasi Cepat
+              </p>
+              <p className="font-normal text-xs sm:text-sm pb-4">
+                Mengubah konfigurasi ini hanya mengganti model LLM yang
+                digunakan dan tidak akan membuat ulang vector database.
+              </p>
+            </div>
+            <div className="flex w-full flex-wrap sm:grid sm:grid-cols-2 sm:grid-rows-1 gap-4 justify-center items-center">
+              <Select
+                id="quick-llm"
+                isRequired
+                label="LLM"
+                placeholder="Pilih Platform LLM"
+                value={llmQuick}
+                selectedKeys={new Set([llmQuick])}
+                onChange={(e) => setLLMQuick(e.target.value)}
+              >
+                <SelectItem key={"openai"} value={"openai"}>
+                  OpenAI
+                </SelectItem>
+                <SelectItem key={"ollama"} value={"ollama"}>
+                  Ollama
+                </SelectItem>
+              </Select>
+              <Select
+                id="quick-model-llm"
+                isRequired
+                label="Model LLM"
+                placeholder="Pilih Model LLM"
+                value={
+                  modelsLLMQuick.includes(modelLLMQuick) ? modelLLMQuick : ""
+                }
+                selectedKeys={
+                  modelsLLMQuick.includes(modelLLMQuick)
+                    ? new Set([modelLLMQuick])
+                    : new Set()
+                }
+                onChange={(e) => setModelLLMQuick(e.target.value)}
+              >
+                {modelsLLMQuick.map((model, index) => (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                ))}
+              </Select>
+            </div>
+          </div>
+          <div className="pt-2">
+            <button
+              id="quick-save"
+              onClick={handleQuickSave}
+              disabled={isSaveQuickDisabled || isQuickLoading}
+              className={`text-white font-semibold px-4 py-3 rounded-xl text-sm flex justify-center items-center gap-1 transition-all ease-in-out 
+    ${
+      isSaveQuickDisabled || isQuickLoading
+        ? "bg-blue-400 cursor-not-allowed"
+        : "bg-blue-500 hover:bg-blue-400"
+    }`}
+            >
+              {isQuickLoading ? (
+                <Image
+                  width={20}
+                  height={20}
+                  src={LoadingIcon.src}
+                  alt={"Loading"}
+                />
+              ) : (
+                ""
+              )}
+              {isQuickLoading ? "Memproses" : "Simpan"}
+            </button>
+            <p id="quick-updated" className="text-xs italic pt-2">
+              Terakhir diubah: {updatedAtQuick + " WITA" || "-"}
+            </p>
+          </div>
+        </div>
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4">
+          <div className="flex flex-wrap items-center pb-8">
+            <div className="flex flex-col pt-1 pb-1">
+              <p className="font-semibold text-base sm:text-lg">
+                Konfigurasi Lengkap
+              </p>
+              <p className="font-normal text-xs sm:text-sm pb-4">
+                Mengubah konfigurasi ini untuk menyesuaikan semua parameter dan
+                membuat ulang vector database setelah proses selesai disimpan.
+              </p>
+            </div>
             <div className="flex w-full flex-wrap sm:grid sm:grid-cols-3 sm:grid-rows-2 gap-4 justify-center items-center">
               <Select
                 isRequired
