@@ -290,11 +290,7 @@ export default function ConfigurationModels() {
     !embedding ||
     !modelEmbedding ||
     chunkSize <= 0 ||
-    chunkOverlap <= 0 ||
-    (llmQuick === initialConfigQuick.llmQuick &&
-      modelLLMQuick === initialConfigQuick.modelLLMQuick) ||
-    !llmQuick ||
-    !modelLLMQuick;
+    chunkOverlap <= 0;
 
   const isSaveQuickDisabled =
     (llmQuick === initialConfigQuick.llmQuick &&
