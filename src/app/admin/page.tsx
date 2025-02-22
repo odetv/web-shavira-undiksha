@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Chip } from "@nextui-org/react";
-import { checkApiStatus } from "@/services/apiVirtualAssistant";
+import { apiShaviraStatus } from "@/services/apiVirtualAssistant";
 import Link from "next/link";
 import LogsActivity from "@/components/LogsActivity";
 import AccessChecker from "@/components/AccessChecker";
@@ -11,7 +11,7 @@ export default function Admin() {
 
   useEffect(() => {
     const fetchApiStatus = async () => {
-      const isReady = await checkApiStatus();
+      const isReady = await apiShaviraStatus();
       setChatBotReady(isReady);
     };
     fetchApiStatus();
@@ -33,13 +33,40 @@ export default function Admin() {
       </div>
       <div className="flex flex-col gap-4 w-full pt-4 justify-center items-center">
         <div className="flex flex-wrap justify-center items-center gap-2">
-          <Link className="bg-blue-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/management-users">Manajemen Pengguna</Link>
-          
-          <Link className="bg-zinc-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/management-datasets">Manajemen Dataset</Link>
-          
-          <Link className="bg-orange-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/configuration-models">Konfigurasi Model</Link>
-          
-          <Link className="bg-emerald-500 text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg" href="/admin/visualize-graph">Visualisasi Graph</Link>
+          <Link
+            className="bg-cyan-500 hover:bg-cyan-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            href="/admin/general"
+          >
+            Umum
+          </Link>
+
+          <Link
+            className="bg-emerald-500 hover:bg-emerald-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            href="/admin/connections"
+          >
+            Konfigurasi Koneksi
+          </Link>
+
+          <Link
+            className="bg-orange-500 hover:bg-orange-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            href="/admin/models"
+          >
+            Konfigurasi Model
+          </Link>
+
+          <Link
+            className="bg-rose-500 hover:bg-rose-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            href="/admin/users"
+          >
+            Manajemen Pengguna
+          </Link>
+
+          <Link
+            className="bg-zinc-500 hover:bg-zinc-400 transition-all ease-in-out text-white text-sm sm:text-base font-medium px-3 py-2 rounded-lg"
+            href="/admin/datasets"
+          >
+            Manajemen Dataset
+          </Link>
         </div>
         <div className="w-full">
           <div className="flex flex-row justify-center items-center pt-8 pb-4">

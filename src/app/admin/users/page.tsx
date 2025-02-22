@@ -43,7 +43,7 @@ import {
   updateUser,
 } from "@/services/apiDatabase";
 import { auth } from "@/services/firebase";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import Image from "next/image";
 
 type User = {
@@ -239,7 +239,7 @@ export default function ManagementUsers() {
     setShowConfirmPassword(false);
   };
 
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
   const filteredUsers = React.useMemo(() => {
     if (!users) return [];
     if (!searchQuery) return users;
@@ -342,7 +342,9 @@ export default function ManagementUsers() {
                 </button>
                 <button
                   className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
-                    loadingSync ? "bg-green-400" : "bg-green-500"
+                    loadingSync
+                      ? "bg-green-400"
+                      : "bg-green-500 hover:bg-green-400"
                   }`}
                   onClick={handleSync}
                   disabled={loadingSync}
@@ -378,8 +380,12 @@ export default function ManagementUsers() {
               <TableColumn className="uppercase">Tipe Akun</TableColumn>
               <TableColumn className="uppercase">Role</TableColumn>
               <TableColumn className="uppercase">Status</TableColumn>
-              <TableColumn className="uppercase">Waktu Dibuat</TableColumn>
-              <TableColumn className="uppercase">Waktu Diperbarui</TableColumn>
+              <TableColumn className="uppercase">
+                Waktu Dibuat (WITA)
+              </TableColumn>
+              <TableColumn className="uppercase">
+                Waktu Diperbarui (WITA)
+              </TableColumn>
               <TableColumn className="uppercase">Aksi</TableColumn>
             </TableHeader>
             <TableBody emptyContent={"Pengguna tidak ditemukan"}>
@@ -486,8 +492,8 @@ export default function ManagementUsers() {
         </div>
       </div>
       <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
-        <GoBackHome />
         <GoBackAdmin />
+        <GoBackHome />
       </div>
 
       {/* Tampilan Modal untuk Add User */}
@@ -806,7 +812,7 @@ export default function ManagementUsers() {
               className="font-semibold"
               onPress={handleEditUser}
             >
-              Simpan
+              Perbarui
             </Button>
           </ModalFooter>
         </ModalContent>

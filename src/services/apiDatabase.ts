@@ -1,15 +1,6 @@
-import { auth, db } from "@/services/firebase";
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-  GoogleAuthProvider,
-  signInWithPopup,
-  sendPasswordResetEmail,
-  signOut,
-  deleteUser,
-} from "firebase/auth";
-import {
+  auth,
+  db,
   doc,
   setDoc,
   Timestamp,
@@ -19,8 +10,14 @@ import {
   where,
   getDocs,
   updateDoc,
-  deleteDoc,
-} from "firebase/firestore";
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+  sendPasswordResetEmail,
+  signOut,
+} from "@/services/firebase";
 import bcrypt from "bcryptjs";
 
 const formatTimestamp = (timestamp: Timestamp) => {
@@ -304,6 +301,3 @@ export const signOutUser = async () => {
     throw new Error(error.message);
   }
 };
-function deleteFirebaseUser(user: any) {
-  throw new Error("Function not implemented.");
-}
