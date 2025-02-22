@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Input, Select, SelectItem, Image } from "@nextui-org/react";
 import {
   setupConfig,
@@ -12,23 +12,30 @@ import GoBackHome from "@/components/GoBackHome";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import AccessChecker from "@/components/AccessChecker";
 import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
+import { db, doc, getDoc, setDoc, serverTimestamp } from "@/services/firebase";
 
 export default function ConfigurationModels() {
-  const [llm, setLLM] = useState("");
-  const [modelLLM, setModelLLM] = useState("");
   const [llmQuick, setLLMQuick] = useState("");
   const [modelLLMQuick, setModelLLMQuick] = useState("");
+  const [isQuickLoading, setIsQuickLoading] = useState(false);
+  const [updatedAtQuick, setUpdatedAtQuick] = useState<string | null>(null);
+  const [modelsLLMQuick, setModelsLLMQuick] = useState<any[]>([]);
+  const [initialConfigQuick, setInitialConfigQuick] = useState({
+    llmQuick: "",
+    modelLLMQuick: "",
+    updatedAtQuick: "",
+  });
+
+  const [llm, setLLM] = useState("");
+  const [modelLLM, setModelLLM] = useState("");
   const [embedding, setEmbedding] = useState("");
   const [modelEmbedding, setModelEmbedding] = useState("");
   const [chunkSize, setChunkSize] = useState(0);
   const [chunkOverlap, setChunkOverlap] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [isQuickLoading, setIsQuickLoading] = useState(false);
   const [totalChunks, setTotalChunks] = useState<number | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string | null>(null);
-  const [updatedAtQuick, setUpdatedAtQuick] = useState<string | null>(null);
   const [modelsLLM, setModelsLLM] = useState<any[]>([]);
-  const [modelsLLMQuick, setModelsLLMQuick] = useState<any[]>([]);
   const [modelsEmbedding, setModelsEmbedding] = useState<any[]>([]);
   const [initialConfig, setInitialConfig] = useState({
     llm: "",
@@ -40,10 +47,16 @@ export default function ConfigurationModels() {
     totalChunks: null,
     updatedAt: null,
   });
-  const [initialConfigQuick, setInitialConfigQuick] = useState({
-    llmQuick: "",
-    modelLLMQuick: "",
-  });
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -99,6 +112,42 @@ export default function ConfigurationModels() {
     fetchEmbeddings();
   }, [embedding]);
 
+  const fetchConfig = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const docRef = doc(db, "settings", "models");
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setLLM(data.llm_platform || "");
+        setModelLLM(data.llm_model || "");
+        setLLMQuick(data.llm_platform || "");
+        setModelLLMQuick(data.llm_model || "");
+        setEmbedding(data.embedding_platform || "");
+        setModelEmbedding(data.embedding_model || "");
+        setChunkSize(data.chunk_size || "");
+        setChunkOverlap(data.chunk_overlap || "");
+        setTotalChunks(data.total_chunks || "");
+        setUpdatedAt(
+          data.updated_at?.toDate ? formatDate(data.updated_at.toDate()) : "-"
+        );
+        setUpdatedAtQuick(
+          data.updated_at?.toDate ? formatDate(data.updated_at.toDate()) : "-"
+        );
+      }
+    } catch (error) {
+      console.error("Gagal mengambil data:", error);
+      alert("Terjadi kesalahan saat mengambil data.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchConfig();
+  }, [fetchConfig]);
+
   const handleSave = async () => {
     setIsLoading(true);
 
@@ -122,9 +171,23 @@ export default function ConfigurationModels() {
       setChunkOverlap(updatedConfig.chunk_overlap);
       setTotalChunks(updatedConfig.total_chunks);
       setUpdatedAt(updatedConfig.updated_at);
+
+      setInitialConfig({
+        llm: updatedConfig.llm_platform,
+        modelLLM: updatedConfig.llm_model,
+        embedding: updatedConfig.embedding_platform,
+        modelEmbedding: updatedConfig.embedding_model,
+        chunkSize: updatedConfig.chunk_size,
+        chunkOverlap: updatedConfig.chunk_overlap,
+        totalChunks: updatedConfig.total_chunks,
+        updatedAt: updatedConfig.updated_at,
+      });
     }
 
+    alert("Konfigurasi model berhasil disimpan!");
+
     setIsLoading(false);
+    fetchConfig();
   };
 
   const handleQuickSave = async () => {
@@ -141,9 +204,18 @@ export default function ConfigurationModels() {
       setLLMQuick(updatedConfig.llm_platform);
       setModelLLMQuick(updatedConfig.llm_model);
       setUpdatedAtQuick(updatedConfig.updated_at);
+
+      setInitialConfigQuick({
+        llmQuick: updatedConfig.llm_platform,
+        modelLLMQuick: updatedConfig.llm_model,
+        updatedAtQuick: updatedConfig.updated_at,
+      });
     }
 
+    alert("Konfigurasi model berhasil disimpan!");
+
     setIsQuickLoading(false);
+    fetchConfig();
   };
 
   useEffect(() => {
@@ -218,7 +290,11 @@ export default function ConfigurationModels() {
     !embedding ||
     !modelEmbedding ||
     chunkSize <= 0 ||
-    chunkOverlap <= 0;
+    chunkOverlap <= 0 ||
+    (llmQuick === initialConfigQuick.llmQuick &&
+      modelLLMQuick === initialConfigQuick.modelLLMQuick) ||
+    !llmQuick ||
+    !modelLLMQuick;
 
   const isSaveQuickDisabled =
     (llmQuick === initialConfigQuick.llmQuick &&
