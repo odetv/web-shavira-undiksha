@@ -58,6 +58,8 @@ export default function Home() {
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
+  const [streamedBotMessage, setStreamedBotMessage] = useState("");
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       // Memastikan dropdownRef ada dan event tidak terjadi di dalamnya
@@ -157,6 +159,34 @@ export default function Home() {
     scrollToBottom();
   }, [messages, loading]);
 
+  // const handleSend = async () => {
+  //   if (!question.trim()) return;
+
+  //   if (!user || (role ? role !== "member" && role !== "admin" : false)) {
+  //     alert("Please login member account.");
+  //     return;
+  //   }
+
+  //   const newUserMessage = { user: question, bot: "", timestamp: "" };
+  //   setMessages((prev) => [...prev, newUserMessage]);
+  //   setLoading(true);
+  //   setWelcomeVisible(false);
+  //   setQuestion("");
+
+  //   const response = await chatResponse(question);
+  //   if (response && response.success && response.data.length > 0) {
+  //     const { timestamp, question: q, answer } = response.data[0];
+  //     const newBotMessage = { user: q, bot: answer, timestamp };
+  //     const updatedMessages = [...messages, newBotMessage];
+  //     setMessages(updatedMessages);
+  //     Cookies.set("botUser", encodeComplexData(updatedMessages), {
+  //       expires: 7,
+  //     });
+  //   }
+
+  //   setLoading(false);
+  // };
+
   const handleSend = async () => {
     if (!question.trim()) return;
 
@@ -174,12 +204,34 @@ export default function Home() {
     const response = await chatConversation(question);
     if (response && response.success && response.data.length > 0) {
       const { timestamp, question: q, answer } = response.data[0];
-      const newBotMessage = { user: q, bot: answer, timestamp };
-      const updatedMessages = [...messages, newBotMessage];
-      setMessages(updatedMessages);
-      Cookies.set("botUser", encodeComplexData(updatedMessages), {
-        expires: 7,
+
+      let currentText = "";
+      const botMessageIndex = messages.length;
+      setMessages((prev) => {
+        const updatedMessages = [...prev];
+        updatedMessages[botMessageIndex] = { user: q, bot: "", timestamp };
+        return updatedMessages;
       });
+
+      answer.split(" ").forEach((word: any, index: any) => {
+        setTimeout(() => {
+          currentText += (index === 0 ? "" : " ") + word;
+          setMessages((prev) => {
+            const updatedMessages = [...prev];
+            updatedMessages[botMessageIndex] = {
+              ...updatedMessages[botMessageIndex],
+              bot: currentText,
+            };
+            return updatedMessages;
+          });
+        }, index * 25); // ms
+      });
+
+      setTimeout(() => {
+        Cookies.set("botUser", encodeComplexData([...messages]), {
+          expires: 7,
+        });
+      }, answer.split(" ").length * 0);
     }
 
     setLoading(false);
@@ -209,6 +261,33 @@ export default function Home() {
     "Cara akses melihat KTM",
   ];
 
+  // const handleSendDirect = async (questionText: string) => {
+  //   if (!user || (role ? role !== "member" && role !== "admin" : false)) {
+  //     alert("Please login member account.");
+  //     return;
+  //   }
+
+  //   setWelcomeVisible(false);
+  //   if (!questionText.trim()) return;
+
+  //   const newUserMessage = { user: questionText, bot: "", timestamp: "" };
+  //   setMessages((prev) => [...prev, newUserMessage]);
+  //   setLoading(true);
+
+  //   const response = await chatConversation(questionText);
+  //   if (response && response.success && response.data.length > 0) {
+  //     const { timestamp, question: q, answer } = response.data[0];
+  //     const newBotMessage = { user: q, bot: answer, timestamp };
+  //     const updatedMessages = [...messages, newBotMessage];
+  //     setMessages(updatedMessages);
+  //     Cookies.set("botUser", encodeComplexData(updatedMessages), {
+  //       expires: 7,
+  //     });
+  //   }
+
+  //   setLoading(false);
+  // };
+
   const handleSendDirect = async (questionText: string) => {
     if (!user || (role ? role !== "member" && role !== "admin" : false)) {
       alert("Please login member account.");
@@ -225,12 +304,37 @@ export default function Home() {
     const response = await chatConversation(questionText);
     if (response && response.success && response.data.length > 0) {
       const { timestamp, question: q, answer } = response.data[0];
-      const newBotMessage = { user: q, bot: answer, timestamp };
-      const updatedMessages = [...messages, newBotMessage];
-      setMessages(updatedMessages);
-      Cookies.set("botUser", encodeComplexData(updatedMessages), {
-        expires: 7,
+
+      let currentText = "";
+      const botMessageIndex = messages.length;
+
+      // Inisialisasi pesan bot
+      setMessages((prev) => {
+        const updatedMessages = [...prev];
+        updatedMessages[botMessageIndex] = { user: q, bot: "", timestamp };
+        return updatedMessages;
       });
+
+      answer.split(" ").forEach((word: any, index: any) => {
+        setTimeout(() => {
+          currentText += (index === 0 ? "" : " ") + word;
+          setMessages((prev) => {
+            const updatedMessages = [...prev];
+            updatedMessages[botMessageIndex] = {
+              ...updatedMessages[botMessageIndex],
+              bot: currentText,
+            };
+            return updatedMessages;
+          });
+        }, index * 25);
+      });
+
+      // Simpan ke cookies setelah teks selesai
+      setTimeout(() => {
+        Cookies.set("botUser", encodeComplexData([...messages]), {
+          expires: 7,
+        });
+      }, answer.split(" ").length * 0);
     }
 
     setLoading(false);
