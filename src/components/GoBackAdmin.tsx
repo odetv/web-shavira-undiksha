@@ -5,7 +5,7 @@ export default function GoBackAdmin() {
   return (
     <Link
       href="/admin"
-      className="text-sm text-center font-semibold bg-blue-500 text-white px-4 py-2.5 rounded-lg hover:bg-blue-600 cursor-pointer transition-all ease-in-out"
+      className="text-sm text-center font-semibold bg-blue-500 hover:bg-blue-400 text-white px-4 py-2.5 rounded-lg cursor-pointer transition-all ease-in-out"
     >
       Kembali ke Admin Panel
     </Link>

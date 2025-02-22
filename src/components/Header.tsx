@@ -312,7 +312,7 @@ export default function Header() {
               <Link
                 href="/admin"
                 className={`${
-                  isActive("/admin")
+                  pathname.startsWith("/admin")
                     ? "text-blue-500"
                     : "text-black hover:text-blue-500"
                 }`}
@@ -367,14 +367,14 @@ export default function Header() {
                   {user ? (
                     <>
                       <DropdownItem
+                        href="https://undiksha.ac.id"
+                        target="_blank"
                         key="explore"
                         textValue="explore"
                         color="primary"
                         className="bg-blue-500 text-white mt-1 font-semibold text-center"
                       >
-                        <a href="https://undiksha.ac.id" target="_blank">
-                          Explore
-                        </a>
+                        Explore Undiksha
                       </DropdownItem>
                       <DropdownItem
                         onPress={handleLogout}
@@ -389,14 +389,14 @@ export default function Header() {
                   ) : (
                     <>
                       <DropdownItem
+                        href="https://undiksha.ac.id"
+                        target="_blank"
                         key="explore"
                         textValue="explore"
                         color="primary"
                         className="bg-blue-500 text-white mt-1 font-semibold text-center"
                       >
-                        <a href="https://undiksha.ac.id" target="_blank">
-                          Explore
-                        </a>
+                        Explore Undiksha
                       </DropdownItem>
                       <DropdownItem
                         onPress={openForm}
@@ -438,7 +438,7 @@ export default function Header() {
               <Link
                 href="/admin"
                 className={`${
-                  isActive("/admin")
+                  pathname.startsWith("/admin")
                     ? "text-blue-500"
                     : "text-black hover:text-blue-500"
                 }`}

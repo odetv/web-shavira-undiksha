@@ -70,8 +70,6 @@ Step 2: Project aktif -> Project settings -> Service accounts -> Firebase Admin 
   NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID=""
   NEXT_PUBLIC_FIREBASE_APPID=""
   NEXT_PUBLIC_FIREBASE_MEASUREMENTID=""
-  NEXT_PUBLIC_VA_API_URL=""
-  NEXT_PUBLIC_VA_API_KEY=""
 ```
 
 Install Packages

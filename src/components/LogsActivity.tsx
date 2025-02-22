@@ -8,11 +8,11 @@ import {
   TableCell,
   Pagination,
   Input,
-  Button
+  Button,
 } from "@nextui-org/react";
 import SearchIcon from "@mui/icons-material/Search";
-import { getLogsActivity } from "@/services/apiVirtualAssistant";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif"
+import { logsActivity } from "@/services/apiVirtualAssistant";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import Image from "next/image";
 
 export default function LogsActivity() {
@@ -26,7 +26,7 @@ export default function LogsActivity() {
   const fetchLogs = async () => {
     setLoading(true);
     setError(null);
-    const response = await getLogsActivity();
+    const response = await logsActivity();
     setLogs(response.data);
     setLoading(false);
   };
@@ -76,16 +76,23 @@ export default function LogsActivity() {
       topContent={
         <div className="flex w-full justify-start sm:justify-end gap-2">
           <button
-            className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${loading ? "bg-green-400" : "bg-green-500"}`}
+            className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
+              loading ? "bg-green-400" : "bg-green-500 hover:bg-green-400"
+            }`}
             onClick={handleSync}
             disabled={loading}
           >
-             {loading ? (
-              <Image width={20} height={20} src={LoadingIcon.src} alt={"Loading"} />
-              ) : (
-                ""
-              )}
-              Sync
+            {loading ? (
+              <Image
+                width={20}
+                height={20}
+                src={LoadingIcon.src}
+                alt={"Loading"}
+              />
+            ) : (
+              ""
+            )}
+            Sync
           </button>
           <Input
             isClearable
@@ -93,7 +100,7 @@ export default function LogsActivity() {
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => onClear()}
             className="w-full sm:max-w-[25%] max-w-[55%]"
-            placeholder="Search"
+            placeholder="Cari Riwayat"
             startContent={<SearchIcon color="disabled" />}
           />
         </div>
@@ -117,29 +124,29 @@ export default function LogsActivity() {
     >
       <TableHeader>
         <TableColumn key="no">NO</TableColumn>
-        <TableColumn key="id">ID</TableColumn>
-        <TableColumn key="timestamp">TIMESTAMP</TableColumn>
-        <TableColumn key="method">METHOD</TableColumn>
-        <TableColumn key="status">STATUS</TableColumn>
-        <TableColumn key="success">SUCCESS</TableColumn>
-        <TableColumn key="description">DESCTIPTION</TableColumn>
+        {/* <TableColumn key="id">ID</TableColumn> */}
+        <TableColumn key="timestamp">WAKTU (WITA)</TableColumn>
+        <TableColumn key="method">METODE</TableColumn>
+        <TableColumn key="status">KODE</TableColumn>
+        <TableColumn key="success">STATUS</TableColumn>
+        <TableColumn key="description">DESKRIPSI</TableColumn>
       </TableHeader>
       <TableBody items={currentItems} emptyContent={"Logs tidak ditemukan"}>
         {(item) => (
-          <TableRow key={item.ID}>
+          <TableRow key={item.id}>
             <TableCell>
               <div>
                 {(page - 1) * rowsPerPage + currentItems.indexOf(item) + 1}
               </div>
             </TableCell>
-            <TableCell>
-              <div>{item.ID.toString()}</div>
-            </TableCell>
-            <TableCell>{item.Timestamp.toString()}</TableCell>
-            <TableCell>{item.Method.toString()}</TableCell>
-            <TableCell>{item["Status Code"].toString()}</TableCell>
-            <TableCell>{item.Success ? "true" : "false"}</TableCell>
-            <TableCell>{item.Description.toString()}</TableCell>
+            {/* <TableCell>
+              <div>{item.id}</div>
+            </TableCell> */}
+            <TableCell>{item.timestamp}</TableCell>
+            <TableCell>{item.method}</TableCell>
+            <TableCell>{item.status_code}</TableCell>
+            <TableCell>{item.success ? "True" : "False"}</TableCell>
+            <TableCell>{item.description}</TableCell>
           </TableRow>
         )}
       </TableBody>

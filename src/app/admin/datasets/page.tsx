@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import GoBackAdmin from "@/components/GoBackAdmin";
 import GoBackHome from "@/components/GoBackHome";
 import SearchIcon from "@mui/icons-material/Search";
-import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px (1).gif";
+import LoadingIcon from "@/assets/gif/Rolling@1x-1.0s-200px-200px.gif";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
@@ -28,7 +28,7 @@ import {
   Image,
 } from "@nextui-org/react";
 import {
-  getDatasets,
+  listDataset,
   uploadDataset,
   readDataset,
   updateDataset,
@@ -64,7 +64,7 @@ export default function ManagementDatasets() {
   useEffect(() => {
     const fetchDatasets = async () => {
       setLoadingSync(true);
-      const data = await getDatasets();
+      const data = await listDataset();
       setDatasets(data);
       setLoadingSync(false);
     };
@@ -73,7 +73,7 @@ export default function ManagementDatasets() {
 
   const handleSync = async () => {
     setLoadingSync(true);
-    const data = await getDatasets();
+    const data = await listDataset();
     setDatasets(data);
     setLoadingSync(false);
   };
@@ -271,7 +271,9 @@ export default function ManagementDatasets() {
 
                 <button
                   className={`text-white font-semibold px-4 py-2 rounded-xl text-sm flex justify-center items-center gap-1 cursor-pointer transition-all ease-in-out ${
-                    loadingSync ? "bg-green-400" : "bg-green-500"
+                    loadingSync
+                      ? "bg-green-400"
+                      : "bg-green-500 hover:bg-green-400"
                   }`}
                   onClick={handleSync}
                   disabled={loadingSync}
@@ -540,7 +542,7 @@ export default function ManagementDatasets() {
           </Modal>
         </div>
       </div>
-      <div className="flex flex-col gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 pt-6 justify-center items-center">
         <GoBackAdmin />
         <GoBackHome />
       </div>

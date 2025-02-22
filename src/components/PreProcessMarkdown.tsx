@@ -9,6 +9,9 @@ import remarkGfm from "remark-gfm";
 import DownloadIcon from "@mui/icons-material/Download";
 
 export default function preprocessMarkdown(text: any) {
+  if (!text || typeof text !== "string") {
+    return null;
+  }
   const lines = text.split("\n");
   return lines.map((line: any, index: any) => (
     <React.Fragment key={index}>
